@@ -1,0 +1,109 @@
+body {
+	margin: 0;
+	font-family: 'Lato', sans-serif;
+	font-weight: 400;
+	background: #384452;
+	color: #ddd;
+}
+a { text-decoration: none; color: unset; }
+a:hover { border-bottom: 1pt solid; }
+#app-toc a:hover, header h1 a:hover {
+	border-bottom: unset;
+}
+main, footer { padding: 0 1em; }
+header, main, footer > div {
+	margin: 0 auto;
+	min-width: 372px;
+	max-width: 1120px; /*1307px*/
+}
+header { height: 50px; }
+header img { vertical-align: top; padding-right: 7px; }
+header h1 {
+	line-height: 50px;
+	font-family: "Raleway", sans-serif;
+	font-size: 1.4em;
+	font-weight: 900;
+	text-transform: uppercase;
+	letter-spacing: 0.9px;
+	color: #fff;
+	margin-top: 0;
+}
+header h1 span { font-size: 0.7em; color: silver; }
+@media(max-width: 622px) { /* 3 columns */
+	header h1 span { display: none; }
+}
+main {
+	padding: 0.1em 2em 1.5em;
+	background: #fff;
+	color: #000;
+	border-radius: 10px;
+}
+footer h4 { border-bottom: 2px solid #ddd; }
+footer .col3 div {
+	vertical-align: top;
+	width: 31%;
+	padding: 1%;
+	display: inline-block;
+}
+@media(max-width: 647px) {
+	footer .col3 div { width: 100%; padding: 0; }
+}
+footer .links {
+	text-align: center;
+	font-size: 0.9em;
+	padding: 1em;
+}
+footer .links a { color: #ddd; }
+
+#main-nav { float: right; }
+#main-nav li { display: inline-block; margin-right: 1em; }
+
+td { padding: 0.2em 1em 0.2em 0.1em; }
+.squeeze { max-width: 700px; }
+
+#get-appcheck:hover { color: #586472; border-bottom: unset; }
+#get-appcheck img { width: 3em; height: 3em; margin: 0.3em; }
+#get-appcheck * { display: inline-block; vertical-align: middle; }
+
+#app-toc { text-align: center; }
+#app-toc div {
+	display: inline-block;
+	width: 140px;
+	margin: 5px;
+	padding: 16px;
+	vertical-align: top;
+	height: min-content;
+	background: #eee;
+	word-wrap: break-word;
+	border: 1pt solid #ccc;
+	border-radius: 7px;
+}
+#app-toc div:hover { background: #BBC6CA; }
+#app-toc img {
+	margin: 0.5em auto 1em;
+	display: block;
+}
+#app-toc img, #get-appcheck img {
+	border-radius: 21.5%;
+	border: 0.7px solid #ccc;
+}
+#app-toc span { font-size: 0.8em; }
+#app-toc span.name { font-weight: bold; }
+
+#pagination { text-align: center; margin-top: 2em; }
+#pagination a { margin: 0.5em; padding: 0.2em }
+#pagination a.active { border: 1pt solid black; border-radius: 0.2em; }
+
+#meta td:nth-child(2) { font-weight: bold }
+#connections i {
+	font-size: 0.9em;
+	font-style: normal;
+	font-weight: normal;
+	background: lightgray;
+	padding: 2pt 4pt;
+	border: 1pt solid #aaa;
+	border-radius: 0.2em;
+	display: inline-block;
+	margin: 0.12em;
+}
+#connections figure { display: inline-block; }

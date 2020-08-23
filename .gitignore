@@ -1,0 +1,15 @@
+/data/*
+/error.log
+/out/*
+!/out/static
+
+.DS_Store
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
