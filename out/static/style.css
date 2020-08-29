@@ -17,7 +17,7 @@ header, main, footer > div {
 	max-width: 1120px; /*1307px*/
 }
 header { height: 50px; }
-header img { vertical-align: top; padding-right: 7px; }
+header img { vertical-align: top; padding: 0 7px; }
 header h1 {
 	line-height: 50px;
 	font-family: "Raleway", sans-serif;
@@ -69,10 +69,11 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 #app-toc div {
 	display: inline-block;
 	width: 140px;
+	height: 12em;
+	overflow: hidden;
 	margin: 5px;
 	padding: 16px;
 	vertical-align: top;
-	height: min-content;
 	background: #eee;
 	word-wrap: break-word;
 	border: 1pt solid #ccc;
@@ -83,7 +84,7 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 	margin: 0.5em auto 1em;
 	display: block;
 }
-#app-toc img, #get-appcheck img {
+#app-toc img, #get-appcheck img, #appicon {
 	border-radius: 21.5%;
 	border: 0.7px solid #ccc;
 }
@@ -94,6 +95,9 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 #pagination a { margin: 0.5em; padding: 0.2em }
 #pagination a.active { border: 1pt solid black; border-radius: 0.2em; }
 
+@media(min-width: 647px) {
+	#meta #appicon { float: right; }
+}
 #meta td:nth-child(2) { font-weight: bold }
 #connections i {
 	font-size: 0.9em;
@@ -106,4 +110,6 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 	display: inline-block;
 	margin: 0.12em;
 }
+#connections i.bad { border-color: red; }
+#connections td { vertical-align: top; }
 #connections figure { display: inline-block; }

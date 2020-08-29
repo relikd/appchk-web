@@ -60,6 +60,7 @@ def template_with_base(content, title=None):
 
 # Other
 
+# same regex as in `api/v1/contribute/index.php`
 regex_bundle_id = re.compile(r'^[A-Za-z0-9\.\-]{1,155}$')
 logging.basicConfig(filename=os.path.join(os.pardir, "error.log"),
                     format='%(asctime)s %(message)s',
@@ -83,6 +84,32 @@ def err(scope, msg, logOnly=False):
 
 def printf(msg):
     print(msg, end='', flush=True)
+
+
+# Binary Tree Search
+
+def read_list(list_name):
+    path = path_root('src', 'lists', list_name)
+    if not file_exists(path):
+        return []
+    with open(path, 'r') as fp:
+        return [x.strip() for x in fp.readlines()]
+
+
+def bintree_lookup(tree, needle):
+    lo = 0
+    hi = len(tree) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if tree[mid] < needle:
+            lo = mid + 1
+        elif needle < tree[mid]:
+            hi = mid - 1
+        else:
+            return True  # mid
+    if lo > 0 and needle.startswith(tree[lo - 1] + '.'):
+        return True  # lo - 1
+    return False  # -1
 
 
 # Filesystem
@@ -113,6 +140,46 @@ def meta_json_exists(bundle_id, lang):
     return file_exists(path_data_app(bundle_id, 'info_{}.json'.format(lang)))
 
 
+def next_path(path_pattern):
+    i = 1
+    while os.path.exists(path_pattern % i):
+        i = i * 2
+    a, b = (i // 2, i)
+    while a + 1 < b:
+        c = (a + b) // 2  # interval midpoint
+        a, b = (c, b) if os.path.exists(path_pattern % c) else (a, c)
+    return path_pattern % b
+
+
+def diff_files(fileA, fileB):
+    with open(fileA, 'r') as fpA:
+        with open(fileB, 'r') as fpB:
+            a = '_'
+            b = '_'
+            diff = []
+            while a != '' and b != '':
+                a = fpA.readline()
+                b = fpB.readline()
+                if a == b:
+                    continue
+                while a != b:
+                    if a == '' or b == '':
+                        break
+                    if a < b:
+                        diff.append(a.strip())
+                        a = fpA.readline()
+                    elif b < a:
+                        diff.append(b.strip())
+                        b = fpB.readline()
+            while a != '':
+                a = fpA.readline()
+                diff.append(a.strip())
+            while b != '':
+                b = fpB.readline()
+                diff.append(b.strip())
+            return diff
+
+
 # Download
 
 def download(url, isJSON=False):
@@ -129,9 +196,8 @@ def download_file(url, path):
 # Enumerator
 
 def enum_newly_added():
-    for fname in glob.glob(path_data('_in', '*.json')):
-        with open(fname, 'r') as fp:
-            yield fname, json.load(fp)
+    for fname in glob.glob(path_data('_in', 'in_*')):
+        yield fname, os.path.basename(fname)[3:]  # del prefix 'in_'
 
 
 def enum_appids():

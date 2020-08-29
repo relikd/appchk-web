@@ -27,8 +27,25 @@ def download_icon(bundle_id, force=False, langs=['us', 'de']):
         json = None
         for lang in langs:
             if not json:
-                json = mylib.json_read_meta(bundle_id, lang)
+                try:
+                    json = mylib.json_read_meta(bundle_id, lang)
+                except Exception:
+                    continue
         mylib.download_file(json['artworkUrl100'], icon_file)
+
+
+def download_missing_icons(force=False, langs=['us', 'de']):
+    didAny = False
+    for bid in mylib.enum_appids():
+        if not mylib.file_exists(mylib.path_out_app(bid, 'icon.png')):
+            if not didAny:
+                print('downloading missing icons ...')
+                didAny = True
+            print('  ' + bid)
+            download_icon(bid, force=force, langs=langs)
+    if didAny:
+        print('')
+    return didAny
 
 
 def download(bundle_id, force=False):

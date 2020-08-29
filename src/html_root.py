@@ -24,9 +24,21 @@ def gen_root():
   </a>{}'''. format('')))
 
 
+def gen_search():
+    with open(mylib.path_out('redirect.html'), 'w') as fp:
+        fp.write(mylib.template_with_base('''
+<h2>Redirecting …</h2>
+<script type="text/javascript">
+  var GET={};
+  window.location.search.substr(1).split("&").forEach(function(x){GET[x.split("=")[0]]=x.split("=")[1]});
+  if (GET["id"]) { window.location = "/app/" + GET["id"] + "/index.html"; }
+</script>'''))
+
+
 def process():
     print('generating root html ...')
     gen_root()  # root index.thml
+    gen_search()  # root redirect.html?id=my.bundle.id
 
 
 if __name__ == '__main__':
