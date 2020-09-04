@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 import common_lib as mylib
 import bundle_combine
 import bundle_download
@@ -8,6 +9,18 @@ import html_root
 import html_index
 import html_bundle
 import tracker_download
+
+
+def print_usage_and_exit():
+    mylib.usage(__file__, 'command [params]')
+    print('''
+  import                 | check '_in' folder for new apps
+  tracker                | update tracking domains
+  icons                  | check & download missing icons
+  run [bundle_id] [...]  | recombine and rebuild apps
+  del [bundle_id] [...]  | remove app and rebuild index
+''')
+    exit(0)
 
 
 def del_id(bundle_ids):
@@ -57,15 +70,25 @@ def tracker_update():
         combine_and_update(['*'], where=new_trackers)
 
 
-def process():
-    # del_id(['_manually'])
-    import_update()
-    # tracker_update()
-    # tracker_download.combine_all('x')
-    # combine_and_update(['*'])  # where=['test.com']
-    # if bundle_download.download_missing_icons(force=False):
-    #     html_index.process()
-    # html_index.process()
-
-
-process()
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    if len(args) == 0:
+        print_usage_and_exit()
+    cmd = args[0]
+    params = args[1:]
+    if cmd == 'import':
+        import_update()
+    elif cmd == 'del':
+        if len(params) == 0:
+            print_usage_and_exit()
+        del_id(params)  # ['_manually']
+    elif cmd == 'run':
+        if len(params) == 0:
+            print_usage_and_exit()
+        combine_and_update(params)  # ['*'], where=['test.com']
+    elif cmd == 'icons':
+        if bundle_download.download_missing_icons(force=False):
+            html_index.process()
+    elif cmd == 'tracker':
+        tracker_update()
+        # tracker_download.combine_all('x')

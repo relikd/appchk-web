@@ -99,7 +99,7 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 	#meta #appicon { float: right; }
 }
 #meta td:nth-child(2) { font-weight: bold }
-#connections i {
+#connections i:not(.empty) {
 	font-size: 0.9em;
 	font-style: normal;
 	font-weight: normal;

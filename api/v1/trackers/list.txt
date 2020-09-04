@@ -1,0 +1,7 @@
+adjust.com
+app-measurement.com
+criteo.com
+firebasedynamiclinks-ipv4.googleapis.com
+firebasedynamiclinks-ipv6.googleapis.com
+ioam.de
+userreport.com

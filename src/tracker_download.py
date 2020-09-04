@@ -16,8 +16,8 @@ known_trackers = None
 
 def save_list(result_set, fname, binary=False):
     if not result_set:
-        return False
-    out = mylib.path_root('src', 'lists', fname)
+        return []
+    out = mylib.path_root('src', 'lists', 'tracker_' + fname)
     with open(out + '_tmp', 'wb' if binary else 'w') as fp:
         end = b'\n' if binary else '\n'
         for domain in sorted(result_set):
@@ -37,11 +37,14 @@ def save_list(result_set, fname, binary=False):
 
 
 def enum_lines(url, ignore=None):
-    whole = mylib.download(url)
-    for line in whole.split(b'\n'):
-        if not line or ignore and line.startswith(ignore):
-            continue
-        yield line
+    try:
+        whole = mylib.download(url)
+        for line in whole.split(b'\n'):
+            if not line or ignore and line.startswith(ignore):
+                continue
+            yield line
+    except Exception as e:
+        mylib.err('tracker-download', str(e) + ' in ' + url)
 
 
 def github(path):
@@ -50,6 +53,13 @@ def github(path):
 
 def lockdown(fname, urlname):
     url = github('confirmedcode/lockdown-ios/master/LockdowniOS/') + urlname
+    return save_list(set(enum_lines(url)), fname, binary=True)
+
+
+def customlist(fname):
+    # We could access the 'list.txt' file directly on this server
+    # However, we can't separate the api from the website then
+    url = 'https://appchk.de/api/v1/trackers/'
     return save_list(set(enum_lines(url)), fname, binary=True)
 
 
@@ -130,15 +140,15 @@ def combine_all(changes):
 def process():
     print('downloading tracker domains ...')
     changes = []
-    changes += lowe('tracker_lowe.txt')
-    changes += easylist('tracker_easylist.txt',
-                        'easyprivacy_trackingservers.txt')
-    changes += easylist('tracker_easylist_int.txt',
+    changes += customlist('custom.txt')
+    changes += lowe('lowe.txt')
+    changes += easylist('easylist.txt', 'easyprivacy_trackingservers.txt')
+    changes += easylist('easylist_int.txt',
                         'easyprivacy_trackingservers_international.txt')
-    changes += exodus('tracker_exodus.txt')
-    # changes += lockdown('tracker_lockdown_clickbait.txt', 'clickbait.txt')
-    # changes += lockdown('tracker_lockdown_marketing.txt', 'marketing.txt')
-    # changes += lockdown('tracker_lockdown_game_ads.txt', 'game_ads.txt')
+    changes += exodus('exodus.txt')
+    # changes += lockdown('lockdown_clickbait.txt', 'clickbait.txt')
+    # changes += lockdown('lockdown_marketing.txt', 'marketing.txt')
+    # changes += lockdown('lockdown_game_ads.txt', 'game_ads.txt')
     combine_all(changes)
     print('')
     return changes

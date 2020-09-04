@@ -125,7 +125,10 @@ def mv(path, to, printOmitPrefix=None):
 
 
 def rm(path):
-    shutil.rmtree(path)
+    try:
+        shutil.rmtree(path)
+    except Exception:
+        pass
 
 
 def dir_exists(path):

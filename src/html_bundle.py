@@ -2,10 +2,10 @@
 
 import sys
 import common_lib as mylib
-import matplotlib
-import matplotlib.pyplot as plt
+# import matplotlib
+# import matplotlib.pyplot as plt
 
-matplotlib.use('Agg')  # disable interactive mode
+# matplotlib.use('Agg')  # disable interactive mode
 
 
 def sort_dict(count_dict):
@@ -18,12 +18,12 @@ def sort_dict(count_dict):
 def gen_graph(count_dict, outfile, overwrite=False):
     if mylib.file_exists(outfile) and not overwrite:
         return
-    names, sizes = sort_dict(count_dict)
-    pie1, _ = plt.pie(sizes, labels=names)
-    plt.setp(pie1, width=0.5, edgecolor='white')
-    plt.subplots_adjust(left=0, right=1, top=0.7, bottom=0.3)
-    plt.savefig(outfile, bbox_inches='tight', pad_inches=0)  # transparent=True
-    plt.close()
+    # names, sizes = sort_dict(count_dict)
+    # pie1, _ = plt.pie(sizes, labels=names)
+    # plt.setp(pie1, width=0.5, edgecolor='white')
+    # plt.subplots_adjust(left=0, right=1, top=0.7, bottom=0.3)
+    # plt.savefig(outfile, bbox_inches='tight', pad_inches=0)  # transparent=True
+    # plt.close()
 
 
 def seconds_to_time(seconds):
@@ -39,7 +39,7 @@ def gen_dom_tags(unsorted_dict, trackers=None):
         clss = ' class="bad"' if trackers and trackers[x] else ''
         title = x  # if y == 1 else '{} ({})'.format(x, y)
         res.append('<i{}>{}</i>'.format(clss, title))
-    return ' '.join(res)
+    return ' '.join(res) if len(res) > 0 else '<i class="empty">– None –</i>'
 
 
 def gen_html(bundle_id, obj):
@@ -92,13 +92,11 @@ def make_bundle_out(bundle_id, forceGraphs=False):
     if not mylib.dir_exists(out_dir):
         needs_update_index = True
         mylib.mkdir(out_dir)
-    try:
-        gen_graph(json['total_subdom'], mylib.path_add(out_dir, 'sub.svg'),
-                  overwrite=forceGraphs)
-        gen_graph(json['total_pardom'], mylib.path_add(out_dir, 'par.svg'),
-                  overwrite=forceGraphs)
-    except KeyError:
-        mylib.err('bundle-generate-page', 'skip: ' + bundle_id)
+
+    gen_graph(json['total_subdom'], mylib.path_add(out_dir, 'sub.svg'),
+              overwrite=forceGraphs)
+    gen_graph(json['total_pardom'], mylib.path_add(out_dir, 'par.svg'),
+              overwrite=forceGraphs)
 
     with open(mylib.path_add(out_dir, 'index.html'), 'w') as fp:
         fp.write(gen_html(bundle_id, json))

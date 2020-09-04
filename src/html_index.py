@@ -71,7 +71,7 @@ def process(per_page=60):
     print('  {} apps'.format(apps_total))
     print('  {} pages'.format(pages_total))
 
-    apps_sorted = sorted(apps, key=lambda x: (x['name'], x['id']))
+    apps_sorted = sorted(apps, key=lambda x: (x['name'].lower(), x['id']))
     for x in range(1, pages_total + 1):
         start = (x - 1) * per_page
         batch = apps_sorted[start:start + per_page]

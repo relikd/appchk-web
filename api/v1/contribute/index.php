@@ -1,7 +1,11 @@
 <?php
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 $proj_root = dirname(dirname(dirname(__DIR__)));
 
 function is_valid_bundle($bundle_id) {
+	# check valid bundle id, same regex as in `common_lib.py`
 	return preg_match('/^[A-Za-z0-9\.\-]{1,155}$/', $bundle_id);
 }
 
@@ -49,10 +53,7 @@ function make_output($msg, $url=null, $when=null, $key=null) {
 }
 
 function response_success($bundle_id, $key) {
-	# check valid bundle id, same regex as in `common_lib.py`
-	if ($bundle_id) {
-		$url = 'https://appchk.de/app/'.$bundle_id.'/index.html';
-	}
+	$url = $bundle_id ? 'https://appchk.de/app/'.$bundle_id.'/index.html' : null;
 	# next update will be in ... X seconds (up to 1 min)
 	make_output('ok', $url, ceil(time()/120)*120 - time(), $key);
 }
