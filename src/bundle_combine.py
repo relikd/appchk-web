@@ -34,14 +34,14 @@ def dict_increment(ddic, key, num):
 
 
 def json_combine(bundle_id):
-    res = dict()
+    res = dict({'#rec': 0, '#logs': 0})
     domA = dict()  # unique sub domains
     domB = dict()  # total sub domains
     domC = dict()  # unique parent domains
     domD = dict()  # total parent domains
     for fname, jdata in mylib.enum_jsons(bundle_id):
         res['name'] = jdata['app-name']
-        dict_increment(res, '#rec', 1)
+        res['#rec'] += 1
         dict_increment(res, 'rec-total', jdata['duration'])
         try:
             logs = jdata['logs']
@@ -49,7 +49,7 @@ def json_combine(bundle_id):
             for subdomain in logs:
                 occurs = len(logs[subdomain])
                 sub_tracker = tracker.is_tracker(subdomain)
-                dict_increment(res, '#logs', occurs)
+                res['#logs'] += 1
                 dict_increment(domA, subdomain, 1)
                 dict_increment(domB, subdomain, occurs)
                 par_dom = get_parent_domain(subdomain)

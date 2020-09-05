@@ -24,14 +24,20 @@ def print_usage_and_exit():
 
 
 def del_id(bundle_ids):
+    print('removing apps from website:')
     if bundle_ids == ['*']:
         bundle_ids = list(mylib.enum_appids())
 
+    update_index = False
     for bid in bundle_ids:
         dest = mylib.path_out_app(bid)
         if mylib.dir_exists(dest):
+            print('  ' + bid)
             mylib.rm(dest)
-            html_index.process()
+            update_index = True
+    print('')
+    if update_index:
+        html_index.process()
 
 
 def combine_and_update(bundle_ids, where=None, forceGraphs=False):
@@ -70,25 +76,28 @@ def tracker_update():
         combine_and_update(['*'], where=new_trackers)
 
 
-if __name__ == '__main__':
-    args = sys.argv[1:]
-    if len(args) == 0:
-        print_usage_and_exit()
-    cmd = args[0]
-    params = args[1:]
-    if cmd == 'import':
-        import_update()
-    elif cmd == 'del':
-        if len(params) == 0:
+try:
+    if __name__ == '__main__':
+        args = sys.argv[1:]
+        if len(args) == 0:
             print_usage_and_exit()
-        del_id(params)  # ['_manually']
-    elif cmd == 'run':
-        if len(params) == 0:
-            print_usage_and_exit()
-        combine_and_update(params)  # ['*'], where=['test.com']
-    elif cmd == 'icons':
-        if bundle_download.download_missing_icons(force=False):
-            html_index.process()
-    elif cmd == 'tracker':
-        tracker_update()
-        # tracker_download.combine_all('x')
+        cmd = args[0]
+        params = args[1:]
+        if cmd == 'import':
+            import_update()
+        elif cmd == 'del':
+            if len(params) == 0:
+                print_usage_and_exit()
+            del_id(params)  # ['_manually']
+        elif cmd == 'run':
+            if len(params) == 0:
+                print_usage_and_exit()
+            combine_and_update(params)  # ['*'], where=['test.com']
+        elif cmd == 'icons':
+            if bundle_download.download_missing_icons(force=False):
+                html_index.process()
+        elif cmd == 'tracker':
+            tracker_update()
+            # tracker_download.combine_all('x')
+except Exception as e:
+    mylib.err('critical', e)

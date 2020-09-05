@@ -6,6 +6,7 @@ import glob
 import json
 import shutil
 import logging
+import traceback
 from pathlib import Path
 import urllib.request as curl
 
@@ -77,6 +78,8 @@ def valid_bundle_id(bundle_id):
 
 
 def err(scope, msg, logOnly=False):
+    if isinstance(msg, Exception):
+        msg = traceback.format_exc()
     logger.error('[{}] {}'.format(scope, msg))
     if not logOnly:
         print(' [ERROR] ' + msg)

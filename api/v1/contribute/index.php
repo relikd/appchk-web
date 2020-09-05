@@ -55,7 +55,7 @@ function make_output($msg, $url=null, $when=null, $key=null) {
 function response_success($bundle_id, $key) {
 	$url = $bundle_id ? 'https://appchk.de/app/'.$bundle_id.'/index.html' : null;
 	# next update will be in ... X seconds (up to 1 min)
-	make_output('ok', $url, ceil(time()/120)*120 - time(), $key);
+	make_output('ok', $url, ceil(time()/60)*60 - time(), $key);
 }
 
 function response_fail($error) {
