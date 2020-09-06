@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import common_lib as mylib
 import tracker_download as tracker
@@ -39,7 +40,9 @@ def json_combine(bundle_id):
     domB = dict()  # total sub domains
     domC = dict()  # unique parent domains
     domD = dict()  # total parent domains
+    latest = 0
     for fname, jdata in mylib.enum_jsons(bundle_id):
+        latest = max(latest, os.path.getmtime(fname))  # or getctime
         res['name'] = jdata['app-name']
         res['#rec'] += 1
         dict_increment(res, 'rec-total', jdata['duration'])
@@ -71,6 +74,7 @@ def json_combine(bundle_id):
         par_tracker[x] = tracker.is_tracker(x)
     res['tracker_subdom'] = sub_tracker
     res['tracker_pardom'] = par_tracker
+    res['last_date'] = latest
     return res
 
 

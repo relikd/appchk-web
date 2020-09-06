@@ -40,12 +40,12 @@ def del_id(bundle_ids):
         html_index.process()
 
 
-def combine_and_update(bundle_ids, where=None, forceGraphs=False):
+def combine_and_update(bundle_ids, where=None):
     affected = bundle_combine.process(bundle_ids, where=where)
     if len(affected) == 0:
         print('no bundle affected by tracker, not generating bundle html')
         return
-    new_ids = html_bundle.process(affected, forceGraphs=forceGraphs)
+    new_ids = html_bundle.process(affected)
     if len(new_ids) == 0:
         print('no new bundle, not rebuilding index')
         return
@@ -69,7 +69,7 @@ def import_update():
         os.remove(fname)
     print('')
     if len(needs_update) > 0:
-        combine_and_update(needs_update, forceGraphs=True)
+        combine_and_update(needs_update)
 
 
 def tracker_update():
