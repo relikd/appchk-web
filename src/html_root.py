@@ -15,13 +15,16 @@ def gen_root():
   cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
   proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 </p>
-  <a id="get-appcheck" href="https://testflight.apple.com/join/9jjaFeHO">
-    <img src="/static/appcheck.svg" alt="app-icon" width="30" height="30">
-    <p>
-      Get the app and contribute.<br />
-      Join the TestFlight Beta.
-    </p>
-  </a>{}'''. format('')))
+<a id="get-appcheck" class="no-ul" href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">
+  <img src="/static/appcheck.svg" alt="app-icon" width="30" height="30">
+  <p>
+    Get the iOS App and contribute.<br />
+    Join the TestFlight Beta.
+  </p>
+</a>
+<p>
+  The source code of the app is available <a href="https://github.com/relikd/appcheck" target="_blank">on GitHub</a>.
+</p>{}'''. format('')))
 
 
 def gen_search():
