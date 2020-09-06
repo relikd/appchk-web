@@ -4,6 +4,7 @@ body {
 	font-weight: 400;
 	background: #384452;
 	color: #ddd;
+	min-width: 436px;
 }
 a { text-decoration: none; color: unset; }
 a:hover { border-bottom: 1pt solid; }
@@ -13,7 +14,6 @@ a:hover { border-bottom: 1pt solid; }
 main, footer { padding: 0 1em; }
 header, main, footer > div {
 	margin: 0 auto;
-	min-width: 372px;
 	max-width: 1120px; /*1307px*/
 }
 header { height: 50px; }
@@ -54,7 +54,7 @@ footer .links a { color: #ddd; }
 
 td { padding: 0.2em 1em 0.2em 0.1em; }
 .squeeze { max-width: 700px; }
-.wrap { word-wrap: anywhere; }
+.wrap { word-break: break-all; }
 
 #get-appcheck:hover { color: #586472; border-bottom: unset; }
 #get-appcheck img { width: 3em; height: 3em; margin: 0.3em; }
