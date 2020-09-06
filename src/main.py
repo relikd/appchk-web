@@ -17,10 +17,17 @@ def print_usage_and_exit():
   import                 | check '_in' folder for new apps
   tracker                | update tracking domains
   icons                  | check & download missing icons
+  index                  | rebuild index & root html
   run [bundle_id] [...]  | recombine and rebuild apps
   del [bundle_id] [...]  | remove app and rebuild index
 ''')
     exit(0)
+
+
+def rebuild_index(inclRoot=False):
+    html_index.process()
+    if inclRoot:  # TODO: remove check if root contains dynamic content
+        html_root.process()
 
 
 def del_id(bundle_ids):
@@ -37,7 +44,7 @@ def del_id(bundle_ids):
             update_index = True
     print('')
     if update_index:
-        html_index.process()
+        rebuild_index()
 
 
 def combine_and_update(bundle_ids, where=None):
@@ -50,8 +57,7 @@ def combine_and_update(bundle_ids, where=None):
         print('no new bundle, not rebuilding index')
         return
     bundle_download.process(new_ids)
-    html_index.process()
-    html_root.process()
+    rebuild_index()
 
 
 def import_update():
@@ -87,19 +93,21 @@ try:
         params = args[1:]
         if cmd == 'import':
             import_update()
-        elif cmd == 'del':
-            if len(params) == 0:
-                print_usage_and_exit()
-            del_id(params)  # ['_manually']
+        elif cmd == 'tracker':
+            tracker_update()
+            # tracker_download.combine_all('x')
+        elif cmd == 'icons':
+            if bundle_download.download_missing_icons(force=False):
+                rebuild_index()
+        elif cmd == 'index':
+            rebuild_index(inclRoot=True)
         elif cmd == 'run':
             if len(params) == 0:
                 print_usage_and_exit()
             combine_and_update(params)  # ['*'], where=['test.com']
-        elif cmd == 'icons':
-            if bundle_download.download_missing_icons(force=False):
-                html_index.process()
-        elif cmd == 'tracker':
-            tracker_update()
-            # tracker_download.combine_all('x')
+        elif cmd == 'del':
+            if len(params) == 0:
+                print_usage_and_exit()
+            del_id(params)  # ['_manually']
 except Exception as e:
     mylib.err('critical', e)
