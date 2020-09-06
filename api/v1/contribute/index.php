@@ -9,23 +9,18 @@ function is_valid_bundle($bundle_id) {
 	return preg_match('/^[A-Za-z0-9\.\-]{1,155}$/', $bundle_id);
 }
 
-function normalize_bundle($bundle_id) {
-	$valid = is_valid_bundle($bundle_id);
-	return [$valid ? $bundle_id : '_manually', $valid];
-}
-
 function path_for($parts) { return implode(DIRECTORY_SEPARATOR, $parts); }
 
-function mark_needs_update($norm_bundle) {
+function mark_needs_update($valid_bundle) {
 	global $proj_root;
 	$pth = path_for([$proj_root, 'data', '_in']);
 	@mkdir($pth, 0755, true);
-	file_put_contents(path_for([$pth, 'in_'.$norm_bundle]), '.');
+	file_put_contents(path_for([$pth, 'in_'.$valid_bundle]), '.');
 }
 
-function random_filename($norm_bundle) {
+function random_filename($valid_bundle) {
 	global $proj_root;
-	$dir = path_for(array_merge([$proj_root, 'data'], explode('.', $norm_bundle)));
+	$dir = path_for(array_merge([$proj_root, 'data'], explode('.', $valid_bundle)));
 	@mkdir($dir, 0755, true);
 	do {
 		$key = '';
@@ -74,7 +69,11 @@ if ($json->v == 1
 	&& !is_null($json->{'app-bundle'})
 	&& !is_null($json->logs))
 {
-	[$bundle_id, $valid] = normalize_bundle($json->{'app-bundle'});
+	$bundle_id = $json->{'app-bundle'};
+	$valid = is_valid_bundle($bundle_id);
+	if (!$valid) {
+		$bundle_id = ($json->duration > 3600) ? '_longterm' : '_manually';
+	}
 	[$filename, $key] = random_filename($bundle_id);
 	$fp = @fopen($filename, 'w');
 	if ($fp) {

@@ -61,6 +61,8 @@ def import_update():
         if bid == '_manually':
             # TODO: notify admin that manual action is required
             mylib.err('import', 'manual action required!')
+        elif bid == '_longterm':
+            mylib.err('import', 'manual action required! (background)')
         else:
             print('  ' + bid)
             needs_update.add(bid)
