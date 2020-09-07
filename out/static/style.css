@@ -138,16 +138,16 @@ p.trckr { font-size: 0.8em; }
 	margin: 1px 1px;
 }
 /* color-bind friendly color palette */
-.c0{color:#63ACBE} .cb0{background:#63ACBE}
-.c1{color:#601A4A} .cb1{background:#601A4A}
-.c2{color:#09F4EC} .cb2{background:#09F4EC}
-.c3{color:#1F77B4} .cb3{background:#1F77B4}
-.c4{color:#EE442F} .cb4{background:#EE442F}
-.c5{color:#7F7F7F} .cb5{background:#7F7F7F}
-.c6{color:#0F2080} .cb6{background:#0F2080}
-.c7{color:#3b9f35} .cb7{background:#3b9f35}
-.c8{color:#F5793A} .cb8{background:#F5793A}
-.c9{color:#AC66FB} .cb9{background:#AC66FB}
+.cb0{background:#63ACBE}
+.cb1{background:#601A4A}
+.cb2{background:#09F4EC}
+.cb3{background:#1F77B4}
+.cb4{background:#EE442F}
+.cb5{background:#7F7F7F}
+.cb6{background:#0F2080}
+.cb7{background:#3b9f35}
+.cb8{background:#F5793A}
+.cb9{background:#AC66FB}
 
 .cs0{stroke:#3AE48C}
 .cs1{stroke:#D11}

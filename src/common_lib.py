@@ -77,6 +77,19 @@ def valid_bundle_id(bundle_id):
     return regex_bundle_id.match(bundle_id)
 
 
+def app_name(bundle_id, fallback=None):
+    def name_for(lang):
+        try:
+            return json_read_meta(bundle_id, lang)['trackCensoredName']
+        except Exception:
+            return None
+    for lang in ['us', 'de']:
+        name = name_for(lang)
+        if name:
+            return name
+    return fallback
+
+
 def err(scope, msg, logOnly=False):
     if isinstance(msg, Exception):
         msg = traceback.format_exc()
@@ -144,6 +157,14 @@ def file_exists(path):
 
 def meta_json_exists(bundle_id, lang):
     return file_exists(path_data_app(bundle_id, 'info_{}.json'.format(lang)))
+
+
+def mkdir_out_app(bundle_id):
+    out_dir = path_out_app(bundle_id)
+    if not dir_exists(out_dir):
+        mkdir(out_dir)
+        return True
+    return False
 
 
 def next_path(path_pattern):
@@ -249,7 +270,7 @@ def json_write(path, obj, pretty=False):
 
 def json_write_combined(bundle_id, obj):
     fname = path_data_app(bundle_id, 'combined.json')
-    json_write(fname, obj, pretty=True)
+    json_write(fname, obj, pretty=False)
 
 
 def json_write_meta(bundle_id, obj, lang):

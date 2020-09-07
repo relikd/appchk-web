@@ -8,11 +8,11 @@ def gen_obj(bundle_id):
         icon = '/app/{0}/icon.png'.format(bundle_id)
     else:
         icon = '/static/app-template.svg'
-    try:
-        name = mylib.json_read_meta(bundle_id, 'de')['trackCensoredName']
-    except Exception:
-        name = '&lt; App-Name &gt;'
-    return {'id': bundle_id, 'name': name, 'img': icon}
+    return {
+        'id': bundle_id,
+        'name': mylib.app_name(bundle_id, '&lt; App-Name &gt;'),
+        'img': icon
+    }
 
 
 def gen_entry(obj):

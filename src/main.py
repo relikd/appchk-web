@@ -48,16 +48,16 @@ def del_id(bundle_ids):
 
 
 def combine_and_update(bundle_ids, where=None):
+    new_ids = bundle_download.process(bundle_ids)
     affected = bundle_combine.process(bundle_ids, where=where)
-    if len(affected) == 0:
+    if len(affected) > 0:
+        html_bundle.process(affected)
+    else:
         print('no bundle affected by tracker, not generating bundle html')
-        return
-    new_ids = html_bundle.process(affected)
-    if len(new_ids) == 0:
+    if len(new_ids) > 0:
+        rebuild_index()
+    else:
         print('no new bundle, not rebuilding index')
-        return
-    bundle_download.process(new_ids)
-    rebuild_index()
 
 
 def import_update():

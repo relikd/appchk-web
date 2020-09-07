@@ -12,31 +12,15 @@ def seconds_to_time(seconds):
     return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
 
 
-def gen_dom_tags(unsorted_dict, trackers=None, additionalClasses=None):
-    sorted_arr = sorted(unsorted_dict, key=lambda x: (-x[1], x[0]))
+def gen_dotgraph(sorted_arr):
     txt = ''
-    anyMark = False
-    for i, (x, y) in enumerate(sorted_arr):
-        mark = trackers[x] if trackers else True
-        title = x if y == 1 else '{} ({})'.format(x, y)
-        txt += '<i{}>{}</i> '.format(' class="trckr"' if mark else '', title)
-        anyMark |= mark
-    if txt:
-        note = '<p class="trckr">known tracker</p>'
-        return '<div class="tags{}">{}{}</div>'.format(
-            additionalClasses or '', txt, note if anyMark else '')
-    else:
-        return '<i>– None –</i>'
-
-
-def gen_dotgraph(count_dict):
-    txt = ''
-    sorted_count = sorted(count_dict.items(), key=lambda x: (-x[1], x[0]))
-    for i, (name, count) in enumerate(sorted_count):
-        # TODO: use average not total count
-        txt += '<span title="{0} ({1})"><p>{0} ({1})</p>'.format(name, count)
-        for x in range(count):
-            txt += '<i class="cb{}"></i>'.format(i % 10)
+    for i, (name, count, mark) in enumerate(sorted_arr):
+        title = '{} ({})'.format(name, count) if count > 1 else name
+        clss = 'cb{}'.format(i % 10)
+        if mark:
+            clss += ' trckr'
+        txt += '<span class="{0}" title="{1}"><p>{1}</p>'.format(clss, title)
+        txt += '<i></i>' * count
         txt += '</span>'
     return '<div class="dot-graph">{}</div>'.format(txt)
 
@@ -71,20 +55,53 @@ def gen_pie_chart(parts, classes, stroke=0.6):
 
 
 def gen_radial_graph(obj):
-    total = 0
-    tracker = 0
-    for name, count in obj['total_subdom'].items():
-        total += count
-        if obj['tracker_subdom'][name]:
-            tracker += count
-    percent = tracker / total
+    percent = obj['#logs_tracker'] / obj['#logs_total']
     return '<div class="pie-chart">{}</div>'.format(
         gen_pie_chart([1 - percent, percent], ['cs0', 'cs1']))
 
 
+def gen_dom_tags(sorted_arr, onlyTrackers=False):
+    txt = ''
+    anyMark = False
+    for i, (name, count, mark) in enumerate(sorted_arr):
+        title = '{} ({})'.format(name, count) if count > 1 else name
+        clss = ' class="trckr"' if mark and not onlyTrackers else ''
+        txt += '<i{}>{}</i> '.format(clss, title)
+        anyMark |= mark
+    if txt:
+        note = '<p class="trckr">known tracker</p>'
+        return '<div class="{}tags">{}{}</div>'.format(
+            'trckr ' if onlyTrackers else '', txt, note if anyMark else '')
+    else:
+        return '<i>– None –</i>'
+
+
+def prepare_json(obj):
+    def calc_sum(arr):
+        # TODO: use average or median, not total count
+        return sum(arr)
+
+    def transform(ddic):
+        res = list()
+        for name, (is_tracker, counts) in ddic.items():
+            res.append([name, calc_sum(counts), is_tracker])
+        res.sort(key=lambda x: (-x[1], x[0]))  # sort by count desc, then name
+        return res
+
+    if not obj['name']:
+        obj['name'] = '&lt; App-Name &gt;'
+    obj['#rec'] = len(obj['rec_len'])
+    obj['rec_len'] = sum(obj['rec_len'])
+    obj['pardom'] = transform(obj['pardom'])
+    obj['subdom'] = transform(obj['subdom'])
+    # do this after the transformation:
+    obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
+    obj['#logs_total'] = sum(map(lambda x: x[1], obj['pardom']))
+    obj['#logs_tracker'] = sum(map(lambda x: x[1], obj['tracker']))
+
+
 def gen_html(bundle_id, obj):
-    track_dom = [(dom, obj['total_subdom'][dom])
-                 for dom, known in obj['tracker_subdom'].items() if known]
+    prepare_json(obj)
     return mylib.template_with_base(f'''
 <h2>{obj['name']}</h2>
 <div id="meta">
@@ -100,13 +117,13 @@ def gen_html(bundle_id, obj):
         obj['#rec']
     }</td></tr>
     <tr><td>Total number of logs:</td><td>{
-        obj['#logs']
+        obj['#logs_total']
     }</td></tr>
     <tr><td>Cumulative recording time:</td><td>{
-        seconds_to_time(obj['rec-total'])
+        seconds_to_time(obj['rec_len'])
     }</td></tr>
     <tr><td>Average recording time:</td><td>{
-         round(obj['rec-total'] / obj['#rec'], 1)
+        round(obj['rec_len'] / obj['#rec'], 1)
     } s</td></tr>
     <tr><td>Last updated:</td><td><time datetime="{
         time.strftime('%Y-%m-%d %H:%M', time.gmtime(obj['last_date']))
@@ -117,30 +134,18 @@ def gen_html(bundle_id, obj):
 </div>
 <h3>Connections</h3>
 <div>
-  <h4>Known Trackers ({ len(track_dom) }):</h4>
-  { gen_dom_tags(track_dom, additionalClasses=' trckr') }
+  <h4>Known Trackers ({ len(obj['tracker']) }):</h4>
+  { gen_dom_tags(obj['tracker'], onlyTrackers=True) }
   <p></p>
 
-  <h4>Domains:</h4>
-  { gen_dotgraph(obj['total_pardom']) }
-  { gen_dom_tags(obj['total_pardom'].items(), obj['tracker_pardom']) }
+  <h4>Domains ({ len(obj['pardom']) }):</h4>
+  { gen_dotgraph(obj['pardom']) }
+  { gen_dom_tags(obj['pardom']) }
 
-  <h4>Subdomains:</h4>
-  { gen_dotgraph(obj['total_subdom']) }
-  { gen_dom_tags(obj['total_subdom'].items(), obj['tracker_subdom']) }
+  <h4>Subdomains ({ len(obj['subdom']) }):</h4>
+  { gen_dotgraph(obj['subdom']) }
+  { gen_dom_tags(obj['subdom']) }
 </div>''', title=obj['name'])
-
-
-def make_bundle_out(bundle_id):
-    json = mylib.json_read_combined(bundle_id)
-    out_dir = mylib.path_out_app(bundle_id)
-    needs_update_index = False
-    if not mylib.dir_exists(out_dir):
-        needs_update_index = True
-        mylib.mkdir(out_dir)
-    with open(mylib.path_add(out_dir, 'index.html'), 'w') as fp:
-        fp.write(gen_html(bundle_id, json))
-    return needs_update_index
 
 
 def process(bundle_ids):
@@ -148,13 +153,13 @@ def process(bundle_ids):
     if bundle_ids == ['*']:
         bundle_ids = list(mylib.enum_appids())
 
-    ids_new_in_index = set()
     for bid in bundle_ids:
         print('  ' + bid)
-        if make_bundle_out(bid):
-            ids_new_in_index.add(bid)
+        json = mylib.json_read_combined(bid)
+        mylib.mkdir_out_app(bid)
+        with open(mylib.path_out_app(bid, 'index.html'), 'w') as fp:
+            fp.write(gen_html(bid, json))
     print('')
-    return ids_new_in_index
 
 
 if __name__ == '__main__':

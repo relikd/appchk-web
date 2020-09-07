@@ -26,54 +26,39 @@ def get_parent_domain(subdomain):
         return '.'.join(parts[-2:])
 
 
-def dict_increment(ddic, key, num):
-    try:
-        ddic[key]
-    except KeyError:
-        ddic[key] = 0
-    ddic[key] += num
-
-
 def json_combine(bundle_id):
-    res = dict({'#rec': 0, '#logs': 0})
-    domA = dict()  # unique sub domains
-    domB = dict()  # total sub domains
-    domC = dict()  # unique parent domains
-    domD = dict()  # total parent domains
+    def inc_dic(ddic, key, num):
+        try:
+            ddic[key][1].append(num)
+        except KeyError:
+            ddic[key] = (tracker.is_tracker(key), [num])
+
+    res = dict({'rec_len': [], 'name': mylib.app_name(bundle_id)})
+    pardom = dict()
+    subdom = dict()
     latest = 0
     for fname, jdata in mylib.enum_jsons(bundle_id):
         latest = max(latest, os.path.getmtime(fname))  # or getctime
-        res['name'] = jdata['app-name']
-        res['#rec'] += 1
-        dict_increment(res, 'rec-total', jdata['duration'])
+        # if not res['name']:
+        #     res['name'] = jdata['app-name']
+        res['rec_len'].append(jdata['duration'])
         try:
             logs = jdata['logs']
-            uniq_par = set()
+            uniq_par = dict()
             for subdomain in logs:
                 occurs = len(logs[subdomain])
-                sub_tracker = tracker.is_tracker(subdomain)
-                res['#logs'] += 1
-                dict_increment(domA, subdomain, 1)
-                dict_increment(domB, subdomain, occurs)
+                inc_dic(subdom, subdomain, occurs)
                 par_dom = get_parent_domain(subdomain)
-                uniq_par.add(par_dom)
-                dict_increment(domD, par_dom, occurs)
-            for par in uniq_par:
-                dict_increment(domC, par, 1)
+                try:
+                    uniq_par[par_dom] += occurs
+                except KeyError:
+                    uniq_par[par_dom] = occurs
+            for name, val in uniq_par.items():
+                inc_dic(pardom, name, val)
         except KeyError:
             mylib.err('bundle-combine', 'skip: ' + fname)
-    res['uniq_subdom'] = domA
-    res['uniq_pardom'] = domC
-    res['total_subdom'] = domB
-    res['total_pardom'] = domD
-    sub_tracker = dict()
-    par_tracker = dict()
-    for x in domA:
-        sub_tracker[x] = tracker.is_tracker(x)
-    for x in domC:
-        par_tracker[x] = tracker.is_tracker(x)
-    res['tracker_subdom'] = sub_tracker
-    res['tracker_pardom'] = par_tracker
+    res['pardom'] = pardom
+    res['subdom'] = subdom
     res['last_date'] = latest
     return res
 
@@ -91,7 +76,7 @@ def process(bundle_ids, where=None):
         if not haystack:
             should_update = True
         else:
-            for x in obj['uniq_subdom']:
+            for x in obj['subdom']:
                 if mylib.bintree_lookup(haystack, x[::-1]):
                     should_update = True
                     break

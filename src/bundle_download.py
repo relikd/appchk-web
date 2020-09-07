@@ -20,10 +20,14 @@ def download_info(bundle_id, lang, force=False):
         mylib.json_write_meta(bundle_id, json, lang)
 
 
-def download_icon(bundle_id, force=False, langs=['us', 'de']):
-    # icon_file = mylib.path_data_app(bundle_id, 'icon.png')
+def needs_icon_path(bundle_id):
     icon_file = mylib.path_out_app(bundle_id, 'icon.png')
-    if force or not mylib.file_exists(icon_file):
+    return (mylib.file_exists(icon_file), icon_file)
+
+
+def download_icon(bundle_id, force=False, langs=['us', 'de']):
+    exists, icon_file = needs_icon_path(bundle_id)
+    if force or not exists:
         json = None
         for lang in langs:
             if not json:
@@ -31,13 +35,18 @@ def download_icon(bundle_id, force=False, langs=['us', 'de']):
                     json = mylib.json_read_meta(bundle_id, lang)
                 except Exception:
                     continue
-        mylib.download_file(json['artworkUrl100'], icon_file)
+        image_url = json['artworkUrl100']  # fail early on KeyError
+        is_new = mylib.mkdir_out_app(bundle_id)
+        mylib.download_file(image_url, icon_file)
+        return is_new
+    return False
 
 
 def download_missing_icons(force=False, langs=['us', 'de']):
     didAny = False
     for bid in mylib.enum_appids():
-        if not mylib.file_exists(mylib.path_out_app(bid, 'icon.png')):
+        exists, _ = needs_icon_path(bid)
+        if not exists:
             if not didAny:
                 print('downloading missing icons ...')
                 didAny = True
@@ -51,7 +60,11 @@ def download_missing_icons(force=False, langs=['us', 'de']):
 def download(bundle_id, force=False):
     if not mylib.valid_bundle_id(bundle_id):
         mylib.err('apple-download', 'invalid id: ' + bundle_id)
-        return
+        return False
+
+    exists, _ = needs_icon_path(bundle_id)
+    if exists and not force:
+        return False
 
     mylib.printf('  {} => '.format(bundle_id))
     for lang in ['us', 'de']:
@@ -65,12 +78,14 @@ def download(bundle_id, force=False):
                       lang.upper(), bundle_id), logOnly=True)
     try:
         mylib.printf('icon')
-        download_icon(bundle_id, force=force)
+        index_needs_update = download_icon(bundle_id, force=force)
         mylib.printf('[✔] ')
     except Exception:
+        index_needs_update = False
         mylib.printf('[✘] ')
         mylib.err('apple-download', 'img for ' + bundle_id, logOnly=True)
     print('')  # end printf line
+    return index_needs_update
 
 
 def process(bundle_ids, force=False):
@@ -78,9 +93,12 @@ def process(bundle_ids, force=False):
     if bundle_ids == ['*']:
         bundle_ids = list(mylib.enum_data_appids())
 
+    newly_created = set()
     for bid in bundle_ids:
-        download(bid, force=force)
+        if download(bid, force=force):
+            newly_created.add(bid)
     print('')
+    return newly_created
 
 
 if __name__ == "__main__":
