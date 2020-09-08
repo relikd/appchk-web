@@ -55,7 +55,7 @@ def gen_pie_chart(parts, classes, stroke=0.6):
 
 
 def gen_radial_graph(obj):
-    percent = obj['#logs_tracker'] / obj['#logs_total']
+    percent = obj['#logs_tracker'] / (obj['#logs_total'] or 1)
     return '<div class="pie-chart">{}</div>'.format(
         gen_pie_chart([1 - percent, percent], ['cs0', 'cs1']))
 
