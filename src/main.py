@@ -2,6 +2,7 @@
 
 import os
 import sys
+import traceback
 import common_lib as mylib
 import bundle_combine
 import bundle_download
@@ -63,6 +64,7 @@ def combine_and_update(bundle_ids, where=None):
 def import_update():
     print('checking incoming data ...')
     needs_update = set()
+    then_delete = set()
     for fname, bid in mylib.enum_newly_added():
         if bid == '_manually':
             # TODO: notify admin that manual action is required
@@ -72,10 +74,15 @@ def import_update():
         else:
             print('  ' + bid)
             needs_update.add(bid)
-        os.remove(fname)
+        then_delete.add(fname)
     print('')
     if len(needs_update) > 0:
         combine_and_update(needs_update)
+    if len(then_delete) > 0:
+        print('cleanup _in folder ...')
+        for x in then_delete:
+            os.remove(fname)
+        print('')
 
 
 def tracker_update():
@@ -109,5 +116,6 @@ try:
             if len(params) == 0:
                 print_usage_and_exit()
             del_id(params)  # ['_manually']
-except Exception as e:
-    mylib.err('critical', e)
+except Exception:
+    mylib.err('critical', traceback.format_exc(), logOnly=True)
+    raise

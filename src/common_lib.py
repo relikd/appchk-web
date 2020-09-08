@@ -6,7 +6,6 @@ import glob
 import json
 import shutil
 import logging
-import traceback
 from pathlib import Path
 import urllib.request as curl
 
@@ -63,7 +62,7 @@ def template_with_base(content, title=None):
 
 # same regex as in `api/v1/contribute/index.php`
 regex_bundle_id = re.compile(r'^[A-Za-z0-9\.\-]{1,155}$')
-logging.basicConfig(filename=os.path.join(os.pardir, "error.log"),
+logging.basicConfig(filename=path_root('error.log'),
                     format='%(asctime)s %(message)s',
                     filemode='a')
 logger = logging.getLogger()
@@ -91,8 +90,6 @@ def app_name(bundle_id, fallback=None):
 
 
 def err(scope, msg, logOnly=False):
-    if isinstance(msg, Exception):
-        msg = traceback.format_exc()
     logger.error('[{}] {}'.format(scope, msg))
     if not logOnly:
         print(' [ERROR] ' + msg)
