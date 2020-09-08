@@ -5,6 +5,9 @@ import time
 import math
 import common_lib as mylib
 
+THRESHOLD_PERCENT_OF_LOGS = 0.7  # domain appears in % recordings
+THRESHOLD_MIN_AVG_LOGS = 1.0  # at least x times in total (after %-thresh)
+
 
 def seconds_to_time(seconds):
     minutes, seconds = divmod(seconds, 60)
@@ -54,8 +57,7 @@ def gen_pie_chart(parts, classes, stroke=0.6):
     return '<svg viewBox="0 0 {0} {0}">{1}</svg>'.format(size, txt)
 
 
-def gen_radial_graph(obj):
-    percent = obj['#logs_tracker'] / (obj['#logs_total'] or 1)
+def gen_radial_graph(percent):
     return '<div class="pie-chart">{}</div>'.format(
         gen_pie_chart([1 - percent, percent], ['cs0', 'cs1']))
 
@@ -77,59 +79,70 @@ def gen_dom_tags(sorted_arr, onlyTrackers=False):
 
 
 def prepare_json(obj):
-    def calc_sum(arr):
-        # TODO: use average or median, not total count
-        return sum(arr)
+    if not obj['name']:
+        obj['name'] = '&lt; App-Name &gt;'
+    rec_count = len(obj['rec_len'])
+    time_total = sum(obj['rec_len'])
+    obj['sum_rec'] = rec_count
+    obj['sum_logs'] = sum([sum(x[1]) for x in obj['pardom'].values()])
+    obj['sum_logs_pm'] = obj['sum_logs'] / (time_total or 1) * 60
+    obj['sum_time'] = time_total
+    obj['avg_time'] = time_total / rec_count
 
     def transform(ddic):
         res = list()
         for name, (is_tracker, counts) in ddic.items():
-            res.append([name, calc_sum(counts), is_tracker])
+            rec_percent = len(counts) / rec_count
+            if rec_percent < THRESHOLD_PERCENT_OF_LOGS:
+                continue
+            avg = sum(counts) / rec_count  # len(counts)
+            if avg < THRESHOLD_MIN_AVG_LOGS:
+                continue
+            res.append([name, round(avg + 0.001), is_tracker])
         res.sort(key=lambda x: (-x[1], x[0]))  # sort by count desc, then name
         return res
 
-    if not obj['name']:
-        obj['name'] = '&lt; App-Name &gt;'
-    obj['#rec'] = len(obj['rec_len'])
-    obj['rec_len'] = sum(obj['rec_len'])
     obj['pardom'] = transform(obj['pardom'])
     obj['subdom'] = transform(obj['subdom'])
     # do this after the transformation:
+    c_tracker = 0
+    c_total = 0
+    for _, c, flag in obj['subdom']:
+        c_tracker += c if flag else 0
+        c_total += c
+    obj['tracker_percent'] = c_tracker / (c_total or 1)
     obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
-    obj['#logs_total'] = sum(map(lambda x: x[1], obj['pardom']))
-    obj['#logs_tracker'] = sum(map(lambda x: x[1], obj['tracker']))
+    obj['avg_logs'] = c_total
+    obj['avg_logs_pm'] = c_total / (obj['avg_time'] or 1) * 60
 
 
 def gen_html(bundle_id, obj):
     prepare_json(obj)
     return mylib.template_with_base(f'''
-<h2>{obj['name']}</h2>
+<h2 class="title">{obj['name']}</h2>
+<p class="subtitle snd"><i class="mg_lr">Bundle-id:</i>{ bundle_id }</p>
 <div id="meta">
   <div class="icons">
     <img src="icon.png" width="100" height="100">
-    { gen_radial_graph(obj) }
+    { gen_radial_graph(obj['tracker_percent']) }
   </div>
   <table>
-    <tr><td>Bundle-id:</td><td class="wrap">{
-        bundle_id
-    }</td></tr>
-    <tr><td>Number of recordings:</td><td>{
-        obj['#rec']
-    }</td></tr>
-    <tr><td>Total number of logs:</td><td>{
-        obj['#logs_total']
-    }</td></tr>
-    <tr><td>Cumulative recording time:</td><td>{
-        seconds_to_time(obj['rec_len'])
-    }</td></tr>
-    <tr><td>Average recording time:</td><td>{
-        round(obj['rec_len'] / obj['#rec'], 1)
-    } s</td></tr>
-    <tr><td>Last updated:</td><td><time datetime="{
+    <tr><td>Last update:</td><td><time datetime="{
         time.strftime('%Y-%m-%d %H:%M', time.gmtime(obj['last_date']))
     }">{
         time.strftime('%Y-%m-%d, %H:%M', time.gmtime(obj['last_date']))
     }</time></td></tr>
+    <tr><td>Number of recordings:</td><td>{ obj['sum_rec'] }</td></tr>
+    <tr><td>Total number of logs:</td><td>{
+        obj['sum_logs'] }<i class="snd mg_lr">({
+            round(obj['sum_logs_pm'], 1)} / min)</i></td></tr>
+    <tr><td>Average number of logs:</td><td>{
+        obj['avg_logs'] }<i class="snd mg_lr">({
+            round(obj['avg_logs_pm'], 1)} / min)</i></td></tr>
+    <tr><td>Average recording time:</td><td>{
+        round(obj['avg_time'], 1) } sec</td></tr>
+    <tr><td>Cumulative recording time:</td><td>{
+        seconds_to_time(obj['sum_time']) }</td></tr>
   </table>
 </div>
 <h3>Connections</h3>
