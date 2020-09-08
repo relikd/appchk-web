@@ -120,38 +120,41 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 p.trckr { font-size: 0.8em; }
 
 /* graphs */
-.pie-chart { width: 100px; height: 100px; }
-.dot-graph span { outline: 3px solid transparent; outline-offset: 2px; }
-.dot-graph span:hover { outline-color: black; }
+.dot-graph {
+	touch-action: manipulation;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+.dot-graph span:hover i { border-top: 5px solid black; margin-top: -5px }
 .dot-graph span:hover p { display: inline; }
 .dot-graph p {
 	display: none;
 	position: absolute;
 	vertical-align: bottom;
 	background: white;
-	border: 1px solid #ddd;
-	padding: 0.2em;
-	margin: -2em 0;
+	border: 0.4em solid black;
+	padding: 0.3em 0.8em;
+	margin-top: -2.8em;
 }
 .dot-graph i {
 	display: inline-block;
 	vertical-align: bottom;
-	width: 20px;
-	height: 20px;
-	padding: 0;
-	margin: 1px 1px;
+	width: 1.5em;
+	height: 2em;
+	margin-bottom: 5px;
 }
 /* color-bind friendly color palette */
-.cb0{background:#63ACBE}
-.cb1{background:#601A4A}
-.cb2{background:#09F4EC}
-.cb3{background:#1F77B4}
-.cb4{background:#EE442F}
-.cb5{background:#7F7F7F}
-.cb6{background:#0F2080}
-.cb7{background:#3b9f35}
-.cb8{background:#F5793A}
-.cb9{background:#AC66FB}
+.cb0 i{background:#63ACBE}
+.cb1 i{background:#601A4A}
+.cb2 i{background:#09F4EC}
+.cb3 i{background:#1F77B4}
+.cb4 i{background:#EE442F}
+.cb5 i{background:#7F7F7F}
+.cb6 i{background:#0F2080}
+.cb7 i{background:#3b9f35}
+.cb8 i{background:#F5793A}
+.cb9 i{background:#AC66FB}
 
 .cs0{stroke:#3AE48C}
 .cs1{stroke:#D11}

@@ -54,7 +54,7 @@ def gen_pie_chart(parts, classes, stroke=0.6):
         else:
             txt += f'<path fill="transparent" class="{clss}" stroke-width="{stroke_p}" d="M{arc(total)}A{r_p},0,{1 if deg > 180 else 0},1,{arc(total + deg)}" />'
         total += deg
-    return '<svg viewBox="0 0 {0} {0}">{1}</svg>'.format(size, txt)
+    return '<svg viewBox="0 0 {0} {0}" width="100" height="100">{1}</svg>'.format(size, txt)
 
 
 def gen_radial_graph(percent):

@@ -1,5 +1,6 @@
 (function(){// main entry
 	updateViewport();
+	addEventListener('touchstart', function() {}); // :hover
 })();
 function updateViewport() {// show at least 2 columns on mobile devices
 	var viewport = document.head.querySelector("meta[name=viewport]");
