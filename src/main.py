@@ -78,6 +78,7 @@ def import_update():
     print('')
     if len(needs_update) > 0:
         combine_and_update(needs_update)
+        html_root.gen_help()
     if len(then_delete) > 0:
         print('cleanup _in folder ...')
         for x in then_delete:
