@@ -7,13 +7,8 @@ def gen_root():
     with open(mylib.path_out('index.html'), 'w') as fp:
         fp.write(mylib.template_with_base('''
 <h2>About</h2>
-<p class="squeeze">
-  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-  tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-  quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-  cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-  proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+<p>
+  Information about the research project will be added soon. Stay tuned.
 </p>
 <a id="get-appcheck" class="no-ul" href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">
   <img src="/static/appcheck.svg" alt="app-icon" width="30" height="30">
@@ -24,7 +19,58 @@ def gen_root():
 </a>
 <p>
   The source code of the app is available <a href="https://github.com/relikd/appcheck" target="_blank">on GitHub</a>.
-</p>{}'''. format('')))
+</p>
+<h2>Results</h2>
+<p>
+  If you're just interested in the results, go ahead to <a href="/index/page/1">all apps</a>.
+</p>
+<h2>Current research</h2>
+<p>
+  We have an ongoing research project open. Your help is highly appreciated. <br>
+  For mor infos follow <a href="/help">this link</a>.
+</p>
+'''))
+
+
+def gen_help():
+    many = 5
+    txt = '''<h2>Help needed!</h2>
+<p>
+We have selected a random sample of applications for further research.
+You can help us by providing app recordings of the following application.
+The more you record the better.<br>
+Ideally you could do recordings for all the apps below.
+But really, even if you only find time for a single recording, anything helps!
+We need at least {} recordings per app.
+</p>
+<div class="help-links">'''.format(many)
+    obj = mylib.json_read(mylib.path_root('src', 'help.json'))
+    for land in sorted(obj.keys()):
+        txt += '\n<h3>{}:</h3>\n<table>'.format(land)
+        for i, x in enumerate(obj[land]):
+            bid = x[2]
+            asurl = 'https://apps.apple.com/de/app/id{}'.format(x[1])
+            try:
+                count = len(mylib.json_read_combined(bid)['rec_len'])
+            except Exception:
+                count = 0
+
+            rr = '<span class="{}"><b>{}</b>/{}</span> recordings'.format(
+                'done' if count >= many else 'notyet', count, many)
+
+            txt += '''
+<tr><td>{0}</td>
+<td><a href="/app/{1}/index.html">{2}</a></td>
+<td>{3}</td>
+<td><a href="{4}" target="_blank">{4}</a></td>
+</tr>'''.format(i + 1, bid, x[0], rr, asurl)
+
+        txt += '</table>'
+
+    txt += '</div>'
+    mylib.mkdir(mylib.path_out('help'))
+    with open(mylib.path_out('help', 'index.html'), 'w') as fp:
+        fp.write(mylib.template_with_base(txt))
 
 
 def gen_search():
@@ -42,6 +88,7 @@ def process():
     print('generating root html ...')
     gen_root()  # root index.thml
     gen_search()  # root redirect.html?id=my.bundle.id
+    gen_help()
 
 
 if __name__ == '__main__':

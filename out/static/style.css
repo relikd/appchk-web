@@ -7,6 +7,7 @@ body {
 	min-width: 436px;
 }
 a { text-decoration: none; color: unset; }
+p a, td a { border-bottom: 1pt dotted; }
 a:hover { border-bottom: 1pt solid; }
 #app-toc a:hover, a.no-ul:hover {
 	border-bottom: unset;
@@ -54,8 +55,6 @@ footer .links a { color: #ddd; }
 #main-nav img { height: 1.2em; margin: 0 -0.4em; }
 #main-nav img:hover { transform: scale(1.2); }
 
-.squeeze { max-width: 700px; }
-
 #get-appcheck:hover { color: #586472; }
 #get-appcheck img { width: 3em; height: 3em; margin: 0.3em; }
 #get-appcheck * { display: inline-block; vertical-align: middle; }
@@ -91,12 +90,17 @@ footer .links a { color: #ddd; }
 #pagination a.active { border: 1pt solid black; border-radius: 0.2em; }
 
 /* app bundle */
+p { max-width: 700px; }
 h2.title { margin-bottom: 0; }
 p.subtitle { margin-top: 0.2em; }
 .mg_lr { margin: 0 0.4em; }
 .snd { color: #586472; font-size: 0.85em; }
 td { padding: 0.2em 1em 0.2em 0.1em; }
 #meta td:nth-child(2) { font-weight: bold }
+.help-links td { padding: 0.5em; }
+.help-links tr:nth-child(even) { background: #ddd; }
+.help-links .notyet { color: #D11; }
+.help-links .done { color: #3AE48C; }
 
 /* domain tags */
 .tags { margin: 2em 0; }
@@ -117,7 +121,7 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 	font-weight: bold;
 }
 .tags i.trckr, .tags.trckr i { background: #DBB; border-color: #C88; }
-p.trckr { font-size: 0.8em; }
+p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 
 /* graphs */
 .dot-graph {
@@ -127,16 +131,6 @@ p.trckr { font-size: 0.8em; }
 	-moz-user-select: none;
 }
 .dot-graph span:hover i { border-top: 5px solid black; margin-top: -5px }
-.dot-graph span:hover p { display: inline; }
-.dot-graph p {
-	display: none;
-	position: absolute;
-	vertical-align: bottom;
-	background: white;
-	border: 0.4em solid black;
-	padding: 0.3em 0.8em;
-	margin-top: -2.8em;
-}
 .dot-graph i {
 	display: inline-block;
 	vertical-align: bottom;
@@ -144,6 +138,16 @@ p.trckr { font-size: 0.8em; }
 	height: 2em;
 	margin-bottom: 5px;
 }
+.dot-graph span:hover p { display: inline; }
+.dot-graph p {
+	display: none;
+	position: absolute;
+	background: white;
+	border: 0.4em solid black;
+	padding: 0.3em 0.8em;
+	margin-top: -2.8em;
+}
+
 /* color-bind friendly color palette */
 .cb0 i{background:#63ACBE}
 .cb1 i{background:#601A4A}
