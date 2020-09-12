@@ -30,7 +30,7 @@ def gen_pager(current, total):
 
     def mklink(i, name, active=False):
         clss = ' class="active"' if active else ''
-        return '<a href="./{}"{}>{}</a>'.format(i, clss, name)
+        return '<a href="../{}"{}>{}</a>'.format(i, clss, name)
 
     links = ''
     # if current > 1:
