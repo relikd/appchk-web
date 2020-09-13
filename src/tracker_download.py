@@ -25,7 +25,7 @@ def save_list(result_set, fname, binary=False):
     try:
         changes = mylib.diff_files(out, out + '_tmp')
     except Exception:
-        changes = list(result_set)
+        changes = [str(x) if binary else x for x in result_set]
     mylib.mv(out + '_tmp', out)
     # md5_old = md5(out) if mylib.file_exists(out) else None
     # md5_new = md5(out)
