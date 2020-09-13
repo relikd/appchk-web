@@ -33,15 +33,20 @@ def gen_root():
 
 
 def gen_help():
-    many = 5
+    many = 7
     txt = '''<h2>Help needed!</h2>
 <p>
-We have selected a random sample of applications for further research.
-You can help us by providing app recordings of the following application.
-The more you record the better.<br>
-Ideally you could do recordings for all the apps below.
-But really, even if you only find time for a single recording, anything helps!
-We need at least {} recordings per app.
+    This study contains two stages. This is the first one.
+    We have selected a random sample of applications for evaluation.
+    We want to track the app behviour over a longer period of time.
+</p><p>
+    You can help us by providing app recordings of the following application.
+    The more you record the better. 
+    Ideally you could do recordings for all the apps below.
+    But really, even if you only find time for a single recording, anything helps!
+</p><p>
+    We need at least {} recordings per app. Stage 2 will follow in a few weeks.
+    Get the <a href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">Testflight beta</a>.
 </p>
 <div class="help-links">'''.format(many)
     obj = mylib.json_read(mylib.path_root('src', 'help.json'))
