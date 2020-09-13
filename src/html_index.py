@@ -17,7 +17,7 @@ def gen_obj(bundle_id):
 
 def gen_entry(obj):
     return '''
-<a href="/app/{id}/index.html">
+<a href="/app/{id}/">
   <div>
     <img src="{img}" width="100" height="100">
     <span class="name">{name}</span><br />
@@ -30,7 +30,7 @@ def gen_pager(current, total):
 
     def mklink(i, name, active=False):
         clss = ' class="active"' if active else ''
-        return '<a href="../{}"{}>{}</a>'.format(i, clss, name)
+        return '<a href="../{}/"{}>{}</a>'.format(i, clss, name)
 
     links = ''
     # if current > 1:

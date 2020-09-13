@@ -18,16 +18,16 @@ def gen_root():
   </p>
 </a>
 <p>
-  The source code of the app is available <a href="https://github.com/relikd/appcheck" target="_blank">on GitHub</a>.
+  The source code of the app is available <a href="https://github.com/relikd/appcheck/" target="_blank">on GitHub</a>.
 </p>
 <h2>Results</h2>
 <p>
-  If you're just interested in the results, go ahead to <a href="/index/page/1">all apps</a>.
+  If you're just interested in the results, go ahead to <a href="/index/page/1/">all apps</a>.
 </p>
 <h2>Current research</h2>
 <p>
   We have an ongoing research project open. Your help is highly appreciated. <br>
-  For mor infos follow <a href="/help">this link</a>.
+  For mor infos follow <a href="/help/">this link</a>.
 </p>
 '''))
 
@@ -65,7 +65,7 @@ def gen_help():
 
             txt += '''
 <tr><td>{0}</td>
-<td><a href="/app/{1}/index.html">{2}</a></td>
+<td><a href="/app/{1}/">{2}</a></td>
 <td>{3}</td>
 <td><a href="{4}" target="_blank">{4}</a></td>
 </tr>'''.format(i + 1, bid, x[0], rr, asurl)
@@ -85,7 +85,7 @@ def gen_search():
 <script type="text/javascript">
   var GET={};
   window.location.search.substr(1).split("&").forEach(function(x){GET[x.split("=")[0]]=x.split("=")[1]});
-  if (GET["id"]) { window.location = "/app/" + GET["id"] + "/index.html"; }
+  if (GET["id"]) { window.location = "/app/" + GET["id"] + "/"; }
 </script>'''))
 
 
