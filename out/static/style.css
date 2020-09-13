@@ -116,7 +116,7 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 	display: inline-block;
 	margin: 0.12em;
 }
-.tags i.trckr, .tags.trckr i { background: #F99; border-color: #C66; }
+.tags i.trckr, .tags.trckr i { background: #F9A7A7;; border-color: #B06363; }
 p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 
 /* graphs */
@@ -126,17 +126,17 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 	-webkit-user-select: none;
 	-moz-user-select: none;
 }
-.dot-graph span { margin-right: 3px; }
 .dot-graph span:hover i { border-top: 5px solid black; margin-top: -5px }
 .dot-graph i {
 	display: inline-block;
 	vertical-align: bottom;
 	background: #AAA;
 	width: 1.5em;
-	height: 2em;
+	height: 1.8em;
 	margin-bottom: 5px;
 }
-.dot-graph .trckr i { background: #D11; }
+.dot-graph i:first-of-type { margin-left: 0.1em; width: 1.4em; }
+.dot-graph .trckr i { background: #AC2B4A; }
 .dot-graph span:hover p { display: inline; }
 .dot-graph p {
 	display: none;
@@ -145,10 +145,12 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 	border: 0.4em solid black;
 	padding: 0.3em 0.8em;
 	margin-top: -2.8em;
+	margin-left: 0.1em;
 }
 
-.cs0{stroke:#3AE48C}
-.cs1{stroke:#D11}
+/* #AC2B4A #BB1C42 #CA0D3A */
+.cs0{stroke:#6AC45C}
+.cs1{stroke:#CA0D3A}
 
 /* responsive */
 @media(max-width: 647px) {
