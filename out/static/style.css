@@ -109,19 +109,14 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 	font-size: 0.9em;
 	font-style: normal;
 	font-weight: normal;
-	background: lightgray;
+	background: #eee;
 	padding: 2pt 4pt;
 	border: 1pt solid #aaa;
 	border-radius: 0.2em;
 	display: inline-block;
 	margin: 0.12em;
 }
-.tags i.trckr:before, .tags.trckr i:before, p.trckr:before {
-	content: '* ';
-	color: red;
-	font-weight: bold;
-}
-.tags i.trckr, .tags.trckr i { background: #DBB; border-color: #C88; }
+.tags i.trckr, .tags.trckr i { background: #F99; border-color: #C66; }
 p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 
 /* graphs */

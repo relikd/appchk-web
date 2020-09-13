@@ -82,7 +82,10 @@ def import_update():
     if len(then_delete) > 0:
         print('cleanup _in folder ...')
         for x in then_delete:
-            os.remove(fname)
+            try:
+                os.remove(fname)
+            except FileNotFoundError:
+                pass
         print('')
 
 

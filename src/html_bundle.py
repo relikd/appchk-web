@@ -10,6 +10,7 @@ THRESHOLD_MIN_AVG_LOGS = 1.0  # at least x times in total (after %-thresh)
 
 
 def seconds_to_time(seconds):
+    seconds = int(seconds)
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
@@ -71,7 +72,7 @@ def gen_dom_tags(sorted_arr, onlyTrackers=False):
         txt += '<i{}>{}</i> '.format(clss, title)
         anyMark |= mark
     if txt:
-        note = '<p class="trckr">known tracker</p>'
+        note = '<p class="trckr">* Potential trackers are highlighted</p>'
         return '<div class="{}tags">{}{}</div>'.format(
             'trckr ' if onlyTrackers else '', txt, note if anyMark else '')
     else:
@@ -133,21 +134,21 @@ def gen_html(bundle_id, obj):
         time.strftime('%Y-%m-%d, %H:%M', time.gmtime(obj['last_date']))
     }</time></td></tr>
     <tr><td>Number of recordings:</td><td>{ obj['sum_rec'] }</td></tr>
-    <tr><td>Total number of logs:</td><td>{
+    <tr><td>Total number of requests:</td><td>{
         obj['sum_logs'] }<i class="snd mg_lr">({
             round(obj['sum_logs_pm'], 1)} / min)</i></td></tr>
-    <tr><td>Average number of logs:</td><td>{
+    <tr><td>Average number of requests:</td><td>{
         obj['avg_logs'] }<i class="snd mg_lr">({
             round(obj['avg_logs_pm'], 1)} / min)</i></td></tr>
     <tr><td>Average recording time:</td><td>{
-        round(obj['avg_time'], 1) } sec</td></tr>
+        seconds_to_time(obj['avg_time']) }</td></tr>
     <tr><td>Cumulative recording time:</td><td>{
         seconds_to_time(obj['sum_time']) }</td></tr>
   </table>
 </div>
 <h3>Connections</h3>
 <div>
-  <h4>Known Trackers ({ len(obj['tracker']) }):</h4>
+  <h4>Potential Trackers ({ len(obj['tracker']) }):</h4>
   { gen_dom_tags(obj['tracker'], onlyTrackers=True) }
   <p></p>
 
