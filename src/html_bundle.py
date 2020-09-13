@@ -18,12 +18,10 @@ def seconds_to_time(seconds):
 
 def gen_dotgraph(sorted_arr):
     txt = ''
-    for i, (name, count, mark) in enumerate(sorted_arr):
+    for name, count, mark in sorted_arr:
         title = '{} ({})'.format(name, count) if count > 1 else name
-        clss = 'cb{}'.format(i % 10)
-        if mark:
-            clss += ' trckr'
-        txt += '<span class="{0}" title="{1}"><p>{1}</p>'.format(clss, title)
+        clss = ' class="trckr"' if mark else ''
+        txt += '<span{0} title="{1}"><p>{1}</p>'.format(clss, title)
         txt += '<i></i>' * count
         txt += '</span>'
     return '<div class="dot-graph">{}</div>'.format(txt)

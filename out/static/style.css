@@ -126,14 +126,17 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 	-webkit-user-select: none;
 	-moz-user-select: none;
 }
+.dot-graph span { margin-right: 3px; }
 .dot-graph span:hover i { border-top: 5px solid black; margin-top: -5px }
 .dot-graph i {
 	display: inline-block;
 	vertical-align: bottom;
+	background: #AAA;
 	width: 1.5em;
 	height: 2em;
 	margin-bottom: 5px;
 }
+.dot-graph .trckr i { background: #D11; }
 .dot-graph span:hover p { display: inline; }
 .dot-graph p {
 	display: none;
@@ -143,18 +146,6 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 	padding: 0.3em 0.8em;
 	margin-top: -2.8em;
 }
-
-/* color-bind friendly color palette */
-.cb0 i{background:#63ACBE}
-.cb1 i{background:#601A4A}
-.cb2 i{background:#09F4EC}
-.cb3 i{background:#1F77B4}
-.cb4 i{background:#EE442F}
-.cb5 i{background:#7F7F7F}
-.cb6 i{background:#0F2080}
-.cb7 i{background:#3b9f35}
-.cb8 i{background:#F5793A}
-.cb9 i{background:#AC66FB}
 
 .cs0{stroke:#3AE48C}
 .cs1{stroke:#D11}
