@@ -329,7 +329,6 @@ admixer.net
 admized.com
 admob.com
 admonitor.com
-admotion.com.ar
 adn.lrb.co.uk
 adnet.asahi.com
 adnet.biz
@@ -1276,7 +1275,6 @@ blogcounter.de
 blogherads.com
 blogtoplist.se
 blogtopsites.com
-blueadvertise.com
 blueconic.com
 blueconic.net
 bluekai.com
@@ -1694,6 +1692,7 @@ engage.dnsfilter.com
 engagebdr.com
 engine.espace.netavenir.com
 enginenetwork.com
+enormousearth.com
 enquisite.com
 ensighten.com
 entercasino.com
@@ -2192,7 +2191,10 @@ log.btopenworld.com
 log.logrocket.io
 log.pinterest.com
 logger.snackly.co
+logs.datadoghq.com
+logs.datadoghq.eu
 logs.roku.com
+logs.spilgames.com
 logsss.com
 logua.com
 longinglettuce.com

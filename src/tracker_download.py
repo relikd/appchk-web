@@ -64,9 +64,9 @@ def customlist(fname):
 
 
 def easylist(fname, urlname):
-    url = github('easylist/easylist/master/easyprivacy/') + urlname
+    url = github('easylist/easylist/master/') + urlname
     res = set()
-    for x in enum_lines(url, b'!'):
+    for x in enum_lines(url):
         if not x.startswith(b'||'):
             continue
         x = x[2:]
@@ -125,7 +125,8 @@ def combine_all(changes):
         print('  no-change: tracker_all.txt')
         return
     res = set()
-    for fname in ['custom.txt', 'lowe.txt', 'easylist.txt', 'easylist_int.txt',
+    for fname in ['custom.txt', 'lowe.txt',
+                  'easylist.txt', 'easyprivacy', 'easyprivacy_int',
                   'exodus.txt', 'lockdown_clickbait.txt',
                   'lockdown_marketing.txt', 'lockdown_game_ads.txt']:
         for dom in mylib.read_list('tracker_' + fname):
@@ -142,9 +143,12 @@ def process():
     changes = []
     changes += customlist('custom.txt')
     changes += lowe('lowe.txt')
-    changes += easylist('easylist.txt', 'easyprivacy_trackingservers.txt')
-    changes += easylist('easylist_int.txt',
-                        'easyprivacy_trackingservers_international.txt')
+    changes += easylist('easylist.txt',
+                        'easylist/easylist_adservers.txt')
+    changes += easylist('easyprivacy.txt',
+                        'easyprivacy/easyprivacy_trackingservers.txt')
+    changes += easylist('easyprivacy_int.txt',
+                        'easyprivacy/easyprivacy_trackingservers_international.txt')
     changes += exodus('exodus.txt')
     # changes += lockdown('lockdown_clickbait.txt', 'clickbait.txt')
     # changes += lockdown('lockdown_marketing.txt', 'marketing.txt')
