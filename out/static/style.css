@@ -101,7 +101,7 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 .help-links tr:nth-child(even) { background: #DDD; }
 .help-links tr:nth-child(odd) { background: #F9F9F9; }
 .help-links .notyet { color: #D11; }
-.help-links .done { color: #3AE48C; }
+.help-links .done { color: #52C840; }
 
 /* domain tags */
 .tags { margin: 2em 0; }

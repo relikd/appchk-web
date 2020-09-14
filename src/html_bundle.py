@@ -90,6 +90,8 @@ def prepare_json(obj):
 
     def transform(ddic):
         res = list()
+        c_sum = 0
+        c_trkr = 0
         for name, (is_tracker, counts) in ddic.items():
             rec_percent = len(counts) / rec_count
             if rec_percent < THRESHOLD_PERCENT_OF_LOGS:
@@ -98,21 +100,17 @@ def prepare_json(obj):
             if avg < THRESHOLD_MIN_AVG_LOGS:
                 continue
             res.append([name, round(avg + 0.001), is_tracker])
+            c_sum += avg
+            c_trkr += avg if is_tracker else 0
         res.sort(key=lambda x: (-x[1], x[0]))  # sort by count desc, then name
-        return res
+        return res, c_trkr, c_sum
 
-    obj['pardom'] = transform(obj['pardom'])
-    obj['subdom'] = transform(obj['subdom'])
-    # do this after the transformation:
-    c_tracker = 0
-    c_total = 0
-    for _, c, flag in obj['subdom']:
-        c_tracker += c if flag else 0
-        c_total += c
-    obj['tracker_percent'] = c_tracker / (c_total or 1)
+    obj['pardom'], p_t, p_c = transform(obj['pardom'])
+    obj['subdom'], s_t, s_c = transform(obj['subdom'])
+    obj['tracker_percent'] = s_t / (s_c or 1)
     obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
-    obj['avg_logs'] = c_total
-    obj['avg_logs_pm'] = c_total / (obj['avg_time'] or 1) * 60
+    obj['avg_logs'] = s_c
+    obj['avg_logs_pm'] = s_c / (obj['avg_time'] or 1) * 60
 
 
 def gen_html(bundle_id, obj):
