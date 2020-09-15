@@ -38,18 +38,17 @@ def json_combine(bundle_id):
         except KeyError:
             ddic[key] = (tracker.is_tracker(key), [num])
 
-    res = dict({'rec_len': [], 'name': mylib.app_name(bundle_id)})
-    pardom = dict()
-    subdom = dict()
+    res = {'rec_len': []}
+    pardom = {}
+    subdom = {}
     latest = 0
     for fname, jdata in mylib.enum_jsons(bundle_id):
+        # TODO: load combined and append newest only, then update evaluated
         latest = max(latest, os.path.getmtime(fname))  # or getctime
-        # if not res['name']:
-        #     res['name'] = jdata['app-name']
         res['rec_len'].append(jdata['duration'])
         try:
             logs = jdata['logs']
-            uniq_par = dict()
+            uniq_par = {}
             for subdomain in logs:
                 occurs = len(logs[subdomain])
                 inc_dic(subdom, subdomain, occurs)
@@ -69,8 +68,6 @@ def json_combine(bundle_id):
 
 
 def json_evaluate_inplace(obj):
-    if not obj['name']:
-        obj['name'] = '&lt; App-Name &gt;'
     rec_count = len(obj['rec_len'])
     time_total = sum(obj['rec_len'])
     del(obj['rec_len'])
@@ -81,7 +78,7 @@ def json_evaluate_inplace(obj):
     obj['avg_time'] = time_total / rec_count
 
     def transform(ddic):
-        res = list()
+        res = []
         c_sum = 0
         c_trkr = 0
         for name, (is_tracker, counts) in ddic.items():

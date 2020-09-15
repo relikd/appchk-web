@@ -4,12 +4,6 @@ import sys
 import common_lib as mylib
 
 
-def get_index_path():
-    pth = mylib.path_root('data', '_eval')
-    mylib.mkdir(pth)
-    return mylib.path_add(pth, 'reverse_index.json')
-
-
 def load_index_json(file_path):
     if mylib.file_exists(file_path):
         json = mylib.json_read(file_path)
@@ -52,7 +46,10 @@ def insert_in_index(index, bundle_ids):
         except ValueError:  # index not found
             i = len(index['bundle'])
             index['bundle'].append(bid)
-        json, _ = mylib.json_read_evaluated(bid)
+        try:
+            json, _ = mylib.json_read_evaluated(bid)
+        except FileNotFoundError:
+            continue
         for key in ['pardom', 'subdom']:  # assuming keys are identical
             for domain, _, _ in json[key]:
                 try:
@@ -64,10 +61,11 @@ def insert_in_index(index, bundle_ids):
 
 
 def process(bundle_ids, deleteOnly=False):
-    print('writing reverse index ...')
-    index_file = get_index_path()
+    print('writing index: reverse domains ...')
+    index_file = mylib.path_data_index('reverse_domains.json')
     if bundle_ids == ['*']:
         bundle_ids = list(mylib.enum_data_appids())
+        print('  full reset')
         mylib.rm_file(index_file)  # rebuild from ground up
     # load previous index
     json = load_index_json(index_file)

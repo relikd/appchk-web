@@ -32,6 +32,12 @@ def path_data_app(bundle_id, filename=None):
     return path_add(pth, filename) if filename else pth
 
 
+def path_data_index(filename):
+    pth = path_root('data', '_eval')
+    mkdir(pth)
+    return path_add(pth, filename)
+
+
 def path_out(*path_components):
     return path_root('out', *path_components)
 
@@ -76,17 +82,18 @@ def valid_bundle_id(bundle_id):
     return regex_bundle_id.match(bundle_id)
 
 
-def app_name(bundle_id, fallback=None):
+def app_names(bundle_id):
     def name_for(lang):
         try:
             return json_read_meta(bundle_id, lang)['trackCensoredName']
         except Exception:
             return None
+    ret = {}
     for lang in ['us', 'de']:
         name = name_for(lang)
         if name:
-            return name
-    return fallback
+            ret[lang] = name
+    return ret
 
 
 def err(scope, msg, logOnly=False):

@@ -8,7 +8,8 @@ import bundle_download
 import html_root
 import html_index
 import html_bundle
-import json_reverse_index
+import index_bundle_names
+import index_reverse_domains
 import tracker_download
 
 
@@ -44,23 +45,31 @@ def del_id(bundle_ids):
             mylib.rm_dir(dest)
             update_index = True
     print('')
-    json_reverse_index.process(bundle_ids, deleteOnly=True)
+    index_reverse_domains.process(bundle_ids, deleteOnly=True)
     if update_index:
         rebuild_index()
 
 
 def combine_and_update(bundle_ids, where=None):
+    # 1. download meta data from iTunes store, incl. app icons
     new_ids = bundle_download.process(bundle_ids)
+    # 2. if new apps, update bundle name index
+    if len(new_ids) > 0:
+        index_bundle_names.process(new_ids)
+    # 3. re-calculate combined.json and evaluated.json files
     affected = bundle_combine.process(bundle_ids, where=where)
+    # special case needed for reverse index. '*' will force rebuilt index
     if not where and bundle_ids == ['*']:
         affected = ['*']
+    # 4. was any json updated? if so, make html and update reverse index
     if len(affected) > 0:
-        json_reverse_index.process(affected)
+        index_reverse_domains.process(affected)
         html_bundle.process(affected)
     else:
         print('no bundle affected by tracker, not generating bundle html')
+    # 5. make all apps index
     if len(new_ids) > 0:
-        rebuild_index()
+        rebuild_index()  # must be called after bundle_combine
     else:
         print('no new bundle, not rebuilding index')
 

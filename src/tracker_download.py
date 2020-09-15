@@ -6,6 +6,13 @@ import common_lib as mylib
 known_trackers = None
 
 
+def is_tracker(domain):
+    global known_trackers
+    if not known_trackers:
+        known_trackers = mylib.read_list('tracker_all.txt')
+    return mylib.bintree_lookup(known_trackers, domain[::-1])
+
+
 # def md5(fname):
 #     hash_md5 = hashlib.md5()
 #     with open(fname, 'rb') as f:
@@ -108,13 +115,6 @@ def exodus(fname):
     except KeyError:
         pass
     return save_list(res, fname, binary=False)
-
-
-def is_tracker(domain):
-    global known_trackers
-    if not known_trackers:
-        known_trackers = mylib.read_list('tracker_all.txt')
-    return mylib.bintree_lookup(known_trackers, domain[::-1])
 
 
 def combine_all(changes):

@@ -5,6 +5,7 @@ import sys
 import time
 import math
 import common_lib as mylib
+import index_bundle_names
 
 
 def seconds_to_time(seconds):
@@ -80,9 +81,10 @@ def gen_dom_tags(sorted_arr, onlyTrackers=False):
 
 
 def gen_html(bundle_id, obj):
+    name = index_bundle_names.get_name(bundle_id)
     obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
     return mylib.template_with_base(f'''
-<h2 class="title">{obj['name']}</h2>
+<h2 class="title">{name}</h2>
 <p class="subtitle snd"><i class="mg_lr">Bundle-id:</i>{ bundle_id }</p>
 <div id="meta">
   <div class="icons">
@@ -122,7 +124,7 @@ def gen_html(bundle_id, obj):
   { gen_dotgraph(obj['subdom']) }
   { gen_dom_tags(obj['subdom']) }
 </div>
-<p class="right snd">Download: <a href="data.json" download="{bundle_id}.json">json</a></p>''', title=obj['name'])
+<p class="right snd">Download: <a href="data.json" download="{bundle_id}.json">json</a></p>''', title=name)
 
 
 def process(bundle_ids):
