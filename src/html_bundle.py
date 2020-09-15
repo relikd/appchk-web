@@ -134,7 +134,7 @@ def gen_html(bundle_id, obj):
         obj['sum_logs'] }<i class="snd mg_lr">({
             round(obj['sum_logs_pm'], 1)} / min)</i></td></tr>
     <tr><td>Average number of requests:</td><td>{
-        obj['avg_logs'] }<i class="snd mg_lr">({
+        round(obj['avg_logs'], 1)}<i class="snd mg_lr">({
             round(obj['avg_logs_pm'], 1)} / min)</i></td></tr>
     <tr><td>Average recording time:</td><td>{
         seconds_to_time(obj['avg_time']) }</td></tr>
