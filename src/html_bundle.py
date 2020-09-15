@@ -5,8 +5,8 @@ import time
 import math
 import common_lib as mylib
 
-THRESHOLD_PERCENT_OF_LOGS = 0.7  # domain appears in % recordings
-THRESHOLD_MIN_AVG_LOGS = 1.0  # at least x times in total (after %-thresh)
+THRESHOLD_PERCENT_OF_LOGS = 0.33  # domain appears in % recordings
+THRESHOLD_MIN_AVG_LOGS = 0.4  # at least x times in total (after %-thresh)
 
 
 def seconds_to_time(seconds):
