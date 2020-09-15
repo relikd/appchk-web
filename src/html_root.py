@@ -7,47 +7,51 @@ def gen_root():
     with open(mylib.path_out('index.html'), 'w') as fp:
         fp.write(mylib.template_with_base('''
 <h2>About</h2>
-<p>
-  Information about the research project will be added soon. Stay tuned.
-</p>
-<a id="get-appcheck" class="no-ul" href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">
-  <img src="/static/appcheck.svg" alt="app-icon" width="30" height="30">
+<div class="squeeze">
   <p>
-    Get the iOS App and contribute.<br />
-    Join the TestFlight Beta.
+    Information about the research project will be added soon. Stay tuned.
   </p>
-</a>
-<p>
-  The source code of the app is available <a href="https://github.com/relikd/appcheck/" target="_blank">on GitHub</a>.
-</p>
-<h2>Results</h2>
-<p>
-  If you're just interested in the results, go ahead to <a href="/index/page/1/">all apps</a>.
-</p>
-<h2>Current research</h2>
-<p>
-  We have an ongoing research project open. Your help is highly appreciated. <br>
-  For mor infos follow <a href="/help/">this link</a>.
-</p>
+  <a id="get-appcheck" class="no-ul" href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">
+    <img src="/static/appcheck.svg" alt="app-icon" width="30" height="30">
+    <p>
+      Get the iOS App and contribute.<br />
+      Join the TestFlight Beta.
+    </p>
+  </a>
+  <p>
+    The source code of the app is available <a href="https://github.com/relikd/appcheck/" target="_blank">on GitHub</a>.
+  </p>
+  <h2>Results</h2>
+  <p>
+    If you're just interested in the results, go ahead to <a href="/index/page/1/">all apps</a>.
+  </p>
+  <h2>Current research</h2>
+  <p>
+    We have an ongoing research project open. Your help is highly appreciated. <br>
+    For mor infos follow <a href="/help/">this link</a>.
+  </p>
+</div>
 '''))
 
 
 def gen_help():
     many = 7
     txt = '''<h2>Help needed!</h2>
-<p>
-    This study contains two stages. This is the first one.
-    We have selected a random sample of applications for evaluation.
-    We want to track the app behviour over a longer period of time.
-</p><p>
-    You can help us by providing app recordings of the following application.
-    The more you record the better. 
-    Ideally you could do recordings for all the apps below.
-    But really, even if you only find time for a single recording, anything helps!
-</p><p>
-    We need at least {} recordings per app. Stage 2 will follow in a few weeks.
-    Get the <a href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">Testflight beta</a>.
-</p>
+<div class="squeeze">
+  <p>
+      This study contains two stages. This is the first one.
+      We have selected a random sample of applications for evaluation.
+      We want to track the app behviour over a longer period of time.
+  </p><p>
+      You can help us by providing app recordings of the following application.
+      The more you record the better. 
+      Ideally you could do recordings for all the apps below.
+      But really, even if you only find time for a single recording, anything helps!
+  </p><p>
+      We need at least {} recordings per app. Stage 2 will follow in a few weeks.
+      Get the <a href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">Testflight beta</a>.
+  </p>
+</div>
 <div class="help-links">'''.format(many)
     obj = mylib.json_read(mylib.path_root('src', 'help.json'))
     for land in sorted(obj.keys()):

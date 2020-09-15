@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import time
 import math
 import common_lib as mylib
-
-THRESHOLD_PERCENT_OF_LOGS = 0.33  # domain appears in % recordings
-THRESHOLD_MIN_AVG_LOGS = 0.4  # at least x times in total (after %-thresh)
 
 
 def seconds_to_time(seconds):
@@ -77,44 +75,8 @@ def gen_dom_tags(sorted_arr, onlyTrackers=False):
         return '<i>– None –</i>'
 
 
-def prepare_json(obj):
-    if not obj['name']:
-        obj['name'] = '&lt; App-Name &gt;'
-    rec_count = len(obj['rec_len'])
-    time_total = sum(obj['rec_len'])
-    obj['sum_rec'] = rec_count
-    obj['sum_logs'] = sum([sum(x[1]) for x in obj['pardom'].values()])
-    obj['sum_logs_pm'] = obj['sum_logs'] / (time_total or 1) * 60
-    obj['sum_time'] = time_total
-    obj['avg_time'] = time_total / rec_count
-
-    def transform(ddic):
-        res = list()
-        c_sum = 0
-        c_trkr = 0
-        for name, (is_tracker, counts) in ddic.items():
-            rec_percent = len(counts) / rec_count
-            if rec_percent < THRESHOLD_PERCENT_OF_LOGS:
-                continue
-            avg = sum(counts) / rec_count  # len(counts)
-            if avg < THRESHOLD_MIN_AVG_LOGS:
-                continue
-            res.append([name, round(avg + 0.001), is_tracker])
-            c_sum += avg
-            c_trkr += avg if is_tracker else 0
-        res.sort(key=lambda x: (-x[1], x[0]))  # sort by count desc, then name
-        return res, c_trkr, c_sum
-
-    obj['pardom'], p_t, p_c = transform(obj['pardom'])
-    obj['subdom'], s_t, s_c = transform(obj['subdom'])
-    obj['tracker_percent'] = s_t / (s_c or 1)
-    obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
-    obj['avg_logs'] = s_c
-    obj['avg_logs_pm'] = s_c / (obj['avg_time'] or 1) * 60
-
-
 def gen_html(bundle_id, obj):
-    prepare_json(obj)
+    obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
     return mylib.template_with_base(f'''
 <h2 class="title">{obj['name']}</h2>
 <p class="subtitle snd"><i class="mg_lr">Bundle-id:</i>{ bundle_id }</p>
@@ -148,14 +110,15 @@ def gen_html(bundle_id, obj):
   { gen_dom_tags(obj['tracker'], onlyTrackers=True) }
   <p></p>
 
-  <h4>Domains ({ len(obj['pardom']) }):</h4>
+  <h4>Overlapping Domains ({ len(obj['pardom']) }):</h4>
   { gen_dotgraph(obj['pardom']) }
   { gen_dom_tags(obj['pardom']) }
 
-  <h4>Subdomains ({ len(obj['subdom']) }):</h4>
+  <h4>Overlapping Subdomains ({ len(obj['subdom']) }):</h4>
   { gen_dotgraph(obj['subdom']) }
   { gen_dom_tags(obj['subdom']) }
-</div>''', title=obj['name'])
+</div>
+<p class="right snd">Download: <a href="data.json" download="{bundle_id}.json">json</a></p>''', title=obj['name'])
 
 
 def process(bundle_ids):
@@ -165,10 +128,13 @@ def process(bundle_ids):
 
     for bid in bundle_ids:
         print('  ' + bid)
-        json = mylib.json_read_combined(bid)
+        json, json_data_path = mylib.json_read_evaluated(bid)
         mylib.mkdir_out_app(bid)
         with open(mylib.path_out_app(bid, 'index.html'), 'w') as fp:
             fp.write(gen_html(bid, json))
+        download_link = mylib.path_out_app(bid, 'data.json')
+        if not mylib.file_exists(download_link):
+            os.symlink(json_data_path, download_link)
     print('')
 
 

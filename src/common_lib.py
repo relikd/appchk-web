@@ -254,6 +254,11 @@ def json_read_combined(bundle_id):
     return json_read(path_data_app(bundle_id, 'combined.json'))
 
 
+def json_read_evaluated(bundle_id):
+    pth = path_data_app(bundle_id, 'evaluated.json')
+    return json_read(pth), pth
+
+
 def json_read_meta(bundle_id, lang):
     return json_read(path_data_app(bundle_id, 'info_{}.json'.format(lang)))
 
@@ -267,6 +272,11 @@ def json_write(path, obj, pretty=False):
 
 def json_write_combined(bundle_id, obj):
     fname = path_data_app(bundle_id, 'combined.json')
+    json_write(fname, obj, pretty=False)
+
+
+def json_write_evaluated(bundle_id, obj):
+    fname = path_data_app(bundle_id, 'evaluated.json')
     json_write(fname, obj, pretty=False)
 
 

@@ -90,7 +90,7 @@ footer .links a { color: #ddd; }
 #pagination a.active { border: 1pt solid black; border-radius: 0.2em; }
 
 /* app bundle */
-p { max-width: 700px; }
+.squeeze { max-width: 700px; }
 h2.title { margin-bottom: 0; }
 p.subtitle { margin-top: 0.2em; }
 .mg_lr { margin: 0 0.4em; }
@@ -102,6 +102,7 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 .help-links tr:nth-child(odd) { background: #F9F9F9; }
 .help-links .notyet { color: #D11; }
 .help-links .done { color: #52C840; }
+.right { text-align: right; }
 
 /* domain tags */
 .tags { margin: 2em 0; }
