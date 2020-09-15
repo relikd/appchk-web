@@ -60,7 +60,7 @@ def gen_page(arr, base, page_id=1, total=1):
 def process(per_page=60):
     print('generating app-index ...')
     index_dir = mylib.path_out('index', 'page')
-    mylib.rm(index_dir)
+    mylib.rm_dir(index_dir)
     mylib.mkdir(index_dir)
 
     apps = [gen_obj(x) for x in mylib.enum_appids()]

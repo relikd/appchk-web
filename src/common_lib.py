@@ -137,7 +137,14 @@ def mv(path, to, printOmitPrefix=None):
     Path(path).rename(to)
 
 
-def rm(path):
+def rm_file(file_path):
+    try:
+        os.remove(file_path)
+    except FileNotFoundError:
+        pass
+
+
+def rm_dir(path):
     try:
         shutil.rmtree(path)
     except Exception:

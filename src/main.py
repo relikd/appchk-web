@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import os
 import sys
 import traceback
 import common_lib as mylib
@@ -9,6 +8,7 @@ import bundle_download
 import html_root
 import html_index
 import html_bundle
+import json_reverse_index
 import tracker_download
 
 
@@ -41,9 +41,10 @@ def del_id(bundle_ids):
         dest = mylib.path_out_app(bid)
         if mylib.dir_exists(dest):
             print('  ' + bid)
-            mylib.rm(dest)
+            mylib.rm_dir(dest)
             update_index = True
     print('')
+    json_reverse_index.process(bundle_ids, deleteOnly=True)
     if update_index:
         rebuild_index()
 
@@ -51,7 +52,10 @@ def del_id(bundle_ids):
 def combine_and_update(bundle_ids, where=None):
     new_ids = bundle_download.process(bundle_ids)
     affected = bundle_combine.process(bundle_ids, where=where)
+    if not where and bundle_ids == ['*']:
+        affected = ['*']
     if len(affected) > 0:
+        json_reverse_index.process(affected)
         html_bundle.process(affected)
     else:
         print('no bundle affected by tracker, not generating bundle html')
@@ -82,10 +86,7 @@ def import_update():
     if len(then_delete) > 0:
         print('cleanup _in folder ...')
         for x in then_delete:
-            try:
-                os.remove(fname)
-            except FileNotFoundError:
-                pass
+            mylib.rm_file(fname)
         print('')
 
 
