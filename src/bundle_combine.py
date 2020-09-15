@@ -23,6 +23,8 @@ def get_parent_domain(subdomain):
     parts = subdomain.split('.')
     if len(parts) < 3:
         return subdomain
+    elif parts[-1].isdigit():
+        return subdomain  # ip address
     elif dom_in_3rd_domain(parts[-1] + '.' + parts[-2]):
         return '.'.join(parts[-3:])
     else:

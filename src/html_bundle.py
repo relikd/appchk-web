@@ -14,6 +14,10 @@ def seconds_to_time(seconds):
     return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
 
 
+def round_num(num):
+    return format(num, '.1f')  # .rstrip('0').rstrip('.')
+
+
 def gen_dotgraph(sorted_arr):
     txt = ''
     for name, count, mark in sorted_arr:
@@ -94,10 +98,10 @@ def gen_html(bundle_id, obj):
     <tr><td>Number of recordings:</td><td>{ obj['sum_rec'] }</td></tr>
     <tr><td>Total number of requests:</td><td>{
         obj['sum_logs'] }<i class="snd mg_lr">({
-            round(obj['sum_logs_pm'], 1)} / min)</i></td></tr>
+            round_num(obj['sum_logs_pm'])} / min)</i></td></tr>
     <tr><td>Average number of requests:</td><td>{
-        round(obj['avg_logs'], 1)}<i class="snd mg_lr">({
-            round(obj['avg_logs_pm'], 1)} / min)</i></td></tr>
+        round_num(obj['avg_logs'])}<i class="snd mg_lr">({
+            round_num(obj['avg_logs_pm'])} / min)</i></td></tr>
     <tr><td>Average recording time:</td><td>{
         seconds_to_time(obj['avg_time']) }</td></tr>
     <tr><td>Cumulative recording time:</td><td>{
