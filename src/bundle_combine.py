@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import re
 import sys
 import common_lib as mylib
 import tracker_download as tracker
@@ -10,6 +11,7 @@ THRESHOLD_PERCENT_OF_LOGS = 0.33  # domain appears in % recordings
 THRESHOLD_MIN_AVG_LOGS = 0.4  # at least x times in total (after %-thresh)
 
 level3_doms = None
+re_domain = re.compile(r'[^a-zA-Z0-9.-]')
 
 
 def dom_in_3rd_domain(needle):
@@ -29,6 +31,17 @@ def get_parent_domain(subdomain):
         return '.'.join(parts[-3:])
     else:
         return '.'.join(parts[-2:])
+
+
+def cleanup_domain_name(domain):
+    safe_domain = re_domain.sub('', domain)
+    if domain == safe_domain:
+        return domain
+    mylib.err('bundle-combine', 'invalid character in domain name: ' + domain)
+    without_null = domain.replace('(null)', '')
+    if domain != without_null:
+        return cleanup_domain_name(without_null)
+    return safe_domain
 
 
 def json_combine(bundle_id):
@@ -51,6 +64,7 @@ def json_combine(bundle_id):
             uniq_par = {}
             for subdomain in logs:
                 occurs = len(logs[subdomain])
+                subdomain = cleanup_domain_name(subdomain)
                 inc_dic(subdom, subdomain, occurs)
                 par_dom = get_parent_domain(subdomain)
                 try:
