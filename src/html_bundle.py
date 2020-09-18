@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import os
 import sys
 import time
 import math
@@ -138,9 +137,7 @@ def process(bundle_ids):
         mylib.mkdir_out_app(bid)
         with open(mylib.path_out_app(bid, 'index.html'), 'w') as fp:
             fp.write(gen_html(bid, json))
-        download_link = mylib.path_out_app(bid, 'data.json')
-        if not mylib.file_exists(download_link):
-            os.symlink(json_data_path, download_link)
+        mylib.symlink(json_data_path, mylib.path_out_app(bid, 'data.json'))
     print('')
 
 

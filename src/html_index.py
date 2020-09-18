@@ -41,7 +41,7 @@ def gen_pager(current, total):
         links += mklink(i, i, active=i == current)
     # if current < total:
     #     links += mklink(current + 1, 'Next')
-    return '<div id="pagination">{}</div>'.format(links)
+    return '<div id="pagination" class="no_ul_all">{}</div>'.format(links)
 
 
 def gen_page(arr, base, page_id=1, total=1):
@@ -52,7 +52,7 @@ def gen_page(arr, base, page_id=1, total=1):
         pagination = gen_pager(page_id, total)  # if total > 1 else ''
         fp.write(mylib.template_with_base('''
 <h2>List of app recordings (A–Z)</h2>
-<div id="app-toc">
+<div id="app-toc" class="center no_ul_all">
   {}
 </div>
 {}'''.format(content, pagination), title="Index"))

@@ -24,14 +24,14 @@ def write_json_to_disk():
     mylib.json_write(index_fname(), _bundle_name_dict, pretty=True)
 
 
-def get_name(bundle_id, langs=['us', 'de']):
+def get_name(bundle_id, langs=['us', 'de'], fallback='&lt; App-Name &gt;'):
     load_json_if_not_already()
     for lang in langs:
         try:
             return _bundle_name_dict[bundle_id][lang]
         except KeyError:
             continue
-    return '&lt; App-Name &gt;'  # None
+    return fallback  # None
 
 
 def process(bundle_ids):

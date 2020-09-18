@@ -166,6 +166,11 @@ def file_exists(path):
     return os.path.isfile(path) and os.path.getsize(path) > 0
 
 
+def symlink(source, target):
+    if not file_exists(target):
+        os.symlink(source, target)
+
+
 def meta_json_exists(bundle_id, lang):
     return file_exists(path_data_app(bundle_id, 'info_{}.json'.format(lang)))
 
