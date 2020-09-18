@@ -98,6 +98,7 @@ def process():
     gen_root()  # root index.thml
     gen_search()  # root redirect.html?id=my.bundle.id
     gen_help()
+    print('')
 
 
 if __name__ == '__main__':

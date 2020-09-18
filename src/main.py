@@ -8,6 +8,7 @@ import bundle_download
 import html_root
 import html_index
 import html_bundle
+import html_reverse_domains
 import index_bundle_names
 import index_reverse_domains
 import tracker_download
@@ -26,10 +27,15 @@ def print_usage_and_exit():
     exit(0)
 
 
-def rebuild_index(inclRoot=False):
+def rebuild_app_index(inclRoot=False):
     html_index.process()
     if inclRoot:  # TODO: remove check if root contains dynamic content
         html_root.process()
+
+
+def rebuild_domain_index(bundle_ids, deleteOnly=False):
+    index_reverse_domains.process(bundle_ids, deleteOnly=deleteOnly)
+    html_reverse_domains.process()
 
 
 def del_id(bundle_ids):
@@ -37,17 +43,17 @@ def del_id(bundle_ids):
     if bundle_ids == ['*']:
         bundle_ids = list(mylib.enum_appids())
 
-    update_index = False
+    update_app_index = False
     for bid in bundle_ids:
         dest = mylib.path_out_app(bid)
         if mylib.dir_exists(dest):
             print('  ' + bid)
             mylib.rm_dir(dest)
-            update_index = True
+            update_app_index = True
     print('')
-    index_reverse_domains.process(bundle_ids, deleteOnly=True)
-    if update_index:
-        rebuild_index()
+    rebuild_domain_index(bundle_ids, deleteOnly=True)
+    if update_app_index:
+        rebuild_app_index(inclRoot=True)
 
 
 def combine_and_update(bundle_ids, where=None):
@@ -55,7 +61,7 @@ def combine_and_update(bundle_ids, where=None):
     new_ids = bundle_download.process(bundle_ids)
     # 2. if new apps, update bundle name index
     if len(new_ids) > 0:
-        index_bundle_names.process(new_ids)
+        index_bundle_names.process(new_ids)  # after bundle_download
     # 3. re-calculate combined.json and evaluated.json files
     affected = bundle_combine.process(bundle_ids, where=where)
     # special case needed for reverse index. '*' will force rebuilt index
@@ -63,13 +69,13 @@ def combine_and_update(bundle_ids, where=None):
         affected = ['*']
     # 4. was any json updated? if so, make html and update reverse index
     if len(affected) > 0:
-        index_reverse_domains.process(affected)
-        html_bundle.process(affected)
+        rebuild_domain_index(affected)  # after bundle_combine
+        html_bundle.process(affected)  # after index_bundle_names
     else:
         print('no bundle affected by tracker, not generating bundle html')
     # 5. make all apps index
     if len(new_ids) > 0:
-        rebuild_index()  # must be called after bundle_combine
+        rebuild_app_index()  # must be called after bundle_combine
     else:
         print('no new bundle, not rebuilding index')
 
@@ -116,12 +122,13 @@ try:
             import_update()
         elif cmd == 'tracker':
             tracker_update()
-            # tracker_download.combine_all('x')
+            # tracker_download.combine_all()
         elif cmd == 'icons':
             if bundle_download.download_missing_icons(force=False):
-                rebuild_index()
+                rebuild_app_index()
         elif cmd == 'index':
-            rebuild_index(inclRoot=True)
+            rebuild_domain_index(['*'])
+            rebuild_app_index(inclRoot=True)
         elif cmd == 'run':
             if len(params) == 0:
                 print_usage_and_exit()

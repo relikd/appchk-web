@@ -1,31 +1,55 @@
-- `main.py`  
-Simply call this script in a cron job or something and it will take care of everything else.
-It will run the scripts below in the proper order.
+![dependency](z_dependency.png)
 
-- `3rd-domains.txt`  
-Contains a list of common 3rd level domains, such as `co.uk`.
+## Structure
 
-- `common_lib.py`  
-Library with useful functions used across multiple python scripts.
+In general all `html_` scripts generate the html output and all other scripts generate intermediate or commonly used `json` files.
 
-- `bundle_import.py`  
-Will copy all `*.json` files from `data/_in` to their bundle id dest folder e.g. 
-`mv  data/_in/test.json  data/com/apple/notes/id_42.json`.
+### Adding new recordings
+`api/v1/contribute/index.php` handles incomming recording contributions. They are automatically inserted in their appropriate folder e.g. `data/com/apple/notes`. Additionally the php places a marker (bundle-id) in `data/_in`.
 
-- `bundle_combine.py`  
-Merges all `id_*.json` files from a bundle id into a single `combined.json`.
-(run this script with one or multiple bundle ids as parameter.)
+### Updating data
+A cron job runs every minute and checks `data/_in` for new markers. If there is a new one, rebuild the app html page and all json files that are affected.  
+There are two special cases `_longterm` and `_manually`. In the latter case the user did not provide an appropriate app prior upload. They must be evaluated manually and completely ignored from automatic processing.  
+The former is self explainatory. Recordings with over an hour recording time.
 
-- `bundle_download.py`  
-Download and cache app metadata from apple servers in de and en given a bundle id. Will also download the app icon and store it in the bundle id out folder.
-(run this script with one or multiple bundle ids as parameter.)
+**Run:** `main.py import` which does everything and avoids unnecessary rebuilding.
 
-- `html_bundle.py`  
-Takes the `combined.json` file and generates the graphs and html file.
-(run this script with one or multiple bundle ids as parameter.)
+### Updating tracker db
+Ad- and tracking domains are not automatically updated. In fact not at all. You could create a cron job for that too. Like once a week or so.
 
-- `html_index.py`  
-Create all pages for the app index and link to bundle id subpages.
+**Run:** `main.py tracker` which will update the db and all app pages that are affected.
 
-- `html_root.py`  
-Create main `index.html`.
+If you want to add custom domains, edit `api/v1/trackers/list.txt` and run the same command.
+
+### Delete a single app
+The delete command does not delete the app result (json), only the html files. So if you rebuild the website it will reappear. This function is here for the cases where you already delete the json files, but the html output is still online.
+
+**Run:** `main.py del com.apple.notes com.apple.siri`
+
+### Development & Complete rebuild
+During development or if pushing new changes to the server, you'll need to rebuild all existing html files. You can do that by rebuilding all individual apps and the app + domain indices.
+
+**Run:** `main.py run '*' && main.py index`
+
+If you are missing some icons run `main.py icons`. This should also download any missing iTunes information. E.g. App meta data like name and categories.
+
+
+## Dependency graph
+
+Given A → B, B depends on A
+
+```
+digraph G {
+  "." -> html_root
+  "." -> bundle_download
+  bundle_download -> index_bundle_names
+  index_bundle_names -> html_bundle
+  index_bundle_names -> html_index
+  "." -> bundle_combine
+  bundle_combine -> index_reverse_domains
+  index_reverse_domains -> html_reverse_domains
+  bundle_combine -> html_bundle
+  "." -> tracker_download
+}
+```
+[graphviz](http://www.webgraphviz.com/)

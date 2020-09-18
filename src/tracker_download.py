@@ -117,7 +117,7 @@ def exodus(fname):
     return save_list(res, fname, binary=False)
 
 
-def combine_all(changes):
+def combine_all(changes=['_']):
     final = mylib.path_root('src', 'lists', 'tracker_all.txt')
     if changes or not mylib.file_exists(final):
         print('  updating: tracker_all.txt')
