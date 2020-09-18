@@ -38,6 +38,13 @@ def rebuild_domain_index(bundle_ids, deleteOnly=False):
     html_reverse_domains.process()
 
 
+def rebuild_name_index(new_ids):
+    if not mylib.file_exists(mylib.path_data_index('bundle_names.json')):
+        index_bundle_names.process(['*'])
+    elif len(new_ids) > 0:
+        index_bundle_names.process(new_ids)  # after bundle_download
+
+
 def del_id(bundle_ids):
     print('removing apps from website:')
     if bundle_ids == ['*']:
@@ -60,8 +67,7 @@ def combine_and_update(bundle_ids, where=None):
     # 1. download meta data from iTunes store, incl. app icons
     new_ids = bundle_download.process(bundle_ids)
     # 2. if new apps, update bundle name index
-    if len(new_ids) > 0:
-        index_bundle_names.process(new_ids)  # after bundle_download
+    rebuild_name_index(new_ids)  # after bundle_download
     # 3. re-calculate combined.json and evaluated.json files
     affected = bundle_combine.process(bundle_ids, where=where)
     # special case needed for reverse index. '*' will force rebuilt index
