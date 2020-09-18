@@ -154,7 +154,7 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 
 /* app bundle: domain tags */
 .tags { margin: 2em 0; }
-.tags i {
+.tags a {
 	font-size: 0.9em;
 	font-style: normal;
 	font-weight: normal;
@@ -165,7 +165,7 @@ td { padding: 0.2em 1em 0.2em 0.1em; }
 	display: inline-block;
 	margin: 0.12em;
 }
-.tags i.trckr, .tags.trckr i { background: #F9A7A7;; border-color: #B06363; }
+.tags a.trckr, .tags.trckr a { background: #F9A7A7;; border-color: #B06363; }
 p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 
 /* app bundle: graphs */

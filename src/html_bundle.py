@@ -63,13 +63,14 @@ def gen_radial_graph(percent):
         gen_pie_chart([1 - percent, percent], ['cs0', 'cs1']))
 
 
-def gen_dom_tags(sorted_arr, onlyTrackers=False):
+def gen_dom_tags(sorted_arr, isSub, onlyTrackers=False):
     txt = ''
     anyMark = False
     for i, (name, count, mark) in enumerate(sorted_arr):
         title = '{} ({})'.format(name, count) if count > 1 else name
         clss = ' class="trckr"' if mark and not onlyTrackers else ''
-        txt += '<i{}>{}</i> '.format(clss, title)
+        txt += '<a{} href="/{}/#{}">{}</a> '.format(
+            clss, 'subdomain' if isSub else 'domain', name, title)
         anyMark |= mark
     if txt:
         note = '<p class="trckr">* Potential trackers are highlighted</p>'
@@ -112,16 +113,16 @@ def gen_html(bundle_id, obj):
 <h3>Connections</h3>
 <div>
   <h4>Potential Trackers ({ len(obj['tracker']) }):</h4>
-  { gen_dom_tags(obj['tracker'], onlyTrackers=True) }
+  { gen_dom_tags(obj['tracker'], isSub=True, onlyTrackers=True) }
   <p></p>
 
   <h4>Overlapping Domains ({ len(obj['pardom']) }):</h4>
   { gen_dotgraph(obj['pardom']) }
-  { gen_dom_tags(obj['pardom']) }
+  { gen_dom_tags(obj['pardom'], isSub=False) }
 
   <h4>Overlapping Subdomains ({ len(obj['subdom']) }):</h4>
   { gen_dotgraph(obj['subdom']) }
-  { gen_dom_tags(obj['subdom']) }
+  { gen_dom_tags(obj['subdom'], isSub=True) }
 </div>
 <p class="right snd">Download: <a href="data.json" download="{bundle_id}.json">json</a></p>''', title=name)
 
