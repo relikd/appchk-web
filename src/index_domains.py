@@ -103,7 +103,7 @@ def enrich_with_bundle_ids(index):
 
 
 def process(bundle_ids, deleteOnly=False):
-    print('writing index: reverse domains ...')
+    print('writing index: domains ...')
     fname = fname_all()
     if bundle_ids == ['*']:
         bundle_ids = list(mylib.enum_data_appids())

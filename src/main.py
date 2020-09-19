@@ -70,10 +70,10 @@ def combine_and_update(bundle_ids, where=None):
     rebuild_name_index(new_ids)  # after bundle_download
     # 3. re-calculate combined.json and evaluated.json files
     affected = bundle_combine.process(bundle_ids, where=where)
-    # special case needed for reverse index. '*' will force rebuilt index
+    # special case needed for domain index. '*' will force rebuilt index
     if not where and bundle_ids == ['*']:
         affected = ['*']
-    # 4. was any json updated? if so, make html and update reverse index
+    # 4. was any json updated? if so, make html and update domain index
     if len(affected) > 0:
         rebuild_domain_index(affected)  # after bundle_combine
         html_bundle.process(affected)  # after index_app_names

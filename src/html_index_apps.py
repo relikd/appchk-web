@@ -51,7 +51,7 @@ def gen_page(arr, base, page_id=1, total=1):
         content = ''.join([gen_entry(x) for x in arr])
         pagination = gen_pager(page_id, total)  # if total > 1 else ''
         fp.write(mylib.template_with_base('''
-<h2>List of app recordings (A–Z)</h2>
+<h2 class="center">Apps (A–Z)</h2>
 <div id="app-toc" class="center no_ul_all">
   {}
 </div>
@@ -60,7 +60,7 @@ def gen_page(arr, base, page_id=1, total=1):
 
 def process(per_page=60):
     print('generating app-index ...')
-    index_dir = mylib.path_out('index', 'page')
+    index_dir = mylib.path_out('index', 'apps')
     mylib.rm_dir(index_dir)
     mylib.mkdir(index_dir)
 

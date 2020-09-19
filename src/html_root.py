@@ -23,7 +23,7 @@ def gen_root():
   </p>
   <h2>Results</h2>
   <p>
-    If you're just interested in the results, go ahead to <a href="/index/page/1/">all apps</a>.
+    If you're just interested in the results, go ahead to see <a href="/index/apps/1/">all apps</a>.
   </p>
   <h2>Current research</h2>
   <p>
