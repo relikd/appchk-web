@@ -116,11 +116,11 @@ def gen_html(bundle_id, obj):
   { gen_dom_tags(obj['tracker'], isSub=True, onlyTrackers=True) }
   <p></p>
 
-  <h4>Overlapping Domains ({ len(obj['pardom']) }):</h4>
+  <h4>Domains ({ len(obj['pardom']) }):</h4>
   { gen_dotgraph(obj['pardom']) }
   { gen_dom_tags(obj['pardom'], isSub=False) }
 
-  <h4>Overlapping Subdomains ({ len(obj['subdom']) }):</h4>
+  <h4>Subdomains ({ len(obj['subdom']) }):</h4>
   { gen_dotgraph(obj['subdom']) }
   { gen_dom_tags(obj['subdom'], isSub=True) }
 </div>

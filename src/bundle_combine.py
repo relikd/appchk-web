@@ -4,7 +4,7 @@ import os
 import re
 import sys
 import common_lib as mylib
-import tracker_download as tracker
+import tracker_download
 
 
 THRESHOLD_PERCENT_OF_LOGS = 0.33  # domain appears in % recordings
@@ -49,7 +49,7 @@ def json_combine(bundle_id):
         try:
             ddic[key][1].append(num)
         except KeyError:
-            ddic[key] = (tracker.is_tracker(key), [num])
+            ddic[key] = (tracker_download.is_tracker(key), [num])
 
     res = {'rec_len': []}
     pardom = {}

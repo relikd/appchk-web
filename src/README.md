@@ -45,6 +45,7 @@ digraph G {
   bundle_download -> index_bundle_names
   index_bundle_names -> html_bundle
   index_bundle_names -> html_index
+  index_bundle_names -> html_reverse_domains
   "." -> bundle_combine
   bundle_combine -> index_reverse_domains
   index_reverse_domains -> html_reverse_domains
