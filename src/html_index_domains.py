@@ -126,7 +126,7 @@ def gen_html_stats(c_apps, c_domains):
 <ul>
   <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
   <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
-  <li>List of <a href="/apps/page/1/">Apps</a></li>
+  <li>List of <a href="/index/apps/1/">Apps</a></li>
 </ul>'''.format(title, c_apps, c_domains), title=title))
 
 
