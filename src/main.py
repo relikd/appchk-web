@@ -39,7 +39,7 @@ def rebuild_domain_index(bundle_ids, deleteOnly=False):
 
 
 def rebuild_name_index(new_ids):
-    if not mylib.file_exists(mylib.path_data_index('bundle_names.json')):
+    if index_bundle_names.missing():
         index_bundle_names.process(['*'])
     elif len(new_ids) > 0:
         index_bundle_names.process(new_ids)  # after bundle_download

@@ -10,6 +10,10 @@ def index_fname():
     return mylib.path_data_index('bundle_names.json')
 
 
+def missing():
+    return not mylib.file_exists(index_fname())
+
+
 def load_json_if_not_already():
     global _bundle_name_dict
     if not _bundle_name_dict:
