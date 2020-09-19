@@ -66,14 +66,14 @@ footer .links {
   cursor: pointer;
 }
 .dropdown { display: inline-block; position: relative; }
-.dropdown div {
+.dropdown nav {
 	display: none;
 	position: absolute;
 	width: max-content;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 	z-index: 1;
 }
-.dropdown:hover div { display: block; }
+.dropdown:hover nav { display: block; }
 .dropdown a { display: block; padding: 0.5em 1em; }
 .dropdown a:hover { background-color: #eee; }
 

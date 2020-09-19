@@ -24,11 +24,11 @@ def dropdown_choose(button):
 <label for="dropdown">Choose list:</label>
 <div class="dropdown" name="dropdown">
   <button class="bg1 border">{button}</button>
-  <div class="bg1 no_ul_all">
+  <nav class="bg1 no_ul_all">
     <a href="index.html">Most frequent</a>
     <a href="by_name.html">Full list (A–Z)</a>
     <a href="by_count.html">Full list (by count)</a>
-  </div>
+  </nav>
 </div>'''
 
 
@@ -54,7 +54,7 @@ def gen_html_index(l1, l2, fname, title, button):
             title=title))
 
 
-def gen_html_top_domains(subset, fname, total, title):
+def gen_html_top_10(subset, fname, total, title):
 
     def div_loadbar(percent):
         return '<span class="loadbar"><span style="width: {0}%">{0}%</span></span>'.format(percent)
@@ -64,7 +64,7 @@ def gen_html_top_domains(subset, fname, total, title):
 <div id="dom-top10" class="found-in">
 <h2>{ title }</h2>'''
         for dom, ids in subset:
-            dom_str = div_dom(dom, len(ids), 'subdomain')
+            dom_str = div_dom(dom, len(ids), 'domain')
             pct_bar = div_loadbar(round(len(ids) / total * 100))
             txt += f'\n<p>{dom_str} {pct_bar}</p>'
         fp.write(mylib.template_with_base(txt + '''
@@ -72,8 +72,26 @@ def gen_html_top_domains(subset, fname, total, title):
 sorted by <a class="snd" href="by_count.html">Occurrence frequency</a>
 or in <a class="snd" href="by_name.html">Alphabetical order</a>.</p>
 </div>
-<p class="right snd">Download: <a href="data.json" download="appcheck_domains_full.json">json</a></p>
+<p class="right snd">Download: <a href="data.json" download="domains.json">json</a></p>
 ''', title=title))
+
+
+def gen_html_trinity(json, idx_dir, app_count, title):
+    # Full list (A–Z)
+    list1 = sorted(json['subdom'].items(), key=lambda x: x[0])
+    list2 = sorted(json['pardom'].items(), key=lambda x: x[0])
+    gen_html_index(list1, list2, mylib.path_add(idx_dir, 'by_name.html'),
+                   title='{} (A–Z)'.format(title),
+                   button='Full list (A–Z)')
+    # Full list (by count)
+    list1.sort(key=lambda x: -len(x[1]))
+    list2.sort(key=lambda x: -len(x[1]))
+    gen_html_index(list1, list2, mylib.path_add(idx_dir, 'by_count.html'),
+                   title='{} (most apps)'.format(title),
+                   button='Full list (by count)')
+    # Top 10
+    gen_html_top_10(list2[:25], mylib.path_add(idx_dir, 'index.html'),
+                    app_count, title='Top 25 {}'.format(title))
 
 
 def gen_html_lookup(html_dir, json, key, title):
@@ -97,43 +115,34 @@ def gen_html_lookup(html_dir, json, key, title):
 def process():
     # bundle_combine assures domain name is [a-zA-Z0-9.-]
     print('generating reverse-domain-index ...')
-    idx_dir = mylib.path_out('index', 'domains')
-    mylib.mkdir(idx_dir)
 
     # Data export
-    mylib.symlink(mylib.path_data_index('reverse_domains.json'),
-                  mylib.path_out_app(idx_dir, 'data.json'))
+    all_dom_dir = mylib.path_out('index', 'domains', 'all')
+    trkr_dir = mylib.path_out('index', 'domains', 'tracker')
+    mylib.mkdir(all_dom_dir)
+    mylib.mkdir(trkr_dir)
+    mylib.symlink(index_reverse_domains.fname_all(),
+                  mylib.path_out_app(all_dom_dir, 'data.json'))
+    mylib.symlink(index_reverse_domains.fname_tracker(),
+                  mylib.path_out_app(trkr_dir, 'data.json'))
 
-    par_arr = list(index_reverse_domains.enumerate('pardom'))
-    sub_arr = list(index_reverse_domains.enumerate('subdom'))
-
-    # Full list (A–Z)
-    sub_arr.sort(key=lambda x: x[0])
-    par_arr.sort(key=lambda x: x[0])
-    gen_html_index(sub_arr, par_arr, mylib.path_add(idx_dir, 'by_name.html'),
-                   title='Requested Domains (A–Z)',
-                   button='Full list (A–Z)')
-
-    # Full list (by count)
-    sub_arr.sort(key=lambda x: -len(x[1]))
-    par_arr.sort(key=lambda x: -len(x[1]))
-    gen_html_index(sub_arr, par_arr, mylib.path_add(idx_dir, 'by_count.html'),
-                   title='Requested Domains (most apps)',
-                   button='Full list (by count)')
-
-    # Top 10
-    del(sub_arr[20:])
-    del(par_arr)
-    total = index_reverse_domains.number_of_apps()
-    gen_html_top_domains(sub_arr, mylib.path_add(idx_dir, 'index.html'),
-                         total, 'Top 20 Requested Domains')
-
+    # Load
+    json = index_reverse_domains.load()
+    app_count = index_reverse_domains.number_of_apps(json)
     # Lookup
-    json = index_reverse_domains.raw()
     gen_html_lookup(mylib.path_out('domain'), json, 'pardom',
                     title='Domain Lookup')
     gen_html_lookup(mylib.path_out('subdomain'), json, 'subdom',
                     title='Subdomain Lookup')
+    # All domains
+    index_reverse_domains.enrich_with_bundle_ids(json)
+    gen_html_trinity(json, all_dom_dir, app_count,
+                     title='Requested Domains')
+    # Tacker only
+    json = index_reverse_domains.load(tracker=True)
+    index_reverse_domains.enrich_with_bundle_ids(json)
+    gen_html_trinity(json, trkr_dir, app_count,
+                     title='Tracker')
     print('')
 
 

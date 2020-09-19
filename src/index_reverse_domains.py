@@ -2,104 +2,122 @@
 
 import sys
 import common_lib as mylib
-
-_reverse_domain_dict = None
-
-
-def index_fname():
-    return mylib.path_data_index('reverse_domains.json')
+import bundle_combine
+import tracker_download
 
 
-def load_json_if_not_already():
-    global _reverse_domain_dict
-    if not _reverse_domain_dict:
-        index_file = index_fname()
-        if mylib.file_exists(index_file):
-            _reverse_domain_dict = mylib.json_read(index_file)
-        else:
-            _reverse_domain_dict = {'bundle': [], 'pardom': {}, 'subdom': {}}
+def fname_all():
+    return mylib.path_data_index('all_domains.json')
 
 
-def write_json_to_disk():
-    mylib.json_write(index_fname(), _reverse_domain_dict, pretty=False)
+def fname_tracker():
+    return mylib.path_data_index('tracker_domains.json')
 
 
-def delete_from_index(bundle_ids, deleteOnly=False):
-    global _reverse_domain_dict
+def index_fname(tracker_only=False):
+    return mylib.path_data_index(
+        'tracker_domains.json' if tracker_only else 'all_domains.json')
+
+
+def load_json_from_disk(index_file):
+    if mylib.file_exists(index_file):
+        return mylib.json_read(index_file)
+    else:
+        return {'bundle': [], 'pardom': {}, 'subdom': {}}
+
+
+def delete_from_index(index, bundle_ids, deleteOnly=False):
     ids_to_delete = set()
     for bid in bundle_ids:
         try:
-            i = _reverse_domain_dict['bundle'].index(bid)
+            i = index['bundle'].index(bid)
         except ValueError:  # index not found
             continue
         ids_to_delete.add(i)
         if deleteOnly:
-            _reverse_domain_dict['bundle'][i] = '_'
+            index['bundle'][i] = '_'
 
     if len(ids_to_delete) == 0:
         return False
 
     for key in ['pardom', 'subdom']:
-        for domain in list(_reverse_domain_dict[key].keys()):
+        for domain in list(index[key].keys()):
             for i in ids_to_delete:
                 try:
-                    _reverse_domain_dict[key][domain].remove(i)
+                    index[key][domain].remove(i)
                 except ValueError:  # ignore if not present
                     continue
-            if not _reverse_domain_dict[key][domain]:
-                del(_reverse_domain_dict[key][domain])
+            if not index[key][domain]:
+                del(index[key][domain])
     return True
 
 
-def insert_in_index(bundle_ids):
-    global _reverse_domain_dict
+def insert_in_index(index, bundle_ids):
     has_changes = False
     for bid in bundle_ids:
         try:
-            i = _reverse_domain_dict['bundle'].index(bid)
+            i = index['bundle'].index(bid)
         except ValueError:  # index not found
-            i = len(_reverse_domain_dict['bundle'])
-            _reverse_domain_dict['bundle'].append(bid)
+            i = len(index['bundle'])
+            index['bundle'].append(bid)
         json, _ = mylib.json_read_evaluated(bid)
         for key in ['pardom', 'subdom']:  # assuming keys are identical
             for domain, _, _ in json[key]:
                 try:
-                    _reverse_domain_dict[key][domain].append(i)
+                    index[key][domain].append(i)
                 except KeyError:
-                    _reverse_domain_dict[key][domain] = [i]
+                    index[key][domain] = [i]
                 has_changes = True
     return has_changes
 
 
-def raw():
-    load_json_if_not_already()
-    return _reverse_domain_dict
+def filter_tracker_only(index):
+    sub_trkr = {}
+    par_trkr = {}
+    for domain, ids in filter(lambda x: tracker_download.is_tracker(x[0]),
+                              index['subdom'].items()):
+        sub_trkr[domain] = ids
+        pardom = bundle_combine.get_parent_domain(domain)
+        try:
+            par_trkr[pardom].update(ids)
+        except KeyError:
+            par_trkr[pardom] = set(ids)
+    for dom, ids in par_trkr.items():
+        par_trkr[dom] = list(ids)
+    index['subdom'] = sub_trkr
+    index['pardom'] = par_trkr
 
 
-def number_of_apps():
-    load_json_if_not_already()
-    return sum(1 for x in _reverse_domain_dict['bundle'] if x != '_')
+def load(tracker=False):
+    return load_json_from_disk(fname_tracker() if tracker else fname_all())
 
 
-def enumerate(key):
-    load_json_if_not_already()
-    for dom, bundles in _reverse_domain_dict[key].items():
-        yield [dom, [_reverse_domain_dict['bundle'][i] for i in bundles]]
+def number_of_apps(index):
+    return sum(1 for x in index['bundle'] if x != '_')
+
+
+def enrich_with_bundle_ids(index):
+    for key in ['pardom', 'subdom']:
+        for dom, ids in index[key].items():
+            index[key][dom] = [index['bundle'][i] for i in ids]
 
 
 def process(bundle_ids, deleteOnly=False):
     print('writing index: reverse domains ...')
+    fname = fname_all()
     if bundle_ids == ['*']:
         bundle_ids = list(mylib.enum_data_appids())
         print('  full reset')
-        mylib.rm_file(index_fname())  # rebuild from ground up
+        mylib.rm_file(fname)  # rebuild from ground up
 
-    load_json_if_not_already()
-    did_change = delete_from_index(bundle_ids, deleteOnly=deleteOnly)
+    index = load_json_from_disk(fname)
+    did_change = delete_from_index(index, bundle_ids, deleteOnly=deleteOnly)
     if not deleteOnly:
-        did_change |= insert_in_index(bundle_ids)
+        did_change |= insert_in_index(index, bundle_ids)
     if did_change:
-        write_json_to_disk()
+        mylib.json_write(fname, index, pretty=False)
+        filter_tracker_only(index)
+        mylib.json_write(fname_tracker(), index, pretty=False)
     else:
         print('  no change')
     print('')
@@ -110,5 +128,5 @@ if __name__ == '__main__':
     if len(args) > 0:
         process(args)
     else:
-        # process(['*'], deleteOnly=False)
+        process(['*'], deleteOnly=False)
         mylib.usage(__file__, '[bundle_id] [...]')
