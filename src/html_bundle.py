@@ -4,7 +4,7 @@ import sys
 import time
 import math
 import common_lib as mylib
-import index_bundle_names
+import index_app_names
 
 
 def seconds_to_time(seconds):
@@ -81,7 +81,7 @@ def gen_dom_tags(sorted_arr, isSub, onlyTrackers=False):
 
 
 def gen_html(bundle_id, obj):
-    name = index_bundle_names.get_name(bundle_id)
+    name = index_app_names.get_name(bundle_id)
     obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
     return mylib.template_with_base(f'''
 <h2 class="title">{name}</h2>

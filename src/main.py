@@ -6,11 +6,11 @@ import common_lib as mylib
 import bundle_combine
 import bundle_download
 import html_root
-import html_index
+import html_index_apps
 import html_bundle
-import html_reverse_domains
-import index_bundle_names
-import index_reverse_domains
+import html_index_domains
+import index_app_names
+import index_domains
 import tracker_download
 
 
@@ -28,21 +28,21 @@ def print_usage_and_exit():
 
 
 def rebuild_app_index(inclRoot=False):
-    html_index.process()
+    html_index_apps.process()
     if inclRoot:  # TODO: remove check if root contains dynamic content
         html_root.process()
 
 
 def rebuild_domain_index(bundle_ids, deleteOnly=False):
-    index_reverse_domains.process(bundle_ids, deleteOnly=deleteOnly)
-    html_reverse_domains.process()
+    index_domains.process(bundle_ids, deleteOnly=deleteOnly)
+    html_index_domains.process()
 
 
 def rebuild_name_index(new_ids):
-    if index_bundle_names.missing():
-        index_bundle_names.process(['*'])
+    if index_app_names.missing():
+        index_app_names.process(['*'])
     elif len(new_ids) > 0:
-        index_bundle_names.process(new_ids)  # after bundle_download
+        index_app_names.process(new_ids)  # after bundle_download
 
 
 def del_id(bundle_ids):
@@ -76,7 +76,7 @@ def combine_and_update(bundle_ids, where=None):
     # 4. was any json updated? if so, make html and update reverse index
     if len(affected) > 0:
         rebuild_domain_index(affected)  # after bundle_combine
-        html_bundle.process(affected)  # after index_bundle_names
+        html_bundle.process(affected)  # after index_app_names
     else:
         print('no bundle affected by tracker, not generating bundle html')
     # 5. make all apps index

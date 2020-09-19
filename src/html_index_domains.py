@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
 import common_lib as mylib
-import index_bundle_names
-import index_reverse_domains
+import index_app_names
+import index_domains
 
 
 def a_app(bundle_id):
     return '<a href="/app/{}/">{}</a>'.format(
-        bundle_id, index_bundle_names.get_name(bundle_id))
+        bundle_id, index_app_names.get_name(bundle_id))
 
 
 def a_dom(domain, key):
@@ -61,13 +61,15 @@ def gen_html_top_10(subset, fname, total, title):
 
     with open(fname, 'w') as fp:
         txt = f'''
-<div id="dom-top10" class="found-in">
-<h2>{ title }</h2>'''
+<div class="div-center">
+<h2 class="center">{ title }</h2>
+<div id="dom-top10" class="found-in">'''
         for dom, ids in subset:
             dom_str = div_dom(dom, len(ids), 'domain')
             pct_bar = div_loadbar(round(len(ids) / total * 100))
             txt += f'\n<p>{dom_str} {pct_bar}</p>'
         fp.write(mylib.template_with_base(txt + '''
+</div>
 <p class="mg_top">Get full list
 sorted by <a class="snd" href="by_count.html">Occurrence frequency</a>
 or in <a class="snd" href="by_name.html">Alphabetical order</a>.</p>
@@ -96,7 +98,7 @@ def gen_html_trinity(json, idx_dir, app_count, title):
 
 def gen_html_lookup(html_dir, json, key, title):
     mylib.mkdir(html_dir)
-    names = [[x, index_bundle_names.get_name(x)] for x in json['bundle']]
+    names = [[x, index_app_names.get_name(x)] for x in json['bundle']]
     mylib.json_write(mylib.path_add(html_dir, 'apps.json'), names)
     mylib.json_write(mylib.path_add(html_dir, 'doms.json'), json[key])
     with open(mylib.path_add(html_dir, 'index.html'), 'w') as fp:
@@ -112,37 +114,58 @@ def gen_html_lookup(html_dir, json, key, title):
 ''', title=title))
 
 
+def gen_html_stats(c_apps, c_domains):
+    title = 'Statistics'
+    mylib.mkdir(mylib.path_out('stats'))
+    with open(mylib.path_out('stats', 'index.html'), 'w') as fp:
+        fp.write(mylib.template_with_base('''
+<h2>{}</h2>
+<p>
+  The AppCheck database currently contains <b>{} apps</b> with a total of <b>{} unique domains</b>.
+</p>
+<ul>
+  <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
+  <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
+  <li>List of <a href="/apps/page/1/">Apps</a></li>
+</ul>'''.format(title, c_apps, c_domains), title=title))
+
+
 def process():
     # bundle_combine assures domain name is [a-zA-Z0-9.-]
-    print('generating reverse-domain-index ...')
-
+    print('generating domain-index ...')
     # Data export
     all_dom_dir = mylib.path_out('index', 'domains', 'all')
     trkr_dir = mylib.path_out('index', 'domains', 'tracker')
     mylib.mkdir(all_dom_dir)
     mylib.mkdir(trkr_dir)
-    mylib.symlink(index_reverse_domains.fname_all(),
+    mylib.symlink(index_domains.fname_all(),
                   mylib.path_out_app(all_dom_dir, 'data.json'))
-    mylib.symlink(index_reverse_domains.fname_tracker(),
+    mylib.symlink(index_domains.fname_tracker(),
                   mylib.path_out_app(trkr_dir, 'data.json'))
 
-    # Load
-    json = index_reverse_domains.load()
-    app_count = index_reverse_domains.number_of_apps(json)
-    # Lookup
+    json = index_domains.load()
+    app_count = index_domains.number_of_apps(json)
+    dom_count = len(json['subdom'])
+
+    print('  Lookup')
     gen_html_lookup(mylib.path_out('domain'), json, 'pardom',
                     title='Domain Lookup')
     gen_html_lookup(mylib.path_out('subdomain'), json, 'subdom',
                     title='Subdomain Lookup')
-    # All domains
-    index_reverse_domains.enrich_with_bundle_ids(json)
+
+    print('  All Domains')
+    index_domains.enrich_with_bundle_ids(json)
     gen_html_trinity(json, all_dom_dir, app_count,
                      title='Requested Domains')
-    # Tacker only
-    json = index_reverse_domains.load(tracker=True)
-    index_reverse_domains.enrich_with_bundle_ids(json)
+
+    print('  Trackers Only')
+    json = index_domains.load(tracker=True)
+    index_domains.enrich_with_bundle_ids(json)
     gen_html_trinity(json, trkr_dir, app_count,
                      title='Tracker')
+    # Stats
+    print('  Stats')
+    gen_html_stats(app_count, dom_count)
     print('')
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import common_lib as mylib
-import index_bundle_names
+import index_app_names
 
 
 def gen_obj(bundle_id):
@@ -11,7 +11,7 @@ def gen_obj(bundle_id):
         icon = '/static/app-template.svg'
     return {
         'id': bundle_id,
-        'name': index_bundle_names.get_name(bundle_id),
+        'name': index_app_names.get_name(bundle_id),
         'img': icon
     }
 

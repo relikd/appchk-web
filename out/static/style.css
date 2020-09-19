@@ -230,11 +230,8 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 		width: 40%;
 		margin-left: 1%;
 	}
-	#dom-top10 {
-		margin: 0 auto;
-		width: max-content;
-		max-width: 100%;
-		text-align: right;
-	}
+	#dom-top10 { text-align: right; }
+	#dom-top10 p { margin: 0.4em; }
+	.div-center { margin: 0 auto; width: max-content; max-width: 100%; }
 	.loadbar { display: inline-block; }
 }

@@ -42,13 +42,13 @@ Given A → B, B depends on A
 digraph G {
   "." -> html_root
   "." -> bundle_download
-  bundle_download -> index_bundle_names
-  index_bundle_names -> html_bundle
-  index_bundle_names -> html_index
-  index_bundle_names -> html_reverse_domains
+  bundle_download -> index_app_names
+  index_app_names -> html_bundle
+  index_app_names -> html_index_apps
+  index_app_names -> html_index_domains
   "." -> bundle_combine
-  bundle_combine -> index_reverse_domains
-  index_reverse_domains -> html_reverse_domains
+  bundle_combine -> index_domains
+  index_domains -> html_index_domains
   bundle_combine -> html_bundle
   "." -> tracker_download
 }
