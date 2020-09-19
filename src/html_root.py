@@ -93,11 +93,19 @@ def gen_search():
 </script>'''))
 
 
+def gen_404():
+    with open(mylib.path_out('404.html'), 'w') as fp:
+        fp.write(mylib.template_with_base('''
+<h2>404 – Not Found</h2>
+<p>Go back to <a href="/">start page</a></p>'''))
+
+
 def process():
     print('generating root html ...')
     gen_root()  # root index.thml
     gen_search()  # root redirect.html?id=my.bundle.id
     gen_help()
+    gen_404()
     print('')
 
 
