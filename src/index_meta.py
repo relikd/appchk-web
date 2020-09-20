@@ -12,6 +12,10 @@ def load_json_from_disk(fname):
     return mylib.json_read(fname) if mylib.file_exists(fname) else {}
 
 
+def load():
+    return load_json_from_disk(index_file())
+
+
 def get_total_counts():
     try:
         return load_json_from_disk(index_file())['_']
@@ -38,7 +42,7 @@ def process(bundle_ids, deleteOnly=False):
         if deleteOnly:
             continue
         # set new value
-        json = mylib.json_read(mylib.path_data_app(bid, 'evaluated.json'))
+        json, _ = mylib.json_read_evaluated(bid)
         index[bid] = [json['sum_rec'], json['sum_logs'],
                       len(json['pardom']), len(json['subdom'])]
     # sum of counts

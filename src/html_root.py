@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import common_lib as mylib
 
 
@@ -35,44 +36,50 @@ def gen_root():
 
 
 def gen_help():
-    many = 7
     txt = '''<h2>Help needed!</h2>
-<div class="squeeze">
-  <p>
-      This study contains two stages. This is the first one.
-      We have selected a random sample of applications for evaluation.
-      We want to track the app behviour over a longer period of time.
+<div class="squeeze"><p>
+    With the release of iOS 14 some <a href="https://www.apple.com/ios/ios-14/features/#Privacy" target="_blank">Privacy</a> features are put into the spotlight.
+    One of these features is making transparent how your data is being used for tracking purposes.
+    Developers are now required to self-report their privacy practices.
   </p><p>
-      You can help us by providing app recordings of the following application.
-      The more you record the better. 
-      Ideally you could do recordings for all the apps below.
-      But really, even if you only find time for a single recording, anything helps!
+    We have selected a random sample of applications for evaluation and want to check whether the app behaviour changes over time.
+    This study consists of two stages; this is the second.
+    In the first stage we recorded the app communications before iOS 14 was released.
+    In the second stage we repeat the process after the launch of iOS 14.
   </p><p>
-      We need at least {} recordings per app. Stage 2 will follow in a few weeks.
-      Get the <a href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">Testflight beta</a>.
+    You can help us by providing app recordings of the following applications.
+    Make sure to update to the lastest AppCheck version (v.34) which includes a check for the iOS version.
+    Get the <a href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">Testflight beta</a>.
   </p>
 </div>
-<div class="help-links">'''.format(many)
+<div id="help-links">'''
+    many = 7
     obj = mylib.json_read(mylib.path_root('src', 'help.json'))
     for land in sorted(obj.keys()):
         txt += '\n<h3>{}:</h3>\n<table>'.format(land)
+        txt += '\n<tr><th></th><th>App Name</th><th>pre iOS 14</th><th>post iOS 14</th></tr>'
         for i, x in enumerate(obj[land]):
             bid = x[2]
             asurl = 'https://apps.apple.com/de/app/id{}'.format(x[1])
-            try:
-                count = len(mylib.json_read_combined(bid)['rec_len'])
-            except Exception:
-                count = 0
-
-            rr = '<span class="{}"><b>{}</b>/{}</span> recordings'.format(
-                'done' if count >= many else 'notyet', count, many)
+            count = [0, 0]
+            for fname, json in mylib.enum_jsons(bid):
+                try:
+                    ios14 = int(json['ios'].split('.')[0]) >= 14
+                except KeyError:
+                    # assume everything submitted after release date is iOS14
+                    ios14 = os.path.getmtime(fname) > 1600258000
+                count[1 if ios14 else 0] += 1
+            s1 = '<span class="{}"><b>{}</b>/{}</span> recordings'.format(
+                'done' if count[0] >= many else 'notyet', count[0], many)
+            s2 = '<span class="{}"><b>{}</b>/{}</span> recordings'.format(
+                'done' if count[1] >= many else 'notyet', count[1], many)
 
             txt += '''
-<tr><td>{0}</td>
-<td><a href="/app/{1}/">{2}</a></td>
-<td>{3}</td>
-<td><a href="{4}" target="_blank">{4}</a></td>
-</tr>'''.format(i + 1, bid, x[0], rr, asurl)
+<tr><td>{}</td>
+<td><a href="/app/{}/">{}</a> <span class="snd">Download from <a href="{}" target="_blank">AppStore</a></span></td>
+<td>{}</td>
+<td>{}</td>
+</tr>'''.format(i + 1, bid, x[0], asurl, s1, s2)
 
         txt += '</table>'
 

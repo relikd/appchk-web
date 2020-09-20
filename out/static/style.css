@@ -204,11 +204,12 @@ p.trckr { font-size: .9em; margin-left: .5em; }
 .cs1{stroke:#CA0D3A}
 
 /* Help needed */
-.help-links td { padding: .5em; }
-.help-links tr:nth-child(even) { background: #DDD; }
-.help-links tr:nth-child(odd) { background: #F9F9F9; }
-.help-links .notyet { color: #D11; }
-.help-links .done { color: #52C840; }
+#help-links td { padding: .5em; }
+#help-links tr:nth-child(even) { background: #DDD; }
+#help-links tr:nth-child(odd) { background: #F9F9F9; }
+#help-links span.snd { display: table; }
+#help-links .notyet { color: #D11; }
+#help-links .done { color: #52C840; }
 
 /* responsive */
 @media(max-width: 647px) {
