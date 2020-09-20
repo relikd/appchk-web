@@ -41,7 +41,7 @@ def gen_pager(current, total):
         links += mklink(i, i, active=i == current)
     # if current < total:
     #     links += mklink(current + 1, 'Next')
-    return '<div id="pagination" class="no_ul_all">{}</div>'.format(links)
+    return '<div id="pagination">{}</div>'.format(links)
 
 
 def gen_page(arr, base, page_id=1, total=1):

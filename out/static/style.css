@@ -49,7 +49,7 @@ footer .links {
 	padding: 1em;
 }
 
-#main-nav { float: right; }
+#main-nav { float: right; padding: 0; }
 #main-nav li { display: inline-block; margin-right: 1em; }
 #main-nav img { height: 1.2em; margin: 0 -0.4em; }
 #main-nav img:hover { transform: scale(1.2); }
@@ -77,8 +77,6 @@ footer .links {
 .dropdown a { display: block; padding: 0.5em 1em; }
 .dropdown a:hover { background-color: #eee; }
 
-#app-toc div, .bg1 { background: #eee; }
-#app-toc div, .border { border: 1pt solid #ccc; }
 #app-toc div:hover, .dropdown:hover button, .dropdown a:hover {
 	background: #BBC6CA;
 }
@@ -89,11 +87,13 @@ footer .links {
 	display: inline-block;
 	width: 140px;
 	height: 12em;
-	overflow: hidden;
 	margin: 5px;
 	padding: 16px;
 	vertical-align: top;
+	overflow: hidden;
 	word-wrap: break-word;
+	background: #eee;
+	border: 1pt solid #ccc;
 	border-radius: 7px;
 }
 #app-toc img {
@@ -108,7 +108,7 @@ footer .links {
 #app-toc span.detail { font-size: 0.7em; }
 
 #pagination { text-align: center; margin-top: 2em; }
-#pagination a { margin: 0.5em; padding: 0.2em }
+#pagination a { margin: 0.5em; padding: 0.2em; }
 #pagination a.active { border: 1pt solid black; border-radius: 0.2em; }
 
 
@@ -149,6 +149,8 @@ p.subtitle { margin-top: 0.2em; }
 .mg_top { margin-top: 2em; }
 .right { text-align: right; }
 .center { text-align: center; }
+.bg1 { background: #eee; }
+.border { border: 1pt solid #ccc; }
 td { padding: 0.2em 1em 0.2em 0.1em; }
 #meta td:nth-child(2) { font-weight: bold }
 
@@ -214,6 +216,19 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 	footer .col3 div { width: 100%; padding: 0; } /* 3 columns */
 	#meta .icons { margin-bottom: 1em; } /* icons beside each other */
 	.pie-chart { float: right; }
+	#app-toc a { text-align: left; }
+	#app-toc div {
+		display: inline-block;
+		width: 100%;
+		margin: 0;
+		padding: 0.5em 0;
+		height: unset;
+		border: unset;
+		background: unset;
+	}
+	#app-toc img {
+		float: left; width: 30pt; height: 30pt; margin: 0 0.5em;
+	}
 }
 @media(min-width: 648px) {
 	#meta .icons { float: right; } /* icons below each other */
