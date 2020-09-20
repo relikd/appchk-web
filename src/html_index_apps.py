@@ -45,17 +45,18 @@ def gen_pager(current, total):
 
 
 def gen_page(arr, base, page_id=1, total=1):
+    title = 'Apps (A–Z)'
     path = mylib.path_add(base, str(page_id))
     mylib.mkdir(path)
     with open(mylib.path_add(path, 'index.html'), 'w') as fp:
         content = ''.join([gen_entry(x) for x in arr])
         pagination = gen_pager(page_id, total)  # if total > 1 else ''
         fp.write(mylib.template_with_base('''
-<h2 class="center">Apps (A–Z)</h2>
-<div id="app-toc" class="center no_ul_all">
+<h2 class="center">{}</h2>
+<div id="app-toc" class="center no-ul-all">
   {}
 </div>
-{}'''.format(content, pagination), title="Index"))
+{}'''.format(title, content, pagination), title=title))
 
 
 def process(per_page=60):

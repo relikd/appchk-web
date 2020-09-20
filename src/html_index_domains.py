@@ -25,7 +25,7 @@ def dropdown_choose(button):
 <label for="dropdown">Choose list:</label>
 <div class="dropdown" name="dropdown">
   <button class="bg1 border">{button}</button>
-  <nav class="bg1 no_ul_all">
+  <nav class="bg1 no-ul-all">
     <a href="index.html">Most frequent</a>
     <a href="by_name.html">Full list (A–Z)</a>
     <a href="by_count.html">Full list (by count)</a>

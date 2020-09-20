@@ -9,7 +9,7 @@ body {
 a { text-decoration: none; color: unset; }
 main a { border-bottom: 1pt dotted; }
 a:hover { border-bottom: 1pt solid; }
-a.no-ul, a.no-ul:hover, .no_ul_all a, .no_ul_all a:hover {
+a.no-ul, a.no-ul:hover, .no-ul-all a, .no-ul-all a:hover {
 	border-bottom: unset;
 }
 main, footer { padding: 0 1em; }
@@ -25,13 +25,13 @@ header h1 {
 	font-size: 1.4em;
 	font-weight: 900;
 	text-transform: uppercase;
-	letter-spacing: 0.9px;
+	letter-spacing: .9px;
 	color: #fff;
 	margin-top: 0;
 }
-header h1 span { font-size: 0.7em; color: silver; }
+header h1 span { font-size: .7em; color: silver; }
 main {
-	padding: 0.1em 2em 1.5em;
+	padding: .1em 2em 1.5em;
 	background: #fff;
 	color: #000;
 	border-radius: 10px;
@@ -45,23 +45,23 @@ footer .col3 div {
 }
 footer .links {
 	text-align: center;
-	font-size: 0.9em;
+	font-size: .9em;
 	padding: 1em;
 }
 
 #main-nav { float: right; padding: 0; }
 #main-nav li { display: inline-block; margin-right: 1em; }
-#main-nav img { height: 1.2em; margin: 0 -0.4em; }
+#main-nav img { height: 1.2em; margin: 0 -.4em; }
 #main-nav img:hover { transform: scale(1.2); }
 
 /* web root */
 #get-appcheck:hover { color: #586472; }
-#get-appcheck img { width: 3em; height: 3em; margin: 0.3em; }
+#get-appcheck img { width: 3em; height: 3em; margin: .3em; }
 #get-appcheck * { display: inline-block; vertical-align: middle; }
 
 /* dropdown */
 .dropdown button {
-  padding: 0.5em 1em;
+  padding: .5em 1em;
   font-size: 16px;
   cursor: pointer;
 }
@@ -70,11 +70,11 @@ footer .links {
 	display: none;
 	position: absolute;
 	width: max-content;
-	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,.2);
 	z-index: 1;
 }
 .dropdown:hover nav { display: block; }
-.dropdown a { display: block; padding: 0.5em 1em; }
+.dropdown a { display: block; padding: .5em 1em; }
 .dropdown a:hover { background-color: #eee; }
 
 #app-toc div:hover, .dropdown:hover button, .dropdown a:hover {
@@ -97,19 +97,19 @@ footer .links {
 	border-radius: 7px;
 }
 #app-toc img {
-	margin: 0.5em auto 1em;
+	margin: .5em auto 1em;
 	display: block;
 }
 #app-toc img, #get-appcheck img, #meta img {
 	border-radius: 21.5%;
-	border: 0.7px solid #ccc;
+	border: .7px solid #ccc;
 }
-#app-toc span.name { font-size: 0.8em; font-weight: bold; }
-#app-toc span.detail { font-size: 0.7em; }
+#app-toc span.name { font-size: .8em; font-weight: bold; }
+#app-toc span.detail { font-size: .7em; }
 
 #pagination { text-align: center; margin-top: 2em; }
-#pagination a { margin: 0.5em; padding: 0.2em; }
-#pagination a.active { border: 1pt solid black; border-radius: 0.2em; }
+#pagination a { margin: .5em; padding: .2em; }
+#pagination a.active { border: 1pt solid black; border-radius: .2em; }
 
 
 /* domain index */
@@ -121,7 +121,7 @@ footer .links {
 }
 #dom-toc a, #dom-top10 a { word-wrap: break-word; }
 #dom-toc span { display: table; }
-.found-in span, .snd { color: #586472; font-size: 0.85em; }
+.found-in span, .snd { color: #586472; font-size: .85em; }
 .loadbar {
 	display: block;
 	background: #DDD;
@@ -134,7 +134,7 @@ footer .links {
 	display: inline-block;
 	border-radius: 4px 0 0 4px;
 	background: #AC2B4A;
-	font-size: 0.8em;
+	font-size: .8em;
 	padding: 2px 0 2px 0;
 	text-align: center;
 	color: #FFF;
@@ -144,31 +144,31 @@ footer .links {
 /* app bundle */
 .squeeze { max-width: 700px; }
 h2.title { margin-bottom: 0; }
-p.subtitle { margin-top: 0.2em; }
-.mg_lr { margin: 0 0.4em; }
+p.subtitle { margin-top: .2em; }
+.mg_lr { margin: 0 .4em; }
 .mg_top { margin-top: 2em; }
 .right { text-align: right; }
 .center { text-align: center; }
 .bg1 { background: #eee; }
 .border { border: 1pt solid #ccc; }
-td { padding: 0.2em 1em 0.2em 0.1em; }
+td { padding: .2em 1em .2em .1em; }
 #meta td:nth-child(2) { font-weight: bold }
 
 /* app bundle: domain tags */
 .tags { margin: 2em 0; }
 .tags a {
-	font-size: 0.9em;
+	font-size: .9em;
 	font-style: normal;
 	font-weight: normal;
 	background: #EEE;
 	padding: 2pt 4pt;
 	border: 1pt solid #AAA;
-	border-radius: 0.2em;
+	border-radius: .2em;
 	display: inline-block;
-	margin: 0.12em;
+	margin: .12em;
 }
 .tags a.trckr, .tags.trckr a { background: #F9A7A7;; border-color: #B06363; }
-p.trckr { font-size: 0.9em; margin-left: 0.5em; }
+p.trckr { font-size: .9em; margin-left: .5em; }
 
 /* app bundle: graphs */
 .dot-graph {
@@ -186,17 +186,17 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 	height: 1.8em;
 	margin-bottom: 5px;
 }
-.dot-graph i:first-of-type { margin-left: 0.1em; width: 1.4em; }
+.dot-graph i:first-of-type { margin-left: .1em; width: 1.4em; }
 .dot-graph .trckr i { background: #AC2B4A; }
 .dot-graph span:hover p { display: inline; }
 .dot-graph p {
 	display: none;
 	position: absolute;
 	background: white;
-	border: 0.4em solid black;
-	padding: 0.3em 0.8em;
+	border: .4em solid black;
+	padding: .3em .8em;
 	margin-top: -2.8em;
-	margin-left: 0.1em;
+	margin-left: .1em;
 }
 
 /* #AC2B4A #BB1C42 #CA0D3A */
@@ -204,7 +204,7 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 .cs1{stroke:#CA0D3A}
 
 /* Help needed */
-.help-links td { padding: 0.5em; }
+.help-links td { padding: .5em; }
 .help-links tr:nth-child(even) { background: #DDD; }
 .help-links tr:nth-child(odd) { background: #F9F9F9; }
 .help-links .notyet { color: #D11; }
@@ -213,6 +213,7 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 /* responsive */
 @media(max-width: 647px) {
 	header h1 span { display: none; } /* header subtitle */
+	main { padding-left: .5em; padding-right: .5em; }
 	footer .col3 div { width: 100%; padding: 0; } /* 3 columns */
 	#meta .icons { margin-bottom: 1em; } /* icons beside each other */
 	.pie-chart { float: right; }
@@ -221,13 +222,13 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 		display: inline-block;
 		width: 100%;
 		margin: 0;
-		padding: 0.7em 0;
+		padding: .7em 0;
 		height: unset;
 		border: unset;
 		background: unset;
 	}
 	#app-toc img {
-		float: left; width: 30pt; height: 30pt; margin: 0 0.5em;
+		float: left; width: 44px; height: 44px; margin: 0 .5em;
 	}
 }
 @media(min-width: 648px) {
@@ -246,7 +247,7 @@ p.trckr { font-size: 0.9em; margin-left: 0.5em; }
 		margin-left: 1%;
 	}
 	#dom-top10 { text-align: right; }
-	#dom-top10 p { margin: 0.4em; }
+	#dom-top10 p { margin: .4em; }
 	.div-center { margin: 0 auto; width: max-content; max-width: 100%; }
 	.loadbar { display: inline-block; }
 }
