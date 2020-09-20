@@ -107,7 +107,7 @@ def gen_html_lookup(html_dir, json, key, title):
 <h2 id="name"></h2>
 <p>Present in: <b id="num_apps">… applications</b></p>
 <h3>Apps containing this domain:</h3>
-<div id="app_list">loading…</div>
+<div id="app_list" class="no-ul-all">loading…</div>
 <script type="text/javascript" src="/static/lookup-domain.js?1"></script>
 <script type="text/javascript">
   lookup_domain_fragment('doms.json', 'apps.json', 'name', 'num_apps', 'app_list');
