@@ -128,5 +128,5 @@ if __name__ == '__main__':
     if len(args) > 0:
         process(args)
     else:
-        process(['*'], deleteOnly=False)
+        # process(['*'], deleteOnly=False)
         mylib.usage(__file__, '[bundle_id] [...]')

@@ -3,6 +3,7 @@
 import common_lib as mylib
 import index_app_names
 import index_domains
+import index_meta
 
 
 def a_app(bundle_id):
@@ -115,19 +116,23 @@ def gen_html_lookup(html_dir, json, key, title):
 
 
 def gen_html_stats(c_apps, c_domains):
+    [c_recordings, c_logs] = index_meta.get_total_counts()
     title = 'Statistics'
     mylib.mkdir(mylib.path_out('stats'))
     with open(mylib.path_out('stats', 'index.html'), 'w') as fp:
         fp.write(mylib.template_with_base('''
 <h2>{}</h2>
 <p>
-  The AppCheck database currently contains <b>{} apps</b> with a total of <b>{} unique domains</b>.
+  The AppCheck database currently contains <b>{:,} apps</b> with a total of <b>{:,} unique domains</b>.
+</p>
+<p>
+  Collected through <b>{:,} recordings</b> with <b>{:,} individual requests</b>.
 </p>
 <ul>
+  <li>List of <a href="/index/apps/1/">Apps</a></li>
   <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
   <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
-  <li>List of <a href="/index/apps/1/">Apps</a></li>
-</ul>'''.format(title, c_apps, c_domains), title=title))
+</ul>'''.format(title, c_apps, c_domains, c_recordings, c_logs), title=title))
 
 
 def process():

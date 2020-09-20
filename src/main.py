@@ -11,6 +11,7 @@ import html_bundle
 import html_index_domains
 import index_app_names
 import index_domains
+import index_meta
 import tracker_download
 
 
@@ -27,13 +28,14 @@ def print_usage_and_exit():
     exit(0)
 
 
-def rebuild_app_index(inclRoot=False):
+def rebuild_app_index_html(inclRoot=False):
     html_index_apps.process()
     if inclRoot:  # TODO: remove check if root contains dynamic content
         html_root.process()
 
 
 def rebuild_domain_index(bundle_ids, deleteOnly=False):
+    index_meta.process(bundle_ids, deleteOnly=deleteOnly)
     index_domains.process(bundle_ids, deleteOnly=deleteOnly)
     html_index_domains.process()
 
@@ -60,7 +62,7 @@ def del_id(bundle_ids):
     print('')
     rebuild_domain_index(bundle_ids, deleteOnly=True)
     if update_app_index:
-        rebuild_app_index(inclRoot=True)
+        rebuild_app_index_html(inclRoot=True)
 
 
 def combine_and_update(bundle_ids, where=None):
@@ -81,7 +83,7 @@ def combine_and_update(bundle_ids, where=None):
         print('no bundle affected by tracker, not generating bundle html')
     # 5. make all apps index
     if len(new_ids) > 0:
-        rebuild_app_index()  # must be called after bundle_combine
+        rebuild_app_index_html()  # must be called after bundle_combine
     else:
         print('no new bundle, not rebuilding index')
 
@@ -131,10 +133,10 @@ try:
             # tracker_download.combine_all()
         elif cmd == 'icons':
             if bundle_download.download_missing_icons(force=False):
-                rebuild_app_index()
+                rebuild_app_index_html()
         elif cmd == 'index':
             rebuild_domain_index(['*'])
-            rebuild_app_index(inclRoot=True)
+            rebuild_app_index_html(inclRoot=True)
         elif cmd == 'run':
             if len(params) == 0:
                 print_usage_and_exit()
