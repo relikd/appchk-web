@@ -123,10 +123,10 @@ def gen_html_stats(c_apps, c_domains):
         fp.write(mylib.template_with_base('''
 <h2>{}</h2>
 <p>
-  The AppCheck database currently contains <b>{:,} apps</b> with a total of <b>{:,} unique domains</b>.
+  The AppCheck database currently contains <b>{:,}&nbsp;apps</b> with a total of <b>{:,} unique domains</b>.
 </p>
 <p>
-  Collected through <b>{:,} recordings</b> with <b>{:,} individual requests</b>.
+  Collected through <b>{:,}&nbsp;recordings</b> with <b>{:,} individual requests</b>.
 </p>
 <ul>
   <li>List of <a href="/index/apps/1/">Apps</a></li>
