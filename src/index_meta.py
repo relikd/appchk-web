@@ -22,32 +22,34 @@ def load_json_from_disk(fname):
 def json_to_list(json):
     return [
         json['sum_rec'],
-        json['sum_logs'],
-        json['sum_logs_pm'],
-        json['sum_time'],
-        json['avg_logs'],
-        json['avg_logs_pm'],
         json['avg_time'],
-        json['last_date'],
+        json['sum_time'],
+        json['avg_logs_pm'],
+        json['sum_logs_pm'],
         len(json['pardom']),
         len(json['subdom']),
-        json['tracker_percent']
+        json['tracker_percent'],
+        # v- not part of rank -v
+        json['sum_logs'],
+        json['avg_logs'],
+        json['last_date'],
     ]
 
 
 def list_to_json(list):
     return {
         'sum_rec': list[0],
-        'sum_logs': list[1],
-        'sum_logs_pm': list[2],
-        'sum_time': list[3],
-        'avg_logs': list[4],
-        'avg_logs_pm': list[5],
-        'avg_time': list[6],
-        'last_date': list[7],
-        'pardom': list[8],
-        'subdom': list[9],
-        'tracker_percent': list[10]
+        'avg_time': list[1],
+        'sum_time': list[2],
+        'avg_logs_pm': list[3],
+        'sum_logs_pm': list[4],
+        'pardom': list[5],
+        'subdom': list[6],
+        'tracker_percent': list[7],
+        # v- not part of rank -v
+        'sum_logs': list[8],
+        'avg_logs': list[9],
+        'last_date': list[10],
     }
 
 
@@ -65,7 +67,7 @@ def write_summary_index(index, bundle_ids, deleteOnly=False):
     total = [0, 0]
     for val in index.values():
         total[0] += val[0]
-        total[1] += val[1]
+        total[1] += val[8]
     index['_sum'] = total
     mylib.json_write(fname_app_summary(), index, pretty=False)
 
@@ -75,7 +77,7 @@ def write_rank_index(index):
     mins = []
     maxs = []
     if len(index) > 0:
-        for i in range(11):  # equal to number of array entries
+        for i in range(8):  # exclude unused columns
             tmp = {}
             # make temporary reverse index
             for bid, val in index.items():
@@ -85,7 +87,7 @@ def write_rank_index(index):
                     tmp[val[i]] = [bid]
             # read index position from temp reverse index
             r = 1
-            ordered = sorted(tmp.items(), reverse=i in [0, 3, 6, 7])
+            ordered = sorted(tmp.items(), reverse=i in [0, 1, 2])
             for idx, (_, ids) in enumerate(ordered):
                 for bid in ids:
                     index[bid][i] = r
@@ -95,7 +97,10 @@ def write_rank_index(index):
     index['_ranks'] = len(index)
     index['_min'] = mins
     index['_max'] = maxs
-    mylib.json_write(fname_app_rank(), index, pretty=False)
+    # write evaluated file
+    fname = fname_app_rank()
+    mylib.json_write(fname, index, pretty=False)
+    mylib.symlink(fname, mylib.path_out('stats', 'rank.json'))
 
 
 def get_total_counts():
@@ -103,18 +108,6 @@ def get_total_counts():
         return load_json_from_disk(fname_app_summary())['_sum']
     except KeyError:
         return [0, 0]
-
-
-def get_rank(bundle_id):
-    ''' Return tuples with (rank, max_rank, min_value, max_value) '''
-    global _rank_dict
-    if not _rank_dict:
-        _rank_dict = load_json_from_disk(fname_app_rank())
-    return list_to_json(list(zip(
-        _rank_dict[bundle_id],
-        _rank_dict['_min'],
-        _rank_dict['_max'],
-    ))), _rank_dict['_ranks']
 
 
 def process(bundle_ids, deleteOnly=False):

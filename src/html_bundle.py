@@ -7,7 +7,6 @@ import common_lib as mylib
 import download_itunes  # get_genres
 import bundle_combine  # get_evaluated, fname_evaluated
 import index_app_names  # get_name
-import index_meta  # get_rank
 
 
 def gen_dotgraph(sorted_arr):
@@ -94,27 +93,22 @@ def gen_html(bundle_id, obj):
         hours, minutes = divmod(minutes, 60)
         return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
 
-    def stat(col, title, rank, value, optional=None, fmt=str, fmt2=None):
-        # percent = int(rank[0] / max_rank * 100)
-        r = rank[0] / max_rank
-        detail = fmt2(value) if fmt2 else fmt(value)
+    def stat(col, title, ident, value, optional=None):
         if optional:
-            x = fmt(optional) if fmt2 else optional
-            detail += '<i class="snd mg_lr">({})</i>'.format(x)
-        return f'''
-<div class="col{col}">
-  <h4>{title}</h4>
-  <div class="percentile {'g' if r < 0.5 else 'b'}"><div style="left: {as_percent(r)}"></div></div>
-  <b class="mg_lr">{detail}</b>
+            value += '<i class="snd mg_lr">({})</i>'.format(optional)
+        return '''
+<div id="{}" class="col{}">
+  <h4>{}</h4>
+  <div class="percentile"><div style="left: 50%"></div></div>
+  <b class="mg_lr">{}</b>
   <p class="snd">
-    Rank:&nbsp;<b>{rank[0]}</b>,
-    best:&nbsp;<i>{fmt(rank[1])}</i>,
-    worst:&nbsp;<i>{fmt(rank[2])}</i></p>
-</div>'''
+    Rank:&nbsp;<b>?</b>,
+    best:&nbsp;<i>?</i>,
+    worst:&nbsp;<i>?</i></p>
+</div>'''.format(ident, col, title, value)
 
     name = index_app_names.get_name(bundle_id)
     gernes = download_itunes.get_genres(bundle_id)
-    rank, max_rank = index_meta.get_rank(bundle_id)
     obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
     return mylib.template_with_base(f'''
 <h2 class="title">{name}</h2>
@@ -132,14 +126,14 @@ def gen_html(bundle_id, obj):
   </table>
 </div>
 <div id="stats">
-  { stat(1, 'Number of recordings:', rank['sum_rec'], obj['sum_rec']) }
-  { stat(1, 'Average recording time:', rank['avg_time'], obj['avg_time'], fmt=seconds_to_time) }
-  { stat(2, 'Cumulative recording time:', rank['sum_time'], obj['sum_time'], fmt=seconds_to_time) }
-  { stat(1, 'Average number of requests:', rank['avg_logs_pm'], obj['avg_logs'], obj['avg_logs_pm'], fmt=as_pm, fmt2=round_num) }
-  { stat(2, 'Total number of requests:', rank['sum_logs_pm'], obj['sum_logs'], obj['sum_logs_pm'], fmt=as_pm, fmt2=str) }
-  { stat(1, 'Number of domains:', rank['pardom'], len(obj['pardom'])) }
-  { stat(2, 'Number of subdomains:', rank['subdom'], len(obj['subdom'])) }
-  { stat(3, 'Tracker percentage:', rank['tracker_percent'], obj['tracker_percent'], fmt=as_percent) }
+  { stat(1, 'Number of recordings:', 'sum_rec', obj['sum_rec']) }
+  { stat(1, 'Average recording time:', 'avg_time', seconds_to_time(obj['avg_time'])) }
+  { stat(2, 'Cumulative recording time:', 'sum_time', seconds_to_time(obj['sum_time'])) }
+  { stat(1, 'Average number of requests:', 'avg_logs_pm', round_num(obj['avg_logs']), as_pm(obj['avg_logs_pm'])) }
+  { stat(2, 'Total number of requests:', 'sum_logs_pm', str(obj['sum_logs']), as_pm(obj['sum_logs_pm'])) }
+  { stat(1, 'Number of domains:', 'pardom', len(obj['pardom'])) }
+  { stat(2, 'Number of subdomains:', 'subdom', len(obj['subdom'])) }
+  { stat(3, 'Tracker percentage:', 'tracker_percent', as_percent(obj['tracker_percent'])) }
 </div>
 <h3>Connections</h3>
 <div>
@@ -152,7 +146,11 @@ def gen_html(bundle_id, obj):
   { gen_dotgraph(obj['subdom']) }
   { gen_dom_tags(obj['subdom'], isSub=True) }
 </div>
-<p class="right snd">Download: <a href="data.json" download="{bundle_id}.json">json</a></p>''', title=name)
+<p class="right snd">Download: <a href="data.json" download="{bundle_id}.json">json</a></p>
+<script type="text/javascript" src="/static/lookup-rank.js"></script>
+<script type="text/javascript">
+  lookup_rank_js('{bundle_id}');
+</script>''', title=name)
 
 
 def process(bundle_ids):
