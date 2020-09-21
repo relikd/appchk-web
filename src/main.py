@@ -41,11 +41,8 @@ def rebuild_domain_index(bundle_ids, deleteOnly=False):
 
 def del_id(bundle_ids):
     print('removing apps from website:')
-    if bundle_ids == ['*']:
-        bundle_ids = list(mylib.enum_appids())
-
     update_app_index = False
-    for bid in bundle_ids:
+    for bid in mylib.appids_in_out(bundle_ids):
         dest = mylib.path_out_app(bid)
         if mylib.dir_exists(dest):
             print('  ' + bid)

@@ -42,13 +42,12 @@ def get_name(bundle_id, langs=['us', 'de'], fallback='&lt; App-Name &gt;'):
 def process(bundle_ids):
     print('writing index: app names ...')
     if bundle_ids == ['*']:
-        bundle_ids = list(mylib.enum_data_appids())
         print('  full reset')
         mylib.rm_file(index_fname())  # rebuild from ground up
 
     load_json_if_not_already()
     did_change = False
-    for bid in bundle_ids:
+    for bid in mylib.appids_in_data(bundle_ids):
         names = download_itunes.app_names(bid)
         if not names:
             mylib.err('index-app-names', 'could not load: {}'.format(bid))

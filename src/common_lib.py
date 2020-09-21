@@ -235,14 +235,12 @@ def download_file(url, path):
 
 # Enumerator
 
+_all_data_bundle_ids = None
+
+
 def enum_newly_added():
     for fname in glob.glob(path_data('_in', 'in_*')):
         yield fname, os.path.basename(fname)[3:]  # del prefix 'in_'
-
-
-def enum_appids():
-    for x in glob.glob(path_out_app('*')):
-        yield os.path.basename(x)
 
 
 def enum_jsons(bundle_id):
@@ -251,12 +249,24 @@ def enum_jsons(bundle_id):
             yield fname, json.load(fp)
 
 
-def enum_data_appids():
-    data_root = path_data()
-    prfx = path_len(data_root)
-    for path, dirs, files in os.walk(data_root):
-        if 'combined.json' in files:
-            yield path[prfx:].replace(os.sep, '.')
+def appids_in_out(selection=['*']):
+    if selection != ['*']:
+        return selection
+    return [os.path.basename(x) for x in glob.glob(path_out_app('*'))]
+
+
+def appids_in_data(selection=['*']):
+    if selection != ['*']:
+        return selection
+    global _all_data_bundle_ids
+    if not _all_data_bundle_ids:
+        _all_data_bundle_ids = []
+        data_root = path_data()
+        prfx = path_len(data_root)
+        for path, dirs, files in os.walk(data_root):
+            if 'combined.json' in files:
+                _all_data_bundle_ids.append(path[prfx:].replace(os.sep, '.'))
+    return _all_data_bundle_ids
 
 
 # JSON

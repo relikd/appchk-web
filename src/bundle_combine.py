@@ -113,10 +113,7 @@ def json_evaluate_inplace(obj):
 
 def process(bundle_ids):
     print('writing combined json ...')
-    if bundle_ids == ['*']:
-        bundle_ids = list(mylib.enum_data_appids())
-
-    for bid in bundle_ids:
+    for bid in mylib.appids_in_data(bundle_ids):
         print('  ' + bid)
         obj = json_combine(bid)
         mylib.json_write(fname_combined(bid), obj, pretty=False)

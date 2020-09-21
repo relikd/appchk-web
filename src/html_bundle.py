@@ -157,13 +157,10 @@ def gen_html(bundle_id, obj):
 
 def process(bundle_ids):
     print('generating html: apps ...')
-    if bundle_ids == ['*']:
-        bundle_ids = list(mylib.enum_appids())
-
-    for bid in bundle_ids:
+    for bid in mylib.appids_in_out(bundle_ids):
         print('  ' + bid)
-        json = bundle_combine.get_evaluated(bid)
         mylib.mkdir_out_app(bid)
+        json = bundle_combine.get_evaluated(bid)
         with open(mylib.path_out_app(bid, 'index.html'), 'w') as fp:
             fp.write(gen_html(bid, json))
         mylib.symlink(bundle_combine.fname_evaluated(bid),

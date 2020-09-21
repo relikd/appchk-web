@@ -77,7 +77,7 @@ def download_icon(bundle_id, force=False, langs=AVAILABLE_LANGS):
 
 def download_missing_icons(force=False, langs=AVAILABLE_LANGS):
     didAny = False
-    for bid in mylib.enum_appids():
+    for bid in mylib.appids_in_out():
         exists, _ = needs_icon_path(bid)
         if not exists:
             if not didAny:
@@ -123,11 +123,8 @@ def download(bundle_id, force=False):
 
 def process(bundle_ids, force=False):
     print('downloading bundle info ...')
-    if bundle_ids == ['*']:
-        bundle_ids = list(mylib.enum_data_appids())
-
     newly_created = set()
-    for bid in bundle_ids:
+    for bid in mylib.appids_in_data(bundle_ids):
         if download(bid, force=force):
             newly_created.add(bid)
     print('')

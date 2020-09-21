@@ -112,14 +112,14 @@ def process(bundle_ids, deleteOnly=False):
     print('writing index: domains ...')
     fname = fname_all()
     if bundle_ids == ['*']:
-        bundle_ids = list(mylib.enum_data_appids())
         print('  full reset')
         mylib.rm_file(fname)  # rebuild from ground up
 
     index = load_json_from_disk(fname)
-    did_change = delete_from_index(index, bundle_ids, deleteOnly=deleteOnly)
+    ids = mylib.appids_in_data(bundle_ids)
+    did_change = delete_from_index(index, ids, deleteOnly=deleteOnly)
     if not deleteOnly:
-        did_change |= insert_in_index(index, bundle_ids)
+        did_change |= insert_in_index(index, ids)
     if did_change:
         mylib.json_write(fname, index, pretty=False)
         filter_tracker_only(index)

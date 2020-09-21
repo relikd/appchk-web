@@ -65,7 +65,7 @@ def process(per_page=60):
     mylib.rm_dir(index_dir)
     mylib.mkdir(index_dir)
 
-    apps = [gen_obj(x) for x in mylib.enum_appids()]
+    apps = [gen_obj(x) for x in mylib.appids_in_out()]
     apps_total = len(apps)
     pages_total, rest = divmod(apps_total, per_page)
     if rest > 0:

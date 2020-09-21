@@ -119,13 +119,14 @@ def get_rank(bundle_id):
 
 def process(bundle_ids, deleteOnly=False):
     print('writing index: meta ...')
+    fname = fname_app_summary()
     if bundle_ids == ['*']:
-        bundle_ids = list(mylib.enum_data_appids())
         print('  full reset')
-        mylib.rm_file(fname_app_summary())  # rebuild from ground up
+        mylib.rm_file(fname)  # rebuild from ground up
 
-    index = load_json_from_disk(fname_app_summary())
-    write_summary_index(index, bundle_ids, deleteOnly=deleteOnly)
+    index = load_json_from_disk(fname)
+    ids = mylib.appids_in_data(bundle_ids)
+    write_summary_index(index, ids, deleteOnly=deleteOnly)
     write_rank_index(index)
     print('')
 
