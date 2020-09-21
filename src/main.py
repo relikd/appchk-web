@@ -6,10 +6,10 @@ import common_lib as mylib
 import bundle_combine
 import download_itunes
 import download_tracker
-import html_root
-import html_index_apps
 import html_bundle
+import html_index_apps
 import html_index_domains
+import html_root
 import index_app_names
 import index_domains
 import index_meta
@@ -58,26 +58,20 @@ def del_id(bundle_ids):
         rebuild_app_index_html(inclRoot=True)
 
 
-def combine_and_update(bundle_ids, where=None):
-    def star_reset(ids):
-        # special case needed. '*' will force rebuilt index
-        return ['*'] if not where and bundle_ids == ['*'] else ids
+def combine_and_update(bundle_ids):
     # 1. download meta data from iTunes store, incl. app icons
     new_ids = download_itunes.process(bundle_ids)
-    new_ids = star_reset(new_ids)
     # 2. if new apps, update bundle name index
+    if bundle_ids == ['*']:
+        new_ids = ['*']  # special case needed to force rebuilt index
     if len(new_ids) > 0:
         index_app_names.process(new_ids)  # after download_itunes
     # 3. re-calculate combined.json and evaluated.json files
-    affected = bundle_combine.process(bundle_ids, where=where)
-    affected = star_reset(affected)
-    # 4. was any json updated? if so, make html and update domain index
-    if len(affected) > 0:
-        index_meta.process(bundle_ids)  # after bundle_combine
-        html_bundle.process(affected)  # after index_app_names
-        rebuild_domain_index(affected)  # after bundle_combine
-    else:
-        print('no bundle affected by tracker, not generating bundle html')
+    bundle_combine.process(bundle_ids)
+    # 4. make html and update domain index
+    index_meta.process(bundle_ids)  # after bundle_combine
+    html_bundle.process(bundle_ids)  # after index_app_names
+    rebuild_domain_index(bundle_ids)  # after bundle_combine
     # 5. make all apps index
     if len(new_ids) > 0:
         rebuild_app_index_html()  # after bundle_combine
@@ -112,8 +106,11 @@ def import_update():
 
 def tracker_update():
     new_trackers = download_tracker.process()
-    if new_trackers:
-        combine_and_update(['*'], where=new_trackers)
+    affected = index_domains.all_bundles_containing(new_trackers)
+    if len(affected) > 0:
+        combine_and_update(affected)
+    else:
+        print('no bundle affected by tracker, not generating bundle html')
 
 
 try:
@@ -138,7 +135,7 @@ try:
         elif cmd == 'run':
             if len(params) == 0:
                 print_usage_and_exit()
-            combine_and_update(params)  # ['*'], where=['test.com']
+            combine_and_update(params)
         elif cmd == 'del':
             if len(params) == 0:
                 print_usage_and_exit()

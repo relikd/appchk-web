@@ -97,6 +97,17 @@ def enrich_with_bundle_ids(index):
             index[key][dom] = [index['bundle'][i] for i in ids]
 
 
+def all_bundles_containing(list_of_domains):
+    affected = set()
+    json = load_json_from_disk(fname_all())
+    haystack = sorted([x[::-1] for x in list_of_domains])
+    for key in ['pardom', 'subdom']:
+        for dom, ids in json[key].items():
+            if mylib.bintree_lookup(haystack, dom[::-1]):
+                affected.update(ids)
+    return [json['bundle'][i] for i in affected]
+
+
 def process(bundle_ids, deleteOnly=False):
     print('writing index: domains ...')
     fname = fname_all()

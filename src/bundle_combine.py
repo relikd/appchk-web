@@ -5,6 +5,7 @@ import re
 import sys
 import common_lib as mylib
 import download_tracker  # is_tracker
+import index_domains  # load
 
 
 THRESHOLD_PERCENT_OF_LOGS = 0.33  # domain appears in % recordings
@@ -110,31 +111,18 @@ def json_evaluate_inplace(obj):
     obj['avg_logs_pm'] = float3(s_c / (obj['avg_time'] or 1) * 60)
 
 
-def process(bundle_ids, where=None):
+def process(bundle_ids):
     print('writing combined json ...')
     if bundle_ids == ['*']:
         bundle_ids = list(mylib.enum_data_appids())
 
-    affected_ids = []
-    haystack = sorted([x[::-1] for x in where]) if where else None
     for bid in bundle_ids:
+        print('  ' + bid)
         obj = json_combine(bid)
-        should_update = False
-        if not haystack:
-            should_update = True
-        else:
-            for x in obj['subdom']:
-                if mylib.bintree_lookup(haystack, x[::-1]):
-                    should_update = True
-                    break
-        if should_update:
-            print('  ' + bid)
-            mylib.json_write(fname_combined(bid), obj, pretty=False)
-            json_evaluate_inplace(obj)
-            mylib.json_write(fname_evaluated(bid), obj, pretty=False)
-            affected_ids.append(bid)
+        mylib.json_write(fname_combined(bid), obj, pretty=False)
+        json_evaluate_inplace(obj)
+        mylib.json_write(fname_evaluated(bid), obj, pretty=False)
     print('')
-    return affected_ids
 
 
 if __name__ == '__main__':
