@@ -48,12 +48,8 @@ def download_info(bundle_id, lang, force=False):
         json = mylib.download(url, isJSON=True)
         json = json['results'][0]
         # delete unused keys to save on storage
-        for key in ['supportedDevices', 'releaseNotes', 'description',
-                    'screenshotUrls', 'ipadScreenshotUrls']:
-            try:
-                del(json[key])
-            except KeyError:
-                continue
+        mylib.try_del(json, ['supportedDevices', 'releaseNotes', 'description',
+                             'screenshotUrls', 'ipadScreenshotUrls'])
         mylib.json_write(fname, json, pretty=True)
 
 

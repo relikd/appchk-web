@@ -259,7 +259,15 @@ def enum_data_appids():
             yield path[prfx:].replace(os.sep, '.')
 
 
-# JSON read
+# JSON
+
+def try_del(index, keys):
+    for x in keys:
+        try:
+            del(index[x])
+        except KeyError:
+            pass
+
 
 def json_read(path):
     with open(path, 'r') as fp:

@@ -19,14 +19,6 @@ def load_json_from_disk(fname):
     return mylib.json_read(fname) if mylib.file_exists(fname) else {}
 
 
-def try_del(index, keys):
-    for x in keys:
-        try:
-            del(index[x])
-        except KeyError:
-            pass
-
-
 def json_to_list(json):
     return [
         json['sum_rec'],
@@ -62,14 +54,14 @@ def list_to_json(list):
 def write_summary_index(index, bundle_ids, deleteOnly=False):
     for bid in bundle_ids:
         # delete old value
-        try_del(index, [bid])
+        mylib.try_del(index, [bid])
         if deleteOnly:
             continue
         # set new value
         index[bid] = json_to_list(bundle_combine.get_evaluated(bid))
 
     # sum of counts
-    try_del(index, ['_sum'])
+    mylib.try_del(index, ['_sum'])
     total = [0, 0]
     for val in index.values():
         total[0] += val[0]
@@ -79,7 +71,7 @@ def write_summary_index(index, bundle_ids, deleteOnly=False):
 
 
 def write_rank_index(index):
-    try_del(index, ['_sum', '_ranks', '_min', '_max'])
+    mylib.try_del(index, ['_sum', '_ranks', '_min', '_max'])
     mins = []
     maxs = []
     if len(index) > 0:
