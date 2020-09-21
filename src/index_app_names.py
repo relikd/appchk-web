@@ -2,7 +2,7 @@
 
 import sys
 import common_lib as mylib
-import bundle_download  # app_names
+import download_itunes  # app_names
 
 _bundle_name_dict = None
 
@@ -49,7 +49,7 @@ def process(bundle_ids):
     load_json_if_not_already()
     did_change = False
     for bid in bundle_ids:
-        names = bundle_download.app_names(bid)
+        names = download_itunes.app_names(bid)
         if not names:
             mylib.err('index-app-names', 'could not load: {}'.format(bid))
             continue

@@ -3,7 +3,7 @@
 import sys
 import common_lib as mylib
 import bundle_combine  # get_evaluated
-import tracker_download  # is_tracker
+import download_tracker  # is_tracker
 
 
 def fname_all():
@@ -69,7 +69,7 @@ def insert_in_index(index, bundle_ids):
 def filter_tracker_only(index):
     sub_trkr = {}
     par_trkr = {}
-    for domain, ids in filter(lambda x: tracker_download.is_tracker(x[0]),
+    for domain, ids in filter(lambda x: download_tracker.is_tracker(x[0]),
                               index['subdom'].items()):
         sub_trkr[domain] = ids
         pardom = mylib.parent_domain(domain)

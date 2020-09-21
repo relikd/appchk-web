@@ -4,7 +4,8 @@ import sys
 import traceback
 import common_lib as mylib
 import bundle_combine
-import bundle_download
+import download_itunes
+import download_tracker
 import html_root
 import html_index_apps
 import html_bundle
@@ -12,7 +13,6 @@ import html_index_domains
 import index_app_names
 import index_domains
 import index_meta
-import tracker_download
 
 
 def print_usage_and_exit():
@@ -63,11 +63,11 @@ def combine_and_update(bundle_ids, where=None):
         # special case needed. '*' will force rebuilt index
         return ['*'] if not where and bundle_ids == ['*'] else ids
     # 1. download meta data from iTunes store, incl. app icons
-    new_ids = bundle_download.process(bundle_ids)
+    new_ids = download_itunes.process(bundle_ids)
     new_ids = star_reset(new_ids)
     # 2. if new apps, update bundle name index
     if len(new_ids) > 0:
-        index_app_names.process(new_ids)  # after bundle_download
+        index_app_names.process(new_ids)  # after download_itunes
     # 3. re-calculate combined.json and evaluated.json files
     affected = bundle_combine.process(bundle_ids, where=where)
     affected = star_reset(affected)
@@ -111,7 +111,7 @@ def import_update():
 
 
 def tracker_update():
-    new_trackers = tracker_download.process()
+    new_trackers = download_tracker.process()
     if new_trackers:
         combine_and_update(['*'], where=new_trackers)
 
@@ -127,9 +127,9 @@ try:
             import_update()
         elif cmd == 'tracker':
             tracker_update()
-            # tracker_download.combine_all()
+            # download_tracker.combine_all()
         elif cmd == 'icons':
-            if bundle_download.download_missing_icons(force=False):
+            if download_itunes.download_missing_icons(force=False):
                 rebuild_app_index_html()
         elif cmd == 'index':
             index_meta.process(['*'])

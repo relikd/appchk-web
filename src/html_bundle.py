@@ -4,7 +4,7 @@ import sys
 import time
 import math
 import common_lib as mylib
-import bundle_download  # get_genres
+import download_itunes  # get_genres
 import bundle_combine  # get_evaluated, fname_evaluated
 import index_app_names  # get_name
 import index_meta  # get_rank
@@ -113,7 +113,7 @@ def gen_html(bundle_id, obj):
 </div>'''
 
     name = index_app_names.get_name(bundle_id)
-    gernes = bundle_download.get_genres(bundle_id)
+    gernes = download_itunes.get_genres(bundle_id)
     rank, max_rank = index_meta.get_rank(bundle_id)
     obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
     return mylib.template_with_base(f'''
