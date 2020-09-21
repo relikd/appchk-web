@@ -82,20 +82,6 @@ def valid_bundle_id(bundle_id):
     return regex_bundle_id.match(bundle_id)
 
 
-def app_names(bundle_id):
-    def name_for(lang):
-        try:
-            return json_read_meta(bundle_id, lang)['trackCensoredName']
-        except Exception:
-            return None
-    ret = {}
-    for lang in ['us', 'de']:
-        name = name_for(lang)
-        if name:
-            ret[lang] = name
-    return ret
-
-
 def err(scope, msg, logOnly=False):
     logger.error('[{}] {}'.format(scope, msg))
     if not logOnly:
@@ -168,11 +154,8 @@ def file_exists(path):
 
 def symlink(source, target):
     if not file_exists(target):
+        rm_file(target)  # file_exists is false if symlink cant be followed
         os.symlink(source, target)
-
-
-def meta_json_exists(bundle_id, lang):
-    return file_exists(path_data_app(bundle_id, 'info_{}.json'.format(lang)))
 
 
 def mkdir_out_app(bundle_id):
@@ -278,10 +261,6 @@ def json_read_evaluated(bundle_id):
     return json_read(pth), pth
 
 
-def json_read_meta(bundle_id, lang):
-    return json_read(path_data_app(bundle_id, 'info_{}.json'.format(lang)))
-
-
 # JSON write
 
 def json_write(path, obj, pretty=False):
@@ -297,8 +276,3 @@ def json_write_combined(bundle_id, obj):
 def json_write_evaluated(bundle_id, obj):
     fname = path_data_app(bundle_id, 'evaluated.json')
     json_write(fname, obj, pretty=False)
-
-
-def json_write_meta(bundle_id, obj, lang):
-    fname = path_data_app(bundle_id, 'info_{}.json'.format(lang))
-    json_write(fname, obj, pretty=True)

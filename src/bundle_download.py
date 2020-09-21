@@ -3,21 +3,58 @@
 import sys
 import common_lib as mylib
 
+AVAILABLE_LANGS = ['us', 'de']  # order matters
+
+
+def fname_for(bundle_id, lang):
+    return mylib.path_data_app(bundle_id, 'info_{}.json'.format(lang))
+
+
+def read_from_disk(bundle_id, lang):
+    return mylib.json_read(fname_for(bundle_id, lang))
+
+
+def read_first_from_disk(bundle_id, langs=AVAILABLE_LANGS):
+    for lang in langs:
+        if mylib.file_exists(fname_for(bundle_id, lang)):
+            return read_from_disk(bundle_id, lang)
+    return None
+
+
+def app_names(bundle_id):
+    def name_for(lang):
+        try:
+            return read_from_disk(bundle_id, lang)['trackCensoredName']
+        except Exception:
+            return None
+    ret = {}
+    for lang in AVAILABLE_LANGS:
+        name = name_for(lang)
+        if name:
+            ret[lang] = name
+    return ret
+
+
+def get_genres(bundle_id, langs=AVAILABLE_LANGS):
+    json = read_first_from_disk(bundle_id, langs=langs)
+    return list(zip(json['genreIds'], json['genres'])) if json else []
+
 
 def download_info(bundle_id, lang, force=False):
-    if force or not mylib.meta_json_exists(bundle_id, lang):
+    fname = fname_for(bundle_id, lang)
+    if force or not mylib.file_exists(fname):
         url = 'https://itunes.apple.com/lookup?bundleId={}&country={}'.format(
             bundle_id, lang.upper())
         json = mylib.download(url, isJSON=True)
         json = json['results'][0]
         # delete unused keys to save on storage
         for key in ['supportedDevices', 'releaseNotes', 'description',
-                    'screenshotUrls']:
+                    'screenshotUrls', 'ipadScreenshotUrls']:
             try:
                 del(json[key])
             except KeyError:
                 continue
-        mylib.json_write_meta(bundle_id, json, lang)
+        mylib.json_write(fname, json, pretty=True)
 
 
 def needs_icon_path(bundle_id):
@@ -25,14 +62,14 @@ def needs_icon_path(bundle_id):
     return (mylib.file_exists(icon_file), icon_file)
 
 
-def download_icon(bundle_id, force=False, langs=['us', 'de']):
+def download_icon(bundle_id, force=False, langs=AVAILABLE_LANGS):
     exists, icon_file = needs_icon_path(bundle_id)
     if force or not exists:
         json = None
         for lang in langs:
             if not json:
                 try:
-                    json = mylib.json_read_meta(bundle_id, lang)
+                    json = read_from_disk(bundle_id, lang)
                 except Exception:
                     continue
         image_url = json['artworkUrl100']  # fail early on KeyError
@@ -42,7 +79,7 @@ def download_icon(bundle_id, force=False, langs=['us', 'de']):
     return False
 
 
-def download_missing_icons(force=False, langs=['us', 'de']):
+def download_missing_icons(force=False, langs=AVAILABLE_LANGS):
     didAny = False
     for bid in mylib.enum_appids():
         exists, _ = needs_icon_path(bid)
@@ -67,7 +104,7 @@ def download(bundle_id, force=False):
         return False
 
     mylib.printf('  {} => '.format(bundle_id))
-    for lang in ['us', 'de']:
+    for lang in AVAILABLE_LANGS:
         try:
             mylib.printf(lang)
             download_info(bundle_id, lang, force=force)

@@ -3,61 +3,137 @@
 import sys
 import common_lib as mylib
 
+_rank_dict = None
 
-def index_file():
-    return mylib.path_data_index('meta.json')
+
+def fname_app_summary():
+    return mylib.path_data_index('app_summary.json')
+
+
+def fname_app_rank():
+    return mylib.path_data_index('app_rank.json')
 
 
 def load_json_from_disk(fname):
     return mylib.json_read(fname) if mylib.file_exists(fname) else {}
 
 
-def load():
-    return load_json_from_disk(index_file())
-
-
-def get_total_counts():
-    try:
-        return load_json_from_disk(index_file())['_']
-    except KeyError:
-        return [0, 0]
-
-
-def process(bundle_ids, deleteOnly=False):
-    print('writing index: meta ...')
-    fname = index_file()
-    if bundle_ids == ['*']:
-        bundle_ids = list(mylib.enum_data_appids())
-        print('  full reset')
-        mylib.rm_file(fname)  # rebuild from ground up
-
-    # json format: `bundle-id : [#recordings, #logs, #domains, #subdomains]`
-    index = load_json_from_disk(fname)
-    for bid in bundle_ids:
-        # delete old value
+def try_del(index, keys):
+    for x in keys:
         try:
-            del(index[bid])
+            del(index[x])
         except KeyError:
             pass
+
+
+def json_to_list(json):
+    return [
+        json['sum_rec'],
+        json['sum_logs'],
+        json['sum_logs_pm'],
+        json['sum_time'],
+        json['avg_logs'],
+        json['avg_logs_pm'],
+        json['avg_time'],
+        json['last_date'],
+        len(json['pardom']),
+        len(json['subdom']),
+        json['tracker_percent']
+    ]
+
+
+def list_to_json(list):
+    return {
+        'sum_rec': list[0],
+        'sum_logs': list[1],
+        'sum_logs_pm': list[2],
+        'sum_time': list[3],
+        'avg_logs': list[4],
+        'avg_logs_pm': list[5],
+        'avg_time': list[6],
+        'last_date': list[7],
+        'pardom': list[8],
+        'subdom': list[9],
+        'tracker_percent': list[10]
+    }
+
+
+def write_summary_index(index, bundle_ids, deleteOnly=False):
+    for bid in bundle_ids:
+        # delete old value
+        try_del(index, [bid])
         if deleteOnly:
             continue
         # set new value
-        json, _ = mylib.json_read_evaluated(bid)
-        index[bid] = [json['sum_rec'], json['sum_logs'],
-                      len(json['pardom']), len(json['subdom'])]
+        evaluated_json, _ = mylib.json_read_evaluated(bid)
+        index[bid] = json_to_list(evaluated_json)
+
     # sum of counts
-    try:
-        del(index['_'])
-    except KeyError:
-        pass
+    try_del(index, ['_sum'])
     total = [0, 0]
     for val in index.values():
         total[0] += val[0]
         total[1] += val[1]
-    index['_'] = total
+    index['_sum'] = total
+    mylib.json_write(fname_app_summary(), index, pretty=False)
 
-    # write json
-    mylib.json_write(fname, index, pretty=False)
+
+def write_rank_index(index):
+    try_del(index, ['_sum', '_ranks', '_min', '_max'])
+    mins = []
+    maxs = []
+    for i in range(11):  # equal to number of array entries
+        tmp = {}
+        # make temporary reverse index
+        for bid, val in index.items():
+            try:
+                tmp[val[i]].append(bid)
+            except KeyError:
+                tmp[val[i]] = [bid]
+        # read index position from temp reverse index
+        r = 1
+        ordered = sorted(tmp.items(), reverse=i in [0, 3, 6, 7])
+        for idx, (_, ids) in enumerate(ordered):
+            for bid in ids:
+                index[bid][i] = r
+            r += len(ids)
+        mins.append(ordered[0][0])
+        maxs.append(ordered[-1][0])
+    index['_min'] = mins
+    index['_max'] = maxs
+    index['_ranks'] = len(index)
+    mylib.json_write(fname_app_rank(), index, pretty=False)
+
+
+def get_total_counts():
+    try:
+        return load_json_from_disk(fname_app_summary())['_sum']
+    except KeyError:
+        return [0, 0]
+
+
+def get_rank(bundle_id):
+    ''' Return tuples with (rank, max_rank, min_value, max_value) '''
+    global _rank_dict
+    if not _rank_dict:
+        _rank_dict = load_json_from_disk(fname_app_rank())
+    return list_to_json(list(zip(
+        _rank_dict[bundle_id],
+        _rank_dict['_min'],
+        _rank_dict['_max'],
+    ))), _rank_dict['_ranks']
+
+
+def process(bundle_ids, deleteOnly=False):
+    print('writing index: meta ...')
+    if bundle_ids == ['*']:
+        bundle_ids = list(mylib.enum_data_appids())
+        print('  full reset')
+        mylib.rm_file(fname_app_summary())  # rebuild from ground up
+
+    index = load_json_from_disk(fname_app_summary())
+    write_summary_index(index, bundle_ids, deleteOnly=deleteOnly)
+    write_rank_index(index)
     print('')
 
 
