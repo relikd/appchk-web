@@ -1,30 +1,35 @@
 #!/usr/bin/env python3
 
 import common_lib as mylib
-# import hashlib
 
 known_trackers = None
 
 
+def fname_tracker(name):
+    return mylib.path_root('data', '_eval', 'tracker_' + name)
+
+
+def enum_local(list_name):
+    path = fname_tracker(list_name)
+    if not mylib.file_exists(path):
+        mylib.err('download-tracker', 'List not found: ' + list_name)
+        return []
+    with open(path, 'r') as fp:
+        for line in fp.readlines():
+            yield line.strip()
+
+
 def is_tracker(domain):
     global known_trackers
-    if not known_trackers:
-        known_trackers = mylib.read_list('tracker_all.txt')
+    if known_trackers is None:
+        known_trackers = list(enum_local('all.txt'))
     return mylib.bintree_lookup(known_trackers, domain[::-1])
-
-
-# def md5(fname):
-#     hash_md5 = hashlib.md5()
-#     with open(fname, 'rb') as f:
-#         for chunk in iter(lambda: f.read(4096), b''):
-#             hash_md5.update(chunk)
-#     return hash_md5.hexdigest()
 
 
 def save_list(result_set, fname, binary=False):
     if not result_set:
         return []
-    out = mylib.path_root('src', 'lists', 'tracker_' + fname)
+    out = fname_tracker(fname)
     with open(out + '_tmp', 'wb' if binary else 'w') as fp:
         end = b'\n' if binary else '\n'
         for domain in sorted(result_set):
@@ -34,16 +39,11 @@ def save_list(result_set, fname, binary=False):
     except Exception:
         changes = [str(x) if binary else x for x in result_set]
     mylib.mv(out + '_tmp', out)
-    # md5_old = md5(out) if mylib.file_exists(out) else None
-    # md5_new = md5(out)
-    if changes:
-        print('  updating: ' + fname)
-    else:
-        print('  no-change: ' + fname)
+    print('  {}: {}'.format('updating' if changes else 'no-change', fname))
     return changes
 
 
-def enum_lines(url, ignore=None):
+def enum_remote(url, ignore=None):
     try:
         whole = mylib.download(url)
         for line in whole.split(b'\n'):
@@ -60,20 +60,20 @@ def github(path):
 
 def lockdown(fname, urlname):
     url = github('confirmedcode/lockdown-ios/master/LockdowniOS/') + urlname
-    return save_list(set(enum_lines(url)), fname, binary=True)
+    return save_list(set(enum_remote(url)), fname, binary=True)
 
 
 def customlist(fname):
     # We could access the 'list.txt' file directly on this server
     # However, we can't separate the api from the website then
     url = 'https://appchk.de/api/v1/trackers/'
-    return save_list(set(enum_lines(url)), fname, binary=True)
+    return save_list(set(enum_remote(url)), fname, binary=True)
 
 
 def easylist(fname, urlname):
     url = github('easylist/easylist/master/') + urlname
     res = set()
-    for x in enum_lines(url):
+    for x in enum_remote(url):
         if not x.startswith(b'||'):
             continue
         x = x[2:]
@@ -86,8 +86,8 @@ def easylist(fname, urlname):
 
 def lowe(fname):
     res = set()
-    for x in enum_lines('https://pgl.yoyo.org/adservers/serverlist.php'
-                        '?hostformat=hosts&mimetype=plaintext', b'#'):
+    for x in enum_remote('https://pgl.yoyo.org/adservers/serverlist.php'
+                         '?hostformat=hosts&mimetype=plaintext', b'#'):
         p = x.split()
         if len(p) != 2:
             mylib.err('tracker-list', 'Lowe: parsing error')
@@ -118,18 +118,17 @@ def exodus(fname):
 
 
 def combine_all(changes=['_']):
-    final = mylib.path_root('src', 'lists', 'tracker_all.txt')
+    final = fname_tracker('all.txt')
     if changes or not mylib.file_exists(final):
         print('  updating: tracker_all.txt')
     else:
         print('  no-change: tracker_all.txt')
         return
     res = set()
-    for fname in ['custom.txt', 'lowe.txt',
-                  'easylist.txt', 'easyprivacy', 'easyprivacy_int',
-                  'exodus.txt', 'lockdown_clickbait.txt',
-                  'lockdown_marketing.txt', 'lockdown_game_ads.txt']:
-        for dom in mylib.read_list('tracker_' + fname):
+    # 'lockdown_clickbait', 'lockdown_marketing', 'lockdown_game_ads'
+    for fname in ['custom', 'lowe', 'exodus',
+                  'easylist', 'easyprivacy', 'easyprivacy_int']:
+        for dom in enum_local(fname + '.txt'):
             if dom == 'google.com':
                 continue  # added by exodus, not a tracker per se
             res.add(dom[::-1])  # reverse for bintree lookup
@@ -140,6 +139,7 @@ def combine_all(changes=['_']):
 
 def process():
     print('downloading tracker domains ...')
+    mylib.mkdir(mylib.path_root('data', '_eval'))
     changes = []
     changes += customlist('custom.txt')
     changes += lowe('lowe.txt')

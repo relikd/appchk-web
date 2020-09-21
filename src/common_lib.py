@@ -97,14 +97,6 @@ def printf(msg):
 _list_TLD = None
 
 
-def read_list(list_name):
-    path = path_root('src', 'lists', list_name)
-    if not file_exists(path):
-        return []
-    with open(path, 'r') as fp:
-        return [x.strip() for x in fp.readlines()]
-
-
 def bintree_lookup(tree, needle):
     lo = 0
     hi = len(tree) - 1
@@ -125,7 +117,8 @@ def parent_domain(subdomain):
     def is_third_level(needle):
         global _list_TLD
         if not _list_TLD:
-            _list_TLD = read_list('3rd-domains.txt')
+            with open(path_root('src', '3rd-domains.txt'), 'r') as fp:
+                _list_TLD = fp.readlines()  # assuming lines have no whitespace
         return bintree_lookup(_list_TLD, needle)
 
     parts = subdomain.split('.')
