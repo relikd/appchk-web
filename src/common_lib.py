@@ -94,6 +94,9 @@ def printf(msg):
 
 # Binary Tree Search
 
+_list_TLD = None
+
+
 def read_list(list_name):
     path = path_root('src', 'lists', list_name)
     if not file_exists(path):
@@ -116,6 +119,24 @@ def bintree_lookup(tree, needle):
     if lo > 0 and needle.startswith(tree[lo - 1] + '.'):
         return True  # lo - 1
     return False  # -1
+
+
+def parent_domain(subdomain):
+    def is_third_level(needle):
+        global _list_TLD
+        if not _list_TLD:
+            _list_TLD = read_list('3rd-domains.txt')
+        return bintree_lookup(_list_TLD, needle)
+
+    parts = subdomain.split('.')
+    if len(parts) < 3:
+        return subdomain
+    elif parts[-1].isdigit():
+        return subdomain  # ip address
+    elif is_third_level(parts[-1] + '.' + parts[-2]):
+        return '.'.join(parts[-3:])
+    else:
+        return '.'.join(parts[-2:])
 
 
 # Filesystem
@@ -252,27 +273,6 @@ def json_read(path):
         return json.load(fp)
 
 
-def json_read_combined(bundle_id):
-    return json_read(path_data_app(bundle_id, 'combined.json'))
-
-
-def json_read_evaluated(bundle_id):
-    pth = path_data_app(bundle_id, 'evaluated.json')
-    return json_read(pth), pth
-
-
-# JSON write
-
 def json_write(path, obj, pretty=False):
     with open(path, 'w') as fp:
         json.dump(obj, fp, indent=2 if pretty else None, sort_keys=pretty)
-
-
-def json_write_combined(bundle_id, obj):
-    fname = path_data_app(bundle_id, 'combined.json')
-    json_write(fname, obj, pretty=False)
-
-
-def json_write_evaluated(bundle_id, obj):
-    fname = path_data_app(bundle_id, 'evaluated.json')
-    json_write(fname, obj, pretty=False)

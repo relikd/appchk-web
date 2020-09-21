@@ -4,9 +4,10 @@ import sys
 import time
 import math
 import common_lib as mylib
-import bundle_download
-import index_app_names
-import index_meta
+import bundle_download  # get_genres
+import bundle_combine  # get_evaluated, fname_evaluated
+import index_app_names  # get_name
+import index_meta  # get_rank
 
 
 def gen_dotgraph(sorted_arr):
@@ -155,17 +156,18 @@ def gen_html(bundle_id, obj):
 
 
 def process(bundle_ids):
-    print('generating html pages ...')
+    print('generating html: apps ...')
     if bundle_ids == ['*']:
         bundle_ids = list(mylib.enum_appids())
 
     for bid in bundle_ids:
         print('  ' + bid)
-        json, json_data_path = mylib.json_read_evaluated(bid)
+        json = bundle_combine.get_evaluated(bid)
         mylib.mkdir_out_app(bid)
         with open(mylib.path_out_app(bid, 'index.html'), 'w') as fp:
             fp.write(gen_html(bid, json))
-        mylib.symlink(json_data_path, mylib.path_out_app(bid, 'data.json'))
+        mylib.symlink(bundle_combine.fname_evaluated(bid),
+                      mylib.path_out_app(bid, 'data.json'))
     print('')
 
 

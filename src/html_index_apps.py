@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import common_lib as mylib
-import index_app_names
+import index_app_names  # get_name
 
 
 def gen_obj(bundle_id):
@@ -60,7 +60,7 @@ def gen_page(arr, base, page_id=1, total=1):
 
 
 def process(per_page=60):
-    print('generating app-index ...')
+    print('generating html: app-index ...')
     index_dir = mylib.path_out('index', 'apps')
     mylib.rm_dir(index_dir)
     mylib.mkdir(index_dir)

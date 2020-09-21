@@ -35,16 +35,8 @@ def rebuild_app_index_html(inclRoot=False):
 
 
 def rebuild_domain_index(bundle_ids, deleteOnly=False):
-    index_meta.process(bundle_ids, deleteOnly=deleteOnly)
     index_domains.process(bundle_ids, deleteOnly=deleteOnly)
     html_index_domains.process()
-
-
-def rebuild_name_index(new_ids):
-    if index_app_names.missing():
-        index_app_names.process(['*'])
-    elif len(new_ids) > 0:
-        index_app_names.process(new_ids)  # after bundle_download
 
 
 def del_id(bundle_ids):
@@ -60,30 +52,35 @@ def del_id(bundle_ids):
             mylib.rm_dir(dest)
             update_app_index = True
     print('')
+    index_meta.process(bundle_ids, deleteOnly=True)
     rebuild_domain_index(bundle_ids, deleteOnly=True)
     if update_app_index:
         rebuild_app_index_html(inclRoot=True)
 
 
 def combine_and_update(bundle_ids, where=None):
+    def star_reset(ids):
+        # special case needed. '*' will force rebuilt index
+        return ['*'] if not where and bundle_ids == ['*'] else ids
     # 1. download meta data from iTunes store, incl. app icons
     new_ids = bundle_download.process(bundle_ids)
+    new_ids = star_reset(new_ids)
     # 2. if new apps, update bundle name index
-    rebuild_name_index(new_ids)  # after bundle_download
+    if len(new_ids) > 0:
+        index_app_names.process(new_ids)  # after bundle_download
     # 3. re-calculate combined.json and evaluated.json files
     affected = bundle_combine.process(bundle_ids, where=where)
-    # special case needed for domain index. '*' will force rebuilt index
-    if not where and bundle_ids == ['*']:
-        affected = ['*']
+    affected = star_reset(affected)
     # 4. was any json updated? if so, make html and update domain index
     if len(affected) > 0:
-        rebuild_domain_index(affected)  # after bundle_combine
+        index_meta.process(bundle_ids)  # after bundle_combine
         html_bundle.process(affected)  # after index_app_names
+        rebuild_domain_index(affected)  # after bundle_combine
     else:
         print('no bundle affected by tracker, not generating bundle html')
     # 5. make all apps index
     if len(new_ids) > 0:
-        rebuild_app_index_html()  # must be called after bundle_combine
+        rebuild_app_index_html()  # after bundle_combine
     else:
         print('no new bundle, not rebuilding index')
 
@@ -135,6 +132,7 @@ try:
             if bundle_download.download_missing_icons(force=False):
                 rebuild_app_index_html()
         elif cmd == 'index':
+            index_meta.process(['*'])
             rebuild_domain_index(['*'])
             rebuild_app_index_html(inclRoot=True)
         elif cmd == 'run':
@@ -145,6 +143,8 @@ try:
             if len(params) == 0:
                 print_usage_and_exit()
             del_id(params)  # ['_manually']
+        else:
+            print_usage_and_exit()
 except Exception:
     mylib.err('critical', traceback.format_exc(), logOnly=True)
     raise

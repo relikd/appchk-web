@@ -2,8 +2,8 @@
 
 import sys
 import common_lib as mylib
-import bundle_combine
-import tracker_download
+import bundle_combine  # get_evaluated
+import tracker_download  # is_tracker
 
 
 def fname_all():
@@ -55,7 +55,7 @@ def insert_in_index(index, bundle_ids):
         except ValueError:  # index not found
             i = len(index['bundle'])
             index['bundle'].append(bid)
-        json, _ = mylib.json_read_evaluated(bid)
+        json = bundle_combine.get_evaluated(bid)
         for key in ['pardom', 'subdom']:  # assuming keys are identical
             for domain, _, _ in json[key]:
                 try:
@@ -72,7 +72,7 @@ def filter_tracker_only(index):
     for domain, ids in filter(lambda x: tracker_download.is_tracker(x[0]),
                               index['subdom'].items()):
         sub_trkr[domain] = ids
-        pardom = bundle_combine.get_parent_domain(domain)
+        pardom = mylib.parent_domain(domain)
         try:
             par_trkr[pardom].update(ids)
         except KeyError:

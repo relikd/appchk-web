@@ -49,7 +49,7 @@ digraph Dependency {
   index_meta -> html_index_domains
   "." -> bundle_combine
   bundle_combine -> index_meta
-  bundle_combine -> html_bundle
+  index_meta -> html_bundle
   bundle_combine -> index_domains
   index_domains -> html_index_domains
   "." -> tracker_download

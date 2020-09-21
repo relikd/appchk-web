@@ -2,6 +2,7 @@
 
 import sys
 import common_lib as mylib
+import bundle_download  # app_names
 
 _bundle_name_dict = None
 
@@ -25,7 +26,7 @@ def load_json_if_not_already():
 
 
 def write_json_to_disk():
-    mylib.json_write(index_fname(), _bundle_name_dict, pretty=True)
+    mylib.json_write(index_fname(), _bundle_name_dict, pretty=False)
 
 
 def get_name(bundle_id, langs=['us', 'de'], fallback='&lt; App-Name &gt;'):
@@ -39,7 +40,7 @@ def get_name(bundle_id, langs=['us', 'de'], fallback='&lt; App-Name &gt;'):
 
 
 def process(bundle_ids):
-    print('writing index: bundle name ...')
+    print('writing index: app names ...')
     if bundle_ids == ['*']:
         bundle_ids = list(mylib.enum_data_appids())
         print('  full reset')
@@ -48,7 +49,7 @@ def process(bundle_ids):
     load_json_if_not_already()
     did_change = False
     for bid in bundle_ids:
-        names = mylib.app_names(bid)
+        names = bundle_download.app_names(bid)
         if not names:
             mylib.err('index-app-names', 'could not load: {}'.format(bid))
             continue

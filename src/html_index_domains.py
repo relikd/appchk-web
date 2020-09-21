@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 import common_lib as mylib
-import index_app_names
+import index_app_names  # get_name
 import index_domains
-import index_meta
+import index_meta  # get_total_counts
 
 
 def a_app(bundle_id):
@@ -117,6 +117,10 @@ def gen_html_lookup(html_dir, json, key, title):
 
 def gen_html_stats(c_apps, c_domains):
     [c_recordings, c_logs] = index_meta.get_total_counts()
+    print('    {} apps'.format(c_apps))
+    print('    {} domains'.format(c_domains))
+    print('    {} recordings'.format(c_recordings))
+    print('    {} logs'.format(c_logs))
     title = 'Statistics'
     mylib.mkdir(mylib.path_out('stats'))
     with open(mylib.path_out('stats', 'index.html'), 'w') as fp:
@@ -137,7 +141,7 @@ def gen_html_stats(c_apps, c_domains):
 
 def process():
     # bundle_combine assures domain name is [a-zA-Z0-9.-]
-    print('generating domain-index ...')
+    print('generating html: domain-index ...')
     # Data export
     all_dom_dir = mylib.path_out('index', 'domains', 'all')
     trkr_dir = mylib.path_out('index', 'domains', 'tracker')

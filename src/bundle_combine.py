@@ -4,33 +4,25 @@ import os
 import re
 import sys
 import common_lib as mylib
-import tracker_download
+import tracker_download  # is_tracker
 
 
 THRESHOLD_PERCENT_OF_LOGS = 0.33  # domain appears in % recordings
 THRESHOLD_MIN_AVG_LOGS = 0.4  # at least x times in total (after %-thresh)
 
-level3_doms = None
 re_domain = re.compile(r'[^a-zA-Z0-9.-]')
 
 
-def dom_in_3rd_domain(needle):
-    global level3_doms
-    if not level3_doms:
-        level3_doms = mylib.read_list('3rd-domains.txt')
-    return mylib.bintree_lookup(level3_doms, needle)
+def fname_combined(bundle_id):
+    return mylib.path_data_app(bundle_id, 'combined.json')
 
 
-def get_parent_domain(subdomain):
-    parts = subdomain.split('.')
-    if len(parts) < 3:
-        return subdomain
-    elif parts[-1].isdigit():
-        return subdomain  # ip address
-    elif dom_in_3rd_domain(parts[-1] + '.' + parts[-2]):
-        return '.'.join(parts[-3:])
-    else:
-        return '.'.join(parts[-2:])
+def fname_evaluated(bundle_id):
+    return mylib.path_data_app(bundle_id, 'evaluated.json')
+
+
+def get_evaluated(bundle_id):
+    return mylib.json_read(fname_evaluated(bundle_id))
 
 
 def cleanup_domain_name(domain):
@@ -66,7 +58,7 @@ def json_combine(bundle_id):
                 occurs = len(logs[subdomain])
                 subdomain = cleanup_domain_name(subdomain)
                 inc_dic(subdom, subdomain, occurs)
-                par_dom = get_parent_domain(subdomain)
+                par_dom = mylib.parent_domain(subdomain)
                 try:
                     uniq_par[par_dom] += occurs
                 except KeyError:
@@ -81,6 +73,24 @@ def json_combine(bundle_id):
     return res
 
 
+def evaluate_domains(ddic, number_of_recordings):
+    res = []
+    c_sum = 0
+    c_trkr = 0
+    for name, (is_tracker, counts) in ddic.items():
+        rec_percent = len(counts) / number_of_recordings
+        if rec_percent < THRESHOLD_PERCENT_OF_LOGS:
+            continue
+        avg = sum(counts) / number_of_recordings  # len(counts)
+        if avg < THRESHOLD_MIN_AVG_LOGS:
+            continue
+        res.append([name, round(avg + 0.001), is_tracker])
+        c_sum += avg
+        c_trkr += avg if is_tracker else 0
+    res.sort(key=lambda x: (-x[1], x[0]))  # sort by count desc, then name
+    return res, c_trkr, c_sum
+
+
 def json_evaluate_inplace(obj):
     def float3(val):
         return int(val * 1000) / 1000
@@ -93,26 +103,8 @@ def json_evaluate_inplace(obj):
     obj['sum_logs_pm'] = float3(obj['sum_logs'] / (time_total or 1) * 60)
     obj['sum_time'] = time_total
     obj['avg_time'] = float3(time_total / rec_count)
-
-    def transform(ddic):
-        res = []
-        c_sum = 0
-        c_trkr = 0
-        for name, (is_tracker, counts) in ddic.items():
-            rec_percent = len(counts) / rec_count
-            if rec_percent < THRESHOLD_PERCENT_OF_LOGS:
-                continue
-            avg = sum(counts) / rec_count  # len(counts)
-            if avg < THRESHOLD_MIN_AVG_LOGS:
-                continue
-            res.append([name, round(avg + 0.001), is_tracker])
-            c_sum += avg
-            c_trkr += avg if is_tracker else 0
-        res.sort(key=lambda x: (-x[1], x[0]))  # sort by count desc, then name
-        return res, c_trkr, c_sum
-
-    obj['pardom'], p_t, p_c = transform(obj['pardom'])
-    obj['subdom'], s_t, s_c = transform(obj['subdom'])
+    obj['pardom'], p_t, p_c = evaluate_domains(obj['pardom'], rec_count)
+    obj['subdom'], s_t, s_c = evaluate_domains(obj['subdom'], rec_count)
     obj['tracker_percent'] = float3(s_t / (s_c or 1))
     obj['avg_logs'] = float3(s_c)
     obj['avg_logs_pm'] = float3(s_c / (obj['avg_time'] or 1) * 60)
@@ -137,9 +129,9 @@ def process(bundle_ids, where=None):
                     break
         if should_update:
             print('  ' + bid)
-            mylib.json_write_combined(bid, obj)
+            mylib.json_write(fname_combined(bid), obj, pretty=False)
             json_evaluate_inplace(obj)
-            mylib.json_write_evaluated(bid, obj)
+            mylib.json_write(fname_evaluated(bid), obj, pretty=False)
             affected_ids.append(bid)
     print('')
     return affected_ids

@@ -2,6 +2,7 @@
 
 import sys
 import common_lib as mylib
+import bundle_combine  # get_evaluated
 
 _rank_dict = None
 
@@ -65,8 +66,7 @@ def write_summary_index(index, bundle_ids, deleteOnly=False):
         if deleteOnly:
             continue
         # set new value
-        evaluated_json, _ = mylib.json_read_evaluated(bid)
-        index[bid] = json_to_list(evaluated_json)
+        index[bid] = json_to_list(bundle_combine.get_evaluated(bid))
 
     # sum of counts
     try_del(index, ['_sum'])
@@ -82,26 +82,27 @@ def write_rank_index(index):
     try_del(index, ['_sum', '_ranks', '_min', '_max'])
     mins = []
     maxs = []
-    for i in range(11):  # equal to number of array entries
-        tmp = {}
-        # make temporary reverse index
-        for bid, val in index.items():
-            try:
-                tmp[val[i]].append(bid)
-            except KeyError:
-                tmp[val[i]] = [bid]
-        # read index position from temp reverse index
-        r = 1
-        ordered = sorted(tmp.items(), reverse=i in [0, 3, 6, 7])
-        for idx, (_, ids) in enumerate(ordered):
-            for bid in ids:
-                index[bid][i] = r
-            r += len(ids)
-        mins.append(ordered[0][0])
-        maxs.append(ordered[-1][0])
+    if len(index) > 0:
+        for i in range(11):  # equal to number of array entries
+            tmp = {}
+            # make temporary reverse index
+            for bid, val in index.items():
+                try:
+                    tmp[val[i]].append(bid)
+                except KeyError:
+                    tmp[val[i]] = [bid]
+            # read index position from temp reverse index
+            r = 1
+            ordered = sorted(tmp.items(), reverse=i in [0, 3, 6, 7])
+            for idx, (_, ids) in enumerate(ordered):
+                for bid in ids:
+                    index[bid][i] = r
+                r += len(ids)
+            mins.append(ordered[0][0])
+            maxs.append(ordered[-1][0])
+    index['_ranks'] = len(index)
     index['_min'] = mins
     index['_max'] = maxs
-    index['_ranks'] = len(index)
     mylib.json_write(fname_app_rank(), index, pretty=False)
 
 
