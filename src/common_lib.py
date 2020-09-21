@@ -219,11 +219,11 @@ def diff_files(fileA, fileB):
                         diff.append(b.strip())
                         b = fpB.readline()
             while a != '':
-                a = fpA.readline()
                 diff.append(a.strip())
+                a = fpA.readline()
             while b != '':
-                b = fpB.readline()
                 diff.append(b.strip())
+                b = fpB.readline()
             return diff
 
 
