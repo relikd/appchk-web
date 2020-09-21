@@ -13,7 +13,7 @@ def gen_root():
     Information about the research project will be added soon. Stay tuned.
   </p>
   <a id="get-appcheck" class="no-ul" href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">
-    <img src="/static/appcheck.svg" alt="app-icon" width="30" height="30">
+    <img class="app-icon" src="/static/appcheck.svg" alt="app-icon" width="30" height="30">
     <p>
       Get the iOS App and contribute.<br />
       Join the TestFlight Beta.

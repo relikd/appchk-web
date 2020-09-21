@@ -7,16 +7,11 @@ import tracker_download
 
 
 def fname_all():
-    return mylib.path_data_index('all_domains.json')
+    return mylib.path_data_index('domains_all.json')
 
 
 def fname_tracker():
-    return mylib.path_data_index('tracker_domains.json')
-
-
-def index_fname(tracker_only=False):
-    return mylib.path_data_index(
-        'tracker_domains.json' if tracker_only else 'all_domains.json')
+    return mylib.path_data_index('domains_tracker.json')
 
 
 def load_json_from_disk(index_file):

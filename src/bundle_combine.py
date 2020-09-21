@@ -77,19 +77,22 @@ def json_combine(bundle_id):
             mylib.err('bundle-combine', 'skip: ' + fname)
     res['pardom'] = pardom
     res['subdom'] = subdom
-    res['last_date'] = latest
+    res['last_date'] = int(latest)
     return res
 
 
 def json_evaluate_inplace(obj):
+    def float3(val):
+        return int(val * 1000) / 1000
+
     rec_count = len(obj['rec_len'])
     time_total = sum(obj['rec_len'])
     del(obj['rec_len'])
     obj['sum_rec'] = rec_count
     obj['sum_logs'] = sum([sum(x[1]) for x in obj['pardom'].values()])
-    obj['sum_logs_pm'] = obj['sum_logs'] / (time_total or 1) * 60
+    obj['sum_logs_pm'] = float3(obj['sum_logs'] / (time_total or 1) * 60)
     obj['sum_time'] = time_total
-    obj['avg_time'] = time_total / rec_count
+    obj['avg_time'] = float3(time_total / rec_count)
 
     def transform(ddic):
         res = []
@@ -110,9 +113,9 @@ def json_evaluate_inplace(obj):
 
     obj['pardom'], p_t, p_c = transform(obj['pardom'])
     obj['subdom'], s_t, s_c = transform(obj['subdom'])
-    obj['tracker_percent'] = s_t / (s_c or 1)
-    obj['avg_logs'] = s_c
-    obj['avg_logs_pm'] = s_c / (obj['avg_time'] or 1) * 60
+    obj['tracker_percent'] = float3(s_t / (s_c or 1))
+    obj['avg_logs'] = float3(s_c)
+    obj['avg_logs_pm'] = float3(s_c / (obj['avg_time'] or 1) * 60)
 
 
 def process(bundle_ids, where=None):

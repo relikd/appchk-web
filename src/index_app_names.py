@@ -7,7 +7,7 @@ _bundle_name_dict = None
 
 
 def index_fname():
-    return mylib.path_data_index('bundle_names.json')
+    return mylib.path_data_index('app_names.json')
 
 
 def missing():
@@ -50,7 +50,7 @@ def process(bundle_ids):
     for bid in bundle_ids:
         names = mylib.app_names(bid)
         if not names:
-            mylib.err('index-bundle-names', 'could not load: {}'.format(bid))
+            mylib.err('index-app-names', 'could not load: {}'.format(bid))
             continue
         _bundle_name_dict[bid] = names
         did_change = True
