@@ -105,12 +105,20 @@ def gen_html_lookup(html_dir, json, key, title):
     with open(mylib.path_add(html_dir, 'index.html'), 'w') as fp:
         fp.write(mylib.template_with_base(f'''
 <h2 id="name"></h2>
-<p>Present in: <b id="num_apps">… applications</b></p>
+<p>Present in: <b id="num-apps">… applications</b></p>
 <h3>Apps containing this domain:</h3>
-<div id="app_list" class="no-ul-all">loading…</div>
-<script type="text/javascript" src="/static/lookup-domain.js?1"></script>
+<div id="app-toc" class="no-ul-all">
+  <a>
+    <div>
+      <img width="100" height="100">
+      <span class="name"></span><br />
+      <span class="detail"></span>
+    </div>
+  </a>
+</div>
+<script type="text/javascript" src="/static/lookup-domain.js"></script>
 <script type="text/javascript">
-  lookup_domain_fragment('doms.json', 'apps.json', 'name', 'num_apps', 'app_list');
+  lookup_domain_js('doms.json', 'apps.json', 'name', 'num-apps', 'app-toc');
 </script>
 ''', title=title))
 
