@@ -107,13 +107,13 @@ def gen_lookup(html_dir, doms_dict, names_dict, title):
     mylib.json_write(mylib.path_add(html_dir, 'doms.json'), doms_dict)
 
 
-def gen_stats(c_apps, c_domains, title):
+def gen_results(c_apps, c_domains, title):
     [c_recordings, c_logs] = index_meta.get_total_counts()
     print('    {} apps'.format(c_apps))
     print('    {} domains'.format(c_domains))
     print('    {} recordings'.format(c_recordings))
     print('    {} logs'.format(c_logs))
-    HTML.write(mylib.path_out('stats'), '''
+    HTML.write(mylib.path_out('results'), '''
 <h2>{}</h2>
 <p>The AppCheck database currently contains <b>{:,}&nbsp;apps</b> with a total of <b>{:,} unique domains</b>.</p>
 <p>Collected through <b>{:,}&nbsp;recordings</b> with <b>{:,} individual requests</b>.</p>
@@ -124,7 +124,7 @@ def gen_stats(c_apps, c_domains, title):
   <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
 </ul>'''.format(title, c_apps, c_domains, c_recordings, c_logs), title=title)
     mylib.symlink(index_meta.fname_app_rank(),
-                  mylib.path_out('stats', 'rank.json'))  # after HTML.write
+                  mylib.path_out('results', 'rank.json'))  # after HTML.write
 
 
 def process():
@@ -153,8 +153,8 @@ def process():
                      json=index_domains.load(tracker=True), title='Tracker',
                      symlink=index_domains.fname_tracker())
     # Stats
-    print('  Stats')
-    gen_stats(app_count, dom_count, title='Results')
+    print('  Results')
+    gen_results(app_count, dom_count, title='Results')
     print('')
 
 
