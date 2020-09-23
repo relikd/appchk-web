@@ -95,10 +95,7 @@ def write_rank_index(index):
     index['_ranks'] = len(index)
     index['_min'] = mins
     index['_max'] = maxs
-    # write evaluated file
-    fname = fname_app_rank()
-    mylib.json_write(fname, index, pretty=False)
-    mylib.symlink(fname, mylib.path_out('stats', 'rank.json'))
+    mylib.json_write(fname_app_rank(), index, pretty=False)
 
 
 def get_total_counts():

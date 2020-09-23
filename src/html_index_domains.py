@@ -123,6 +123,8 @@ def gen_stats(c_apps, c_domains, title):
   <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
   <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
 </ul>'''.format(title, c_apps, c_domains, c_recordings, c_logs), title=title)
+    mylib.symlink(index_meta.fname_app_rank(),
+                  mylib.path_out('stats', 'rank.json'))  # after HTML.write
 
 
 def process():
