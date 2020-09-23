@@ -103,10 +103,14 @@ def gen_404():
 
 def process():
     print('generating root html ...')
+    print('  index.html')
     gen_root()  # root index.thml
+    print('  redirect.html')
     gen_search()  # root redirect.html?id=my.bundle.id
-    gen_help()
+    print('  404.html')
     gen_404()
+    print('  /help/')
+    gen_help()
     print('')
 
 

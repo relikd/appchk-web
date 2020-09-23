@@ -119,7 +119,7 @@ def gen_stats(c_apps, c_domains, title):
 <p>Collected through <b>{:,}&nbsp;recordings</b> with <b>{:,} individual requests</b>.</p>
 <ul>
   <li>List of <a href="/index/apps/">Apps</a></li>
-  <li>List of <a href="/category/">All Categories</a></li>
+  <li>List of <a href="/category/">Categories</a></li>
   <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
   <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
 </ul>'''.format(title, c_apps, c_domains, c_recordings, c_logs), title=title)
@@ -154,7 +154,7 @@ def process():
                      symlink=index_domains.fname_tracker())
     # Stats
     print('  Stats')
-    gen_stats(app_count, dom_count, title='Statistics')
+    gen_stats(app_count, dom_count, title='Results')
     print('')
 
 
