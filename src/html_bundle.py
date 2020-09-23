@@ -111,11 +111,16 @@ def gen_page(bundle_id, obj):
 
 def process(bundle_ids):
     print('generating html: apps ...')
+    i = 0
     for bid in mylib.appids_in_out(bundle_ids):
-        # print('  ' + bid)
         gen_page(bid, bundle_combine.get_evaluated(bid))
         mylib.symlink(bundle_combine.fname_evaluated(bid),
                       mylib.path_out_app(bid, 'data.json'))
+        mylib.printf('  .' if i == 0 else '.')
+        i = (i + 1) % 50
+        if i == 0:
+            print('')  # close printf
+    print('')  # close printf
     print('')
 
 

@@ -43,9 +43,12 @@ digraph Dependency {
   "." -> html_root
   "." -> download_itunes
   download_itunes -> index_app_names
+  download_itunes -> index_categories
+  index_categories -> html_categories
   index_app_names -> html_bundle
   index_app_names -> html_index_apps
   index_app_names -> html_index_domains
+  index_app_names -> html_categories
   index_meta -> html_index_domains
   "." -> bundle_combine
   bundle_combine -> index_meta

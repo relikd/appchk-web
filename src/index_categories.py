@@ -58,15 +58,6 @@ def reset_index():
     _dict_apps = None
 
 
-def try_persist_changes(flag_apps, flag_names):
-    if flag_apps:
-        print('  write app-index')
-        mylib.json_write(fname_app_categories(), _dict_apps, pretty=False)
-    if flag_names:
-        print('  write name-index')
-        mylib.json_write(fname_category_names(), _dict_names, pretty=False)
-
-
 def get_categories(bundle_id):
     load_json_if_not_already()
     try:
@@ -110,8 +101,8 @@ def process(bundle_ids, force=False):
         reset_index()
 
     load_json_if_not_already()
-    write_app_index = False
     write_name_index = False
+    write_app_index = False
     for bid in mylib.appids_in_data(bundle_ids):
         genre_ids = []
         for lang, gid, gname in download_itunes.enum_genres(bid):
@@ -122,7 +113,12 @@ def process(bundle_ids, force=False):
         if try_update_app(bid, genre_ids):
             write_app_index = True
 
-    try_persist_changes(write_app_index, write_name_index)
+    if write_name_index:
+        print('  write name-index')
+        mylib.json_write(fname_category_names(), _dict_names, pretty=False)
+    if write_app_index:
+        print('  write app-index')
+        mylib.json_write(fname_app_categories(), _dict_apps, pretty=False)
     print('')
 
 
@@ -131,5 +127,5 @@ if __name__ == '__main__':
     if len(args) > 0:
         process(args)
     else:
-        # process(['*'])
+        # process(['*'], force=True)
         mylib.usage(__file__, '[bundle_id] [...]')

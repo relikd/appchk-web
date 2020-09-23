@@ -69,18 +69,18 @@ def download_icon(bundle_id, force=False, langs=AVAILABLE_LANGS):
 
 
 def download_missing_icons(force=False, langs=AVAILABLE_LANGS):
-    didAny = False
+    affected = []
     for bid in mylib.appids_in_out():
         exists, _ = needs_icon_path(bid)
         if not exists:
-            if not didAny:
+            if not affected:
                 print('downloading missing icons ...')
-                didAny = True
+                affected.append(bid)
             print('  ' + bid)
             download_icon(bid, force=force, langs=langs)
-    if didAny:
+    if affected:
         print('')
-    return didAny
+    return affected
 
 
 def download(bundle_id, force=False):
