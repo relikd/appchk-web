@@ -3,9 +3,8 @@
 import os
 import re
 import sys
-import common_lib as mylib
+import lib_common as mylib
 import download_tracker  # is_tracker
-import index_domains  # load
 
 
 THRESHOLD_PERCENT_OF_LOGS = 0.33  # domain appears in % recordings

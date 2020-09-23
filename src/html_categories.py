@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import common_lib as mylib
+import lib_common as mylib
 import lib_html as HTML
 import index_categories  # enum_all_categories
 

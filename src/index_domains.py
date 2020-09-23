@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import common_lib as mylib
+import lib_common as mylib
 import bundle_combine  # get_evaluated
 import download_tracker  # is_tracker
 

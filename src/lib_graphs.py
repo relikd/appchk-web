@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import math
-import common_lib as mylib
+import lib_common as mylib
 import lib_html as HTML
 
 
