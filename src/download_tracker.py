@@ -22,6 +22,8 @@ def enum_local(list_name):
 def is_tracker(domain):
     global known_trackers
     if known_trackers is None:
+        if not mylib.file_exists(fname_tracker('all.txt')):
+            process()
         known_trackers = list(enum_local('all.txt'))
     return mylib.bintree_lookup(known_trackers, domain[::-1])
 

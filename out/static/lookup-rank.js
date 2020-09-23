@@ -1,5 +1,5 @@
 function lookup_rank_js(bundle_id) {
-  loadJSON('/stats/rank.json', function(response) {
+  loadJSON('/results/rank.json', function(response) {
     let json = JSON.parse(response);
     if (!json) { return; }
     let rank = json[bundle_id];
