@@ -118,7 +118,7 @@ def parent_domain(subdomain):
         global _list_TLD
         if not _list_TLD:
             with open(path_root('src', '3rd-domains.txt'), 'r') as fp:
-                _list_TLD = fp.readlines()  # assuming lines have no whitespace
+                _list_TLD = [x.strip() for x in fp.readlines()]
         return bintree_lookup(_list_TLD, needle)
 
     parts = subdomain.split('.')
