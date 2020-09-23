@@ -272,11 +272,14 @@ def appids_in_data(selection=['*']):
 # JSON
 
 def try_del(index, keys):
+    did_change = False
     for x in keys:
         try:
             del(index[x])
+            did_change = True
         except KeyError:
             pass
+    return did_change
 
 
 def json_read(path):

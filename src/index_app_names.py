@@ -39,7 +39,7 @@ def get_name(bundle_id, langs=['us', 'de'], fallback='&lt; App-Name &gt;'):
     return fallback  # None
 
 
-def process(bundle_ids):
+def process(bundle_ids, deleteOnly=False):
     print('writing index: app names ...')
     if bundle_ids == ['*']:
         print('  full reset')
@@ -48,13 +48,22 @@ def process(bundle_ids):
     load_json_if_not_already()
     did_change = False
     for bid in mylib.appids_in_data(bundle_ids):
+        if deleteOnly:
+            did_change |= mylib.try_del(_bundle_name_dict, [bid])
+            continue
         names = download_itunes.get_app_names(bid)
         if not names:
             mylib.err('index-app-names', 'could not load: {}'.format(bid))
             continue
+        try:
+            if _bundle_name_dict[bid] == names:
+                continue
+        except KeyError:
+            pass
         _bundle_name_dict[bid] = names
         did_change = True
     if did_change:
+        print('  writing')
         write_json_to_disk()
     else:
         print('  no change')
@@ -66,5 +75,5 @@ if __name__ == '__main__':
     if len(args) > 0:
         process(args)
     else:
-        # process(['*'])
+        # process(['*'], deleteOnly=False)
         mylib.usage(__file__, '[bundle_id] [...]')
