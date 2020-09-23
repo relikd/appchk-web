@@ -1,76 +1,51 @@
 #!/usr/bin/env python3
 
 import sys
-import time
-import math
 import common_lib as mylib
-import download_itunes  # get_genres
+import lib_graphs as Graph
+import lib_html as HTML
 import bundle_combine  # get_evaluated, fname_evaluated
 import index_app_names  # get_name
+import index_categories  # get_categories
 
 
-def gen_dotgraph(sorted_arr):
-    txt = ''
-    for name, count, mark in sorted_arr:
-        title = '{} ({})'.format(name, count) if count > 1 else name
-        clss = ' class="trckr"' if mark else ''
-        txt += '<span{0} title="{1}"><p>{1}</p>'.format(clss, title)
-        txt += '<i></i>' * count
-        txt += '</span>'
-    return '<div class="dot-graph">{}</div>'.format(txt)
+def trkr_if(flag):
+    return ' class="trckr"' if flag else ''
 
 
-def gen_pie_chart(parts, classes, stroke=0.6):
-    size = 1000
-    stroke *= size * 0.5
-    stroke_p = '{:.0f}'.format(stroke)
-    r = (0.99 * size - stroke) / 2
-    r_p = '{:.0f},{:.0f}'.format(r, r)
-    mid = '{:.0f}'.format(size / 2)
-
-    def arc(deg):
-        deg -= 90
-        x = r * math.cos(math.pi * deg / 180)
-        y = r * math.sin(math.pi * deg / 180)
-        return '{:.0f},{:.0f}'.format(size / 2 + x, size / 2 + y)
-
-    txt = ''
-    total = 0
-    for i, x in enumerate(parts):
-        clss = classes[i % len(classes)]
-        deg = x * 360
-        if x == 0:
-            continue
-        elif x == 1:
-            txt += f'<circle fill="transparent" class="{clss}" stroke-width="{stroke_p}" cx="{mid}" cy="{mid}" r="{r}"/>'
-        else:
-            txt += f'<path fill="transparent" class="{clss}" stroke-width="{stroke_p}" d="M{arc(total)}A{r_p},0,{1 if deg > 180 else 0},1,{arc(total + deg)}" />'
-        total += deg
-    return '<svg viewBox="0 0 {0} {0}" width="100" height="100">{1}</svg>'.format(size, txt)
+def domain_w_count(domain, count):
+    if count > 1:
+        return '{} ({})'.format(domain, count)
+    return domain
 
 
-def gen_radial_graph(percent):
-    return gen_pie_chart([1 - percent, percent], ['cs0', 'cs1'])
-
-
-def gen_dom_tags(sorted_arr, isSub, onlyTrackers=False):
-    txt = ''
+def gen_dom_tags(sorted_arr, fn_a_html, onlyTrackers=False):
+    src = ''
     anyMark = False
-    for i, (name, count, mark) in enumerate(sorted_arr):
-        title = '{} ({})'.format(name, count) if count > 1 else name
-        clss = ' class="trckr"' if mark and not onlyTrackers else ''
-        txt += '<a{} href="/{}/#{}">{}</a> '.format(
-            clss, 'subdomain' if isSub else 'domain', name, title)
+    for name, count, mark in sorted_arr:
         anyMark |= mark
-    if txt:
-        note = '<p class="trckr">* Potential trackers are highlighted</p>'
-        return '<div class="{}tags">{}{}</div>'.format(
-            'trckr ' if onlyTrackers else '', txt, note if anyMark else '')
+        src += fn_a_html(name, domain_w_count(name, count),
+                         attr_str=trkr_if(mark and not onlyTrackers)) + ' '
+    if src:
+        if anyMark:
+            src += '<p class="trckr">* Potential trackers are highlighted</p>'
+        clss = ' trckr' if onlyTrackers else ''
+        return f'<div class="tags{clss}">{src}</div>'
     else:
         return '<i>– None –</i>'
 
 
-def gen_html(bundle_id, obj):
+def gen_dotgraph(arr):
+    return Graph.dotgraph([(domain_w_count(title, num), num, trkr_if(f))
+                           for title, num, f in arr])
+
+
+def stat(col, title, ident, value, optional=None):
+    return Graph.rank_tile(title, value, optional, {
+        'id': ident, 'class': 'col' + str(col)})
+
+
+def gen_page(bundle_id, obj):
 
     def round_num(num):
         return format(num, '.1f')  # .rstrip('0').rstrip('.')
@@ -81,48 +56,29 @@ def gen_html(bundle_id, obj):
     def as_percent(value):
         return round_num(value * 100) + '%'
 
-    def as_date(value):
-        return '<time datetime="{}">{} UTC</time>'.format(
-            time.strftime('%Y-%m-%d %H:%M', time.gmtime(value)),
-            time.strftime('%Y-%m-%d, %H:%M', time.gmtime(value))
-        )
-
     def seconds_to_time(seconds):
         seconds = int(seconds)
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
         return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
 
-    def stat(col, title, ident, value, optional=None):
-        if optional:
-            value += '<i class="snd mg_lr">({})</i>'.format(optional)
-        return '''
-<div id="{}" class="col{}">
-  <h4>{}</h4>
-  <div class="percentile"><div style="left: 50%"></div></div>
-  <b class="mg_lr">{}</b>
-  <p class="snd">
-    Rank:&nbsp;<b>?</b>,
-    best:&nbsp;<i>?</i>,
-    worst:&nbsp;<i>?</i></p>
-</div>'''.format(ident, col, title, value)
-
     name = index_app_names.get_name(bundle_id)
-    gernes = download_itunes.get_genres(bundle_id)
+    gernes = index_categories.get_categories(bundle_id)
     obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
-    return mylib.template_with_base(f'''
+
+    HTML.write(mylib.path_out_app(bundle_id), f'''
 <h2 class="title">{name}</h2>
 <p class="subtitle snd"><i class="mg_lr">Bundle-id:</i>{ bundle_id }</p>
 <div id="meta">
   <div class="icons">
-    { gen_radial_graph(obj['tracker_percent']) }
+    { Graph.pie_chart_tracker(obj['tracker_percent']) }
     <img class="app-icon" src="icon.png" alt="app-icon" width="100" height="100">
   </div>
   <table>
     <tr><td>App Categories:</td><td>{
-      ', '.join([name for i, name in gernes])
+      ', '.join([HTML.a_category(i, name) for i, name in gernes])
     }</td></tr>
-    <tr><td>Last Update:</td><td>{as_date(obj['last_date'])}</td></tr>
+    <tr><td>Last Update:</td><td>{HTML.date_utc(obj['last_date'])}</td></tr>
   </table>
 </div>
 <div id="stats">
@@ -138,13 +94,13 @@ def gen_html(bundle_id, obj):
 <h3>Connections</h3>
 <div>
   <h4>Potential Trackers ({ len(obj['tracker']) }):</h4>
-  { gen_dom_tags(obj['tracker'], isSub=True, onlyTrackers=True) }
+  { gen_dom_tags(obj['tracker'], HTML.a_subdomain, onlyTrackers=True) }
   <h4>Domains ({ len(obj['pardom']) }):</h4>
   { gen_dotgraph(obj['pardom']) }
-  { gen_dom_tags(obj['pardom'], isSub=False) }
+  { gen_dom_tags(obj['pardom'], HTML.a_domain) }
   <h4>Subdomains ({ len(obj['subdom']) }):</h4>
   { gen_dotgraph(obj['subdom']) }
-  { gen_dom_tags(obj['subdom'], isSub=True) }
+  { gen_dom_tags(obj['subdom'], HTML.a_subdomain) }
 </div>
 <p class="right snd">Download: <a href="data.json" download="{bundle_id}.json">json</a></p>
 <script type="text/javascript" src="/static/lookup-rank.js"></script>
@@ -156,11 +112,8 @@ def gen_html(bundle_id, obj):
 def process(bundle_ids):
     print('generating html: apps ...')
     for bid in mylib.appids_in_out(bundle_ids):
-        print('  ' + bid)
-        mylib.mkdir_out_app(bid)
-        json = bundle_combine.get_evaluated(bid)
-        with open(mylib.path_out_app(bid, 'index.html'), 'w') as fp:
-            fp.write(gen_html(bid, json))
+        # print('  ' + bid)
+        gen_page(bid, bundle_combine.get_evaluated(bid))
         mylib.symlink(bundle_combine.fname_evaluated(bid),
                       mylib.path_out_app(bid, 'data.json'))
     print('')

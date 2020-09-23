@@ -14,30 +14,23 @@ def read_from_disk(bundle_id, lang):
     return mylib.json_read(fname_for(bundle_id, lang))
 
 
-def read_first_from_disk(bundle_id, langs=AVAILABLE_LANGS):
-    for lang in langs:
-        if mylib.file_exists(fname_for(bundle_id, lang)):
-            return read_from_disk(bundle_id, lang)
-    return None
-
-
-def app_names(bundle_id):
-    def name_for(lang):
-        try:
-            return read_from_disk(bundle_id, lang)['trackCensoredName']
-        except Exception:
-            return None
-    ret = {}
+def enum_all_from_disk(bundle_id):
     for lang in AVAILABLE_LANGS:
-        name = name_for(lang)
-        if name:
-            ret[lang] = name
-    return ret
+        try:
+            yield lang, read_from_disk(bundle_id, lang)
+        except Exception:
+            pass
 
 
-def get_genres(bundle_id, langs=AVAILABLE_LANGS):
-    json = read_first_from_disk(bundle_id, langs=langs)
-    return list(zip(json['genreIds'], json['genres'])) if json else []
+def get_app_names(bundle_id):
+    return {lang: json['trackCensoredName']
+            for lang, json in enum_all_from_disk(bundle_id)}
+
+
+def enum_genres(bundle_id):
+    for lang, json in enum_all_from_disk(bundle_id):
+        for gid, name in zip(json['genreIds'], json['genres']):
+            yield lang, gid, name
 
 
 def download_info(bundle_id, lang, force=False):

@@ -48,7 +48,7 @@ def process(bundle_ids):
     load_json_if_not_already()
     did_change = False
     for bid in mylib.appids_in_data(bundle_ids):
-        names = download_itunes.app_names(bid)
+        names = download_itunes.get_app_names(bid)
         if not names:
             mylib.err('index-app-names', 'could not load: {}'.format(bid))
             continue

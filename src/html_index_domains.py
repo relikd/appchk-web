@@ -1,23 +1,11 @@
 #!/usr/bin/env python3
 
 import common_lib as mylib
+import lib_graphs as Graph
+import lib_html as HTML
 import index_app_names  # get_name
 import index_domains
 import index_meta  # get_total_counts
-
-
-def a_app(bundle_id):
-    return '<a href="/app/{}/">{}</a>'.format(
-        bundle_id, index_app_names.get_name(bundle_id))
-
-
-def a_dom(domain, key):
-    return '<a href="/{0}/#{1}">{1}</a>'.format(key, domain)
-
-
-def div_dom(domain, count, key):
-    return '{} <span>found in {} {}</span>'.format(
-        a_dom(domain, key), count, 'apps' if count > 1 else 'app')
 
 
 def dropdown_choose(button):
@@ -33,156 +21,138 @@ def dropdown_choose(button):
 </div>'''
 
 
+def div_dom(fn_a_html, domain, count):
+    return '{} <span>found in {} {}</span>'.format(
+        fn_a_html(domain), count, 'apps' if count > 1 else 'app')
+
+
 def duo_list(list1, list2):
-    txt1 = '<br>\n'.join([div_dom(dom, len(ids), 'subdomain') for dom, ids in list1])
-    txt2 = '<br>\n'.join([div_dom(dom, len(ids), 'domain') for dom, ids in list2])
-    return '''
+    def full(fn_a_html, arr):
+        return '<br>\n'.join([div_dom(fn_a_html, domain, count)
+                              for domain, count in arr])
+    return f'''
 <div id="dom-toc" class="found-in">
   <div id="subdomains">
-    <h3>Subdomains ({}) <a class="snd mg_lr" href="#domains">go to Domains</a></h3>
-    {}
+    <h3 class="stick-top">Subdomains ({len(list1)})
+      <a class="snd mg_lr" href="#domains">go to Domains</a></h3>
+    { full(HTML.a_subdomain, list1) }
   </div><div id="domains">
-    <h3>Domains ({}) <a class="snd mg_lr" href="#subdomains">go to Subdomains</a></h3>
-    {}
+    <h3 class="stick-top">Domains ({len(list2)})
+      <a class="snd mg_lr" href="#subdomains">go to Subdomains</a></h3>
+    { full(HTML.a_domain, list2) }
   </div>
-</div>'''.format(len(list1), txt1, len(list2), txt2)
+</div>'''
 
 
-def gen_html_index(l1, l2, fname, title, button):
-    with open(fname, 'w') as fp:
-        fp.write(mylib.template_with_base(
-            f'<h2>{title}</h2>' + dropdown_choose(button) + duo_list(l1, l2),
-            title=title))
+def gen_html_top_10(path, subset, total, title):
+    src = ''
+    for dom, count in subset:
+        src += '\n<div>{} {}</div>'.format(
+            div_dom(HTML.a_domain, dom, count), Graph.fill_bar(count / total))
 
-
-def gen_html_top_10(subset, fname, total, title):
-
-    def div_loadbar(percent):
-        return '<span class="loadbar"><span style="width: {0}%">{0}%</span></span>'.format(percent)
-
-    with open(fname, 'w') as fp:
-        txt = f'''
-<div class="div-center">
+    HTML.write(path, f'''
 <h2 class="center">{ title }</h2>
-<div id="dom-top10" class="found-in">'''
-        for dom, ids in subset:
-            dom_str = div_dom(dom, len(ids), 'domain')
-            pct_bar = div_loadbar(round(len(ids) / total * 100))
-            txt += f'\n<p>{dom_str} {pct_bar}</p>'
-        fp.write(mylib.template_with_base(txt + '''
-</div>
-<p class="mg_top">Get full list
-sorted by <a class="snd" href="by_count.html">Occurrence frequency</a>
-or in <a class="snd" href="by_name.html">Alphabetical order</a>.</p>
+<div class="div-center">
+  <div id="dom-top10" class="found-in">
+    { src }
+  </div>
+  <p class="mg_top">Get full list sorted by
+    <a class="snd" href="by_count.html">Occurrence frequency</a> or in
+    <a class="snd" href="by_name.html">Alphabetical order</a>.
+  </p>
 </div>
 <p class="right snd">Download: <a href="data.json" download="domains.json">json</a></p>
-''', title=title))
+''', title=title)
 
 
-def gen_html_trinity(json, idx_dir, app_count, title):
+def gen_html_trinity(idx_dir, app_count, json, title, symlink):
+    list1 = [(dom, len(ids)) for dom, ids in json['subdom'].items()]
+    list2 = [(dom, len(ids)) for dom, ids in json['pardom'].items()]
+
+    def write_index(fname, title, button):
+        HTML.write(idx_dir, '<h2>{}</h2>{}{}'.format(
+            title, dropdown_choose(button), duo_list(list1, list2)
+        ), title=title, fname=fname)
+
     # Full list (A–Z)
-    list1 = sorted(json['subdom'].items(), key=lambda x: x[0])
-    list2 = sorted(json['pardom'].items(), key=lambda x: x[0])
-    gen_html_index(list1, list2, mylib.path_add(idx_dir, 'by_name.html'),
-                   title='{} (A–Z)'.format(title),
-                   button='Full list (A–Z)')
+    list1.sort(key=lambda x: x[0])
+    list2.sort(key=lambda x: x[0])
+    write_index('by_name.html', title='{} (A–Z)'.format(title),
+                button='Full list (A–Z)')
     # Full list (by count)
-    list1.sort(key=lambda x: -len(x[1]))
-    list2.sort(key=lambda x: -len(x[1]))
-    gen_html_index(list1, list2, mylib.path_add(idx_dir, 'by_count.html'),
-                   title='{} (most apps)'.format(title),
-                   button='Full list (by count)')
+    list1.sort(key=lambda x: -x[1])
+    list2.sort(key=lambda x: -x[1])
+    write_index('by_count.html', title='{} (most apps)'.format(title),
+                button='Full list (by count)')
     # Top 10
-    gen_html_top_10(list2[:25], mylib.path_add(idx_dir, 'index.html'),
-                    app_count, title='Top 25 {}'.format(title))
+    gen_html_top_10(idx_dir, list2[:25], app_count, 'Top 25 {}'.format(title))
+    mylib.symlink(symlink, mylib.path_out(idx_dir, 'data.json'))
 
 
-def gen_html_lookup(html_dir, json, key, title):
-    mylib.mkdir(html_dir)
-    names = [[x, index_app_names.get_name(x)] for x in json['bundle']]
-    mylib.json_write(mylib.path_add(html_dir, 'apps.json'), names)
-    mylib.json_write(mylib.path_add(html_dir, 'doms.json'), json[key])
-    with open(mylib.path_add(html_dir, 'index.html'), 'w') as fp:
-        fp.write(mylib.template_with_base(f'''
+def gen_lookup(html_dir, doms_dict, names_dict, title):
+    HTML.write(html_dir, '''
 <h2 id="name"></h2>
 <p>Present in: <b id="num-apps">… applications</b></p>
 <h3>Apps containing this domain:</h3>
 <div id="app-toc" class="no-ul-all">
-  <a>
-    <div>
-      <img width="100" height="100">
-      <span class="name"></span><br />
-      <span class="detail"></span>
-    </div>
-  </a>
+  {}
 </div>
 <script type="text/javascript" src="/static/lookup-domain.js"></script>
 <script type="text/javascript">
   lookup_domain_js('doms.json', 'apps.json', 'name', 'num-apps', 'app-toc');
 </script>
-''', title=title))
+'''.format(HTML.app_tile_template()), title=title)
+    # after html write which will create the dir
+    mylib.json_write(mylib.path_add(html_dir, 'apps.json'), names_dict)
+    mylib.json_write(mylib.path_add(html_dir, 'doms.json'), doms_dict)
 
 
-def gen_html_stats(c_apps, c_domains):
+def gen_stats(c_apps, c_domains, title):
     [c_recordings, c_logs] = index_meta.get_total_counts()
     print('    {} apps'.format(c_apps))
     print('    {} domains'.format(c_domains))
     print('    {} recordings'.format(c_recordings))
     print('    {} logs'.format(c_logs))
-    title = 'Statistics'
-    mylib.mkdir(mylib.path_out('stats'))
-    with open(mylib.path_out('stats', 'index.html'), 'w') as fp:
-        fp.write(mylib.template_with_base('''
+    HTML.write(mylib.path_out('stats'), '''
 <h2>{}</h2>
-<p>
-  The AppCheck database currently contains <b>{:,}&nbsp;apps</b> with a total of <b>{:,} unique domains</b>.
-</p>
-<p>
-  Collected through <b>{:,}&nbsp;recordings</b> with <b>{:,} individual requests</b>.
-</p>
+<p>The AppCheck database currently contains <b>{:,}&nbsp;apps</b> with a total of <b>{:,} unique domains</b>.</p>
+<p>Collected through <b>{:,}&nbsp;recordings</b> with <b>{:,} individual requests</b>.</p>
 <ul>
-  <li>List of <a href="/index/apps/1/">Apps</a></li>
+  <li>List of <a href="/index/apps/">Apps</a></li>
+  <li>List of <a href="/category/">All Categories</a></li>
   <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
   <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
-</ul>'''.format(title, c_apps, c_domains, c_recordings, c_logs), title=title))
+</ul>'''.format(title, c_apps, c_domains, c_recordings, c_logs), title=title)
 
 
 def process():
     # bundle_combine assures domain name is [a-zA-Z0-9.-]
     print('generating html: domain-index ...')
-    # Data export
-    all_dom_dir = mylib.path_out('index', 'domains', 'all')
-    trkr_dir = mylib.path_out('index', 'domains', 'tracker')
-    mylib.mkdir(all_dom_dir)
-    mylib.mkdir(trkr_dir)
-    mylib.symlink(index_domains.fname_all(),
-                  mylib.path_out_app(all_dom_dir, 'data.json'))
-    mylib.symlink(index_domains.fname_tracker(),
-                  mylib.path_out_app(trkr_dir, 'data.json'))
-
     json = index_domains.load()
     app_count = index_domains.number_of_apps(json)
     dom_count = len(json['subdom'])
 
     print('  Lookup')
-    gen_html_lookup(mylib.path_out('domain'), json, 'pardom',
-                    title='Domain Lookup')
-    gen_html_lookup(mylib.path_out('subdomain'), json, 'subdom',
-                    title='Subdomain Lookup')
+    names = [[x, index_app_names.get_name(x)] for x in json['bundle']]
+    gen_lookup(mylib.path_out('domain'), json['pardom'], names,
+               title='Domain Lookup')
+    gen_lookup(mylib.path_out('subdomain'), json['subdom'], names,
+               title='Subdomain Lookup')
+    names = None
 
     print('  All Domains')
-    index_domains.enrich_with_bundle_ids(json)
-    gen_html_trinity(json, all_dom_dir, app_count,
-                     title='Requested Domains')
+    gen_html_trinity(mylib.path_out('index', 'domains', 'all'), app_count,
+                     json=json, title='Requested Domains',
+                     symlink=index_domains.fname_all())
+    json = None
 
     print('  Trackers Only')
-    json = index_domains.load(tracker=True)
-    index_domains.enrich_with_bundle_ids(json)
-    gen_html_trinity(json, trkr_dir, app_count,
-                     title='Tracker')
+    gen_html_trinity(mylib.path_out('index', 'domains', 'tracker'), app_count,
+                     json=index_domains.load(tracker=True), title='Tracker',
+                     symlink=index_domains.fname_tracker())
     # Stats
     print('  Stats')
-    gen_html_stats(app_count, dom_count)
+    gen_stats(app_count, dom_count, title='Statistics')
     print('')
 
 

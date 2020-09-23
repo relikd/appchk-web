@@ -12,7 +12,7 @@ function lookup_rank_js(bundle_id) {
     function update(i, id, fmt=String) {
       let r = (rank[i] - 1) / (rank_max - 1);
       let target = document.getElementById(id);
-      let bar = target.querySelector('.percentile');
+      let bar = target.querySelector('.pcbar');
       bar.classList.add(r < 0.5 ? 'g' : 'b');
       bar.firstChild.style.left = r * 100 + '%';
       let meta = target.lastElementChild.children;

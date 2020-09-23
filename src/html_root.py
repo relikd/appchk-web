@@ -2,11 +2,11 @@
 
 import os
 import common_lib as mylib
+import lib_html as HTML
 
 
 def gen_root():
-    with open(mylib.path_out('index.html'), 'w') as fp:
-        fp.write(mylib.template_with_base('''
+    HTML.write(mylib.path_out(), '''
 <h2>About</h2>
 <div class="squeeze">
   <p>
@@ -24,7 +24,7 @@ def gen_root():
   </p>
   <h2>Results</h2>
   <p>
-    If you're just interested in the results, go ahead to see <a href="/index/apps/1/">all apps</a>.
+    If you're just interested in the results, go ahead to see <a href="/index/apps/">all apps</a>.
   </p>
   <h2>Current research</h2>
   <p>
@@ -32,10 +32,11 @@ def gen_root():
     For mor infos follow <a href="/help/">this link</a>.
   </p>
 </div>
-'''))
+''')
 
 
 def gen_help():
+    many = 7
     txt = '''<h2>Help needed!</h2>
 <div class="squeeze"><p>
     With the release of iOS 14 some <a href="https://www.apple.com/ios/ios-14/features/#Privacy" target="_blank">Privacy</a> features are put into the spotlight.
@@ -53,58 +54,51 @@ def gen_help():
   </p>
 </div>
 <div id="help-links">'''
-    many = 7
+
+    def app(bundle_id, name, appstore_id):
+        iurl = 'https://apps.apple.com/de/app/id{}'.format(appstore_id)
+        aref = '<a href="{}" target="_blank">AppStore</a>'.format(iurl)
+        return '{} <span class="snd">Download from {}</span>'.format(
+            HTML.a_app(bid, name), aref)
+
+    def rec(count):
+        return '<span class="{}"><b>{}</b>/{}</span> recordings'.format(
+            'done' if count >= many else 'notyet', count, many)
+
     obj = mylib.json_read(mylib.path_root('src', 'help.json'))
     for land in sorted(obj.keys()):
         txt += '\n<h3>{}:</h3>\n<table>'.format(land)
-        txt += '\n<tr><th></th><th>App Name</th><th>pre iOS 14</th><th>post iOS 14</th></tr>'
+        txt += HTML.tr(['', 'App Name', 'pre iOS 14', 'post iOS 14'], 'th')
         for i, x in enumerate(obj[land]):
             bid = x[2]
-            asurl = 'https://apps.apple.com/de/app/id{}'.format(x[1])
-            count = [0, 0]
+            c = [0, 0]
             for fname, json in mylib.enum_jsons(bid):
                 try:
                     ios14 = int(json['ios'].split('.')[0]) >= 14
                 except KeyError:
                     # assume everything submitted after release date is iOS14
                     ios14 = os.path.getmtime(fname) > 1600258000
-                count[1 if ios14 else 0] += 1
-            s1 = '<span class="{}"><b>{}</b>/{}</span> recordings'.format(
-                'done' if count[0] >= many else 'notyet', count[0], many)
-            s2 = '<span class="{}"><b>{}</b>/{}</span> recordings'.format(
-                'done' if count[1] >= many else 'notyet', count[1], many)
-
-            txt += '''
-<tr><td>{}</td>
-<td><a href="/app/{}/">{}</a> <span class="snd">Download from <a href="{}" target="_blank">AppStore</a></span></td>
-<td>{}</td>
-<td>{}</td>
-</tr>'''.format(i + 1, bid, x[0], asurl, s1, s2)
-
+                c[1 if ios14 else 0] += 1
+            txt += HTML.tr([i + 1, app(bid, x[0], x[1]), rec(c[0]), rec(c[1])])
         txt += '</table>'
-
     txt += '</div>'
-    mylib.mkdir(mylib.path_out('help'))
-    with open(mylib.path_out('help', 'index.html'), 'w') as fp:
-        fp.write(mylib.template_with_base(txt))
+    HTML.write(mylib.path_out('help'), txt)
 
 
 def gen_search():
-    with open(mylib.path_out('redirect.html'), 'w') as fp:
-        fp.write(mylib.template_with_base('''
+    HTML.write(mylib.path_out(), '''
 <h2>Redirecting …</h2>
 <script type="text/javascript">
   var GET={};
   window.location.search.substr(1).split("&").forEach(function(x){GET[x.split("=")[0]]=x.split("=")[1]});
   if (GET["id"]) { window.location = "/app/" + GET["id"] + "/"; }
-</script>'''))
+</script>''', fname='redirect.html')
 
 
 def gen_404():
-    with open(mylib.path_out('404.html'), 'w') as fp:
-        fp.write(mylib.template_with_base('''
+    HTML.write(mylib.path_out(), '''
 <h2>404 – Not Found</h2>
-<p>Go back to <a href="/">start page</a></p>'''))
+<p>Go back to <a href="/">start page</a></p>''', fname='404.html')
 
 
 def process():

@@ -4,8 +4,6 @@ import sys
 import common_lib as mylib
 import bundle_combine  # get_evaluated
 
-_rank_dict = None
-
 
 def fname_app_summary():
     return mylib.path_data_index('app_summary.json')
