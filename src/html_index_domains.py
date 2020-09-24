@@ -5,7 +5,7 @@ import lib_graphs as Graph
 import lib_html as HTML
 import index_app_names  # get_name
 import index_domains
-import index_meta  # get_total_counts
+import index_rank  # get_total_counts, fname_app_rank
 
 
 def dropdown_choose(button):
@@ -108,7 +108,7 @@ def gen_lookup(html_dir, doms_dict, names_dict, title):
 
 
 def gen_results(c_apps, c_domains, title):
-    [c_recordings, c_logs] = index_meta.get_total_counts()
+    [c_recordings, c_logs] = index_rank.get_total_counts()
     print('    {} apps'.format(c_apps))
     print('    {} domains'.format(c_domains))
     print('    {} recordings'.format(c_recordings))
@@ -123,7 +123,7 @@ def gen_results(c_apps, c_domains, title):
   <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
   <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
 </ul>'''.format(title, c_apps, c_domains, c_recordings, c_logs), title=title)
-    mylib.symlink(index_meta.fname_app_rank(),
+    mylib.symlink(index_rank.fname_app_rank(),
                   mylib.path_out('results', 'rank.json'))  # after HTML.write
 
 

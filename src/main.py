@@ -14,7 +14,7 @@ import html_root
 import index_app_names
 import index_categories
 import index_domains
-import index_meta
+import index_rank
 
 
 def print_usage_and_exit():
@@ -33,7 +33,7 @@ def print_usage_and_exit():
 def rebuild_html(bundle_ids=None, cat_ids=None, inclIApp=True, inclRoot=False):
     # all of these must happen after index_app_names
     if bundle_ids:
-        html_bundle.process(bundle_ids)  # after index_meta
+        html_bundle.process(bundle_ids)  # after index_rank
     html_categories.process(affected=cat_ids)  # after index_categories
     html_index_domains.process()  # after index_domains
     if inclIApp:
@@ -46,7 +46,7 @@ def rebuild_html(bundle_ids=None, cat_ids=None, inclIApp=True, inclRoot=False):
 
 def del_id(bundle_ids):
     def delete_from_all_indices(bundle_ids):
-        index_meta.process(bundle_ids, deleteOnly=True)
+        index_rank.process(bundle_ids, deleteOnly=True)
         index_domains.process(bundle_ids, deleteOnly=True)
         index_app_names.process(bundle_ids, deleteOnly=True)
 
@@ -73,7 +73,7 @@ def combine_and_update(bundle_ids):
     # 3. re-calculate combined.json
     bundle_combine.process(bundle_ids)
     # 4. re-build indices
-    index_meta.process(bundle_ids)  # after bundle_combine
+    index_rank.process(bundle_ids)  # after bundle_combine
     index_domains.process(bundle_ids)  # after bundle_combine
     # 5. make all html files
     rebuild_html(bundle_ids, inclIApp=len(new_ids) > 0)
@@ -130,7 +130,7 @@ try:
             if bundle_ids:
                 rebuild_html(bundle_ids)
         elif cmd == 'index':
-            index_meta.process(['*'])
+            index_rank.process(['*'])
             index_domains.process(['*'])
             rebuild_html(inclRoot=True)
         elif cmd == 'run':
