@@ -15,7 +15,7 @@ def process(affected=None, per_page=60):
         arr.append((cid, cat))
         if affected and cid not in affected:
             continue
-        pre = HTML.h2(HTML.a_path([(parent, '../')], cat))
+        pre = HTML.h2(HTML.a_path([(parent, '..')], cat))
         _, a = HTML.write_app_pages(mylib.path_add(base, cid), apps, cat,
                                     per_page, pre=pre)
         print('  {} ({})'.format(cat, a))
