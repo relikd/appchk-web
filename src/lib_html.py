@@ -46,29 +46,27 @@ def attr_and(a, b):
 
 # Basic building blocks
 
-def xml(tag, inner, attr={}):
+def xml(tag, inner, attr=None):
     src = ''
-    for key, val in attr.items():
-        if val:
-            src += ' {}="{}"'.format(key, val)
+    if attr:
+        for key, val in attr.items():
+            if val:
+                src += ' {}="{}"'.format(key, val)
     return '<{0}{1}>{2}</{0}>'.format(tag, src, inner)
 
 
-def div(inner, attr={}):
+def div(inner, attr=None):
     return xml('div', inner, attr)
 
 
-def h2(inner, attr={}):
+def h2(inner, attr=None):
     return xml('h2', inner, attr)
-
-
-def a(inner, href, attr={}):
-    return xml('a', inner, attr_and(attr, {'href': href}))
 
 
 def a_path(parts, suffix):
     ''' expects (name, url) tuples '''
-    return ' / '.join([a(*x) for x in parts] + [suffix])
+    return ' / '.join(['<a href="{}/">{}</a>'.format(url, title)
+                       for title, url in parts] + [suffix])
 
 
 # Simple constructs
@@ -137,8 +135,8 @@ def app_tile_template():
 </div></a>'''
 
 
-def app_tiles_all(bundle_ids, per_page=60, attr={}):
-    attr = attr_and(attr, {'id': 'app-toc', 'class': 'no-ul-all'})
+def app_tiles_all(bundle_ids, per_page=60):
+    attr = {'id': 'app-toc', 'class': 'no-ul-all'}
     c_apps = len(bundle_ids)
     c_pages = int(math.ceil(c_apps / per_page))
     for i, apps in apps_sorted_batch(bundle_ids, batch_size=per_page):
@@ -170,11 +168,11 @@ def write(path, content, title=None, fname='index.html'):
         fp.write(base_template(content, title=title))
 
 
-def write_app_pages(base, bundle_ids, title, per_page=60, attr={}, pre=''):
+def write_app_pages(base, bundle_ids, title, per_page=60, pre=''):
     pages = 0
     entries = 0
     mylib.rm_dir(base)
-    for i, count, src in app_tiles_all(bundle_ids, per_page, attr):
+    for i, count, src in app_tiles_all(bundle_ids, per_page):
         pages += 1
         entries += count
         pth = base if i == 1 else mylib.path_add(base, str(i))

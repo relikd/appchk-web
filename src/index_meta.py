@@ -13,10 +13,6 @@ def fname_app_rank():
     return mylib.path_data_index('app_rank.json')
 
 
-def load_json_from_disk(fname):
-    return mylib.json_read(fname) if mylib.file_exists(fname) else {}
-
-
 def json_to_list(json):
     return [
         json['sum_rec'],
@@ -100,7 +96,7 @@ def write_rank_index(index):
 
 def get_total_counts():
     try:
-        return load_json_from_disk(fname_app_summary())['_sum']
+        return mylib.json_safe_read(fname_app_summary(), {})['_sum']
     except KeyError:
         return [0, 0]
 
@@ -112,7 +108,7 @@ def process(bundle_ids, deleteOnly=False):
         print('  full reset')
         mylib.rm_file(fname)  # rebuild from ground up
 
-    index = load_json_from_disk(fname)
+    index = mylib.json_safe_read(fname, {})
     ids = mylib.appids_in_data(bundle_ids)
     write_summary_index(index, ids, deleteOnly=deleteOnly)
     write_rank_index(index)

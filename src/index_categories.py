@@ -12,50 +12,53 @@ def fname_app_categories():
     return mylib.path_data_index('app_categories.json')
 
 
-def fname_category_names():
-    return mylib.path_data_index('category_names.json')
+def fname_cat_name_all():
+    return mylib.path_data_index('category_names_all.json')
 
 
-def load_json_if_not_already():
-    def load_json_from_disk(fname):
-        return mylib.json_read(fname) if mylib.file_exists(fname) else {}
+def fname_cat_name_compact():
+    return mylib.path_data_index('category_names_compact.json')
 
+
+def load_json_if_not_already(noNames=False):
     global _dict_apps, _dict_names
     if not _dict_apps:
-        _dict_apps = load_json_from_disk(fname_app_categories())
-    if not _dict_names:
-        _dict_names = load_json_from_disk(fname_category_names())
+        _dict_apps = mylib.json_safe_read(fname_app_categories(), {})
+    if not _dict_names and not noNames:
+        _dict_names = mylib.json_safe_read(fname_cat_name_compact(), {})
 
 
-def try_update_app(bid, genre_ids):
+def try_update_app(index, bid, genre_ids):
     try:
-        if _dict_apps[bid] == genre_ids:
+        if index[bid] == genre_ids:
             return False
     except KeyError:
         pass
-    _dict_apps[bid] = genre_ids
+    index[bid] = genre_ids
     return True
 
 
-def try_update_name(gid, lang, name):
+def try_update_name_all(index, cid, lang, name):
     try:
-        _dict_names[gid]
+        index[cid]
     except KeyError:
-        _dict_names[gid] = {}
+        index[cid] = {}
     try:
-        if _dict_names[gid][lang]:
+        if index[cid][lang]:
             return False  # key already exists
     except KeyError:
         pass
-    _dict_names[gid][lang] = name
+    index[cid][lang] = name
     return True  # updated, need to persist changes
 
 
 def reset_index():
-    global _dict_apps
-    print('  full reset')
+    global _dict_apps, _dict_names
     mylib.rm_file(fname_app_categories())  # rebuild from ground up
+    mylib.rm_file(fname_cat_name_all())
+    mylib.rm_file(fname_cat_name_compact())
     _dict_apps = None
+    _dict_names = None
 
 
 def get_categories(bundle_id):
@@ -66,13 +69,7 @@ def get_categories(bundle_id):
         return []
     res = []
     for gid in genres:
-        for lang in ['us', 'de']:
-            try:
-                name = _dict_names[gid][lang]
-            except KeyError:
-                continue
-            res.append((gid, name))
-            break
+        res.append((gid, _dict_names[gid]))
     return res
 
 
@@ -85,40 +82,40 @@ def enum_all_categories():
                 reverse_index[gid].append(bid)
             except KeyError:
                 reverse_index[gid] = [bid]
-    for gid, lang_dict in _dict_names.items():
-        for lang in ['us', 'de']:
-            try:
-                name = lang_dict[lang]
-            except KeyError:
-                continue
-            yield gid, name, reverse_index[gid]
-            break
+    for gid, name in _dict_names.items():
+        yield gid, name, reverse_index[gid]
 
 
 def process(bundle_ids, force=False):
+    global _dict_apps, _dict_names
     print('writing index: categories ...')
     if force and bundle_ids == ['*']:
+        print('  full reset')
         reset_index()
 
-    load_json_if_not_already()
+    load_json_if_not_already(noNames=False)
+    name_index = mylib.json_safe_read(fname_cat_name_all(), {})
     write_name_index = False
     write_app_index = False
     for bid in mylib.appids_in_data(bundle_ids):
-        genre_ids = []
-        for lang, gid, gname in download_itunes.enum_genres(bid):
-            if gid not in genre_ids:
-                genre_ids.append(gid)
-            if try_update_name(gid, lang, gname):
+        cateogory_ids = []
+        for lang, cid, gname in download_itunes.enum_genres(bid):
+            if cid not in cateogory_ids:
+                cateogory_ids.append(cid)
+            if try_update_name_all(name_index, cid, lang, gname):
                 write_name_index = True
-        if try_update_app(bid, genre_ids):
+        if try_update_app(_dict_apps, bid, cateogory_ids):
             write_app_index = True
 
-    if write_name_index:
-        print('  write name-index')
-        mylib.json_write(fname_category_names(), _dict_names, pretty=False)
     if write_app_index:
         print('  write app-index')
         mylib.json_write(fname_app_categories(), _dict_apps, pretty=False)
+    if write_name_index:
+        print('  write name-index')
+        mylib.json_write(fname_cat_name_all(), name_index, pretty=False)
+        _dict_names = {cid: download_itunes.choose_lang(names)
+                       for cid, names in name_index.items()}
+        mylib.json_write(fname_cat_name_compact(), _dict_names, pretty=False)
     print('')
 
 

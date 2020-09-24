@@ -249,14 +249,14 @@ def enum_jsons(bundle_id):
             yield fname, json.load(fp)
 
 
-def appids_in_out(selection=['*']):
-    if selection != ['*']:
+def appids_in_out(selection=None):
+    if selection and selection != ['*']:
         return selection
     return [os.path.basename(x) for x in glob.glob(path_out_app('*'))]
 
 
-def appids_in_data(selection=['*']):
-    if selection != ['*']:
+def appids_in_data(selection=None):
+    if selection and selection != ['*']:
         return selection
     global _all_data_bundle_ids
     if not _all_data_bundle_ids:
@@ -285,6 +285,10 @@ def try_del(index, keys):
 def json_read(path):
     with open(path, 'r') as fp:
         return json.load(fp)
+
+
+def json_safe_read(path, fallback=None):
+    return json_read(path) if file_exists(path) else fallback
 
 
 def json_write(path, obj, pretty=False):

@@ -4,67 +4,58 @@ import sys
 import lib_common as mylib
 import download_itunes  # app_names
 
-_bundle_name_dict = None
+_app_names_dict = None
 
 
-def index_fname():
-    return mylib.path_data_index('app_names.json')
+def fname_apps_all():
+    return mylib.path_data_index('app_names_all.json')
 
 
-def missing():
-    return not mylib.file_exists(index_fname())
+def fname_apps_compact():
+    return mylib.path_data_index('app_names_compact.json')
 
 
-def load_json_if_not_already():
-    global _bundle_name_dict
-    if not _bundle_name_dict:
-        index_file = index_fname()
-        if mylib.file_exists(index_file):
-            _bundle_name_dict = mylib.json_read(index_file)
-        else:
-            _bundle_name_dict = {}
-
-
-def write_json_to_disk():
-    mylib.json_write(index_fname(), _bundle_name_dict, pretty=False)
-
-
-def get_name(bundle_id, langs=['us', 'de'], fallback='&lt; App-Name &gt;'):
-    load_json_if_not_already()
-    for lang in langs:
-        try:
-            return _bundle_name_dict[bundle_id][lang]
-        except KeyError:
-            continue
-    return fallback  # None
+def get_name(bundle_id, fallback='&lt; App-Name &gt;'):
+    global _app_names_dict
+    if not _app_names_dict:
+        _app_names_dict = mylib.json_safe_read(fname_apps_compact(), {})
+    try:
+        return _app_names_dict[bundle_id]
+    except KeyError:
+        return fallback
 
 
 def process(bundle_ids, deleteOnly=False):
+    global _app_names_dict
     print('writing index: app names ...')
     if bundle_ids == ['*']:
         print('  full reset')
-        mylib.rm_file(index_fname())  # rebuild from ground up
+        mylib.rm_file(fname_apps_all())  # rebuild from ground up
+        mylib.rm_file(fname_apps_compact())
 
-    load_json_if_not_already()
+    index = mylib.json_safe_read(fname_apps_all(), {})
     did_change = False
     for bid in mylib.appids_in_data(bundle_ids):
         if deleteOnly:
-            did_change |= mylib.try_del(_bundle_name_dict, [bid])
+            did_change |= mylib.try_del(index, [bid])
             continue
         names = download_itunes.get_app_names(bid)
         if not names:
             mylib.err('index-app-names', 'could not load: {}'.format(bid))
             continue
         try:
-            if _bundle_name_dict[bid] == names:
+            if index[bid] == names:
                 continue
         except KeyError:
             pass
-        _bundle_name_dict[bid] = names
+        index[bid] = names
         did_change = True
     if did_change:
         print('  writing')
-        write_json_to_disk()
+        mylib.json_write(fname_apps_all(), index, pretty=False)
+        _app_names_dict = {bid: download_itunes.choose_lang(names)
+                           for bid, names in index.items()}
+        mylib.json_write(fname_apps_compact(), _app_names_dict, pretty=False)
     else:
         print('  no change')
     print('')

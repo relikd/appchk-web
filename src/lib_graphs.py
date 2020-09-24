@@ -13,11 +13,11 @@ def percent_bar(percent):
     return '<div class="pcbar"><i style="left: {}%"></i></div>'.format(round(percent * 100))
 
 
-def rank_tile(title, value, additional=None, attr={},
+def rank_tile(title, value, additional=None, attr=None,
               percent=0.5, rank='?', best='?', worst='?'):
     if additional:
         value += '<i class="snd mg_lr">({})</i>'.format(additional)
-    attr = HTML.attr_and(attr, {'class': 'rank'})
+    attr = HTML.attr_and(attr or {}, {'class': 'rank'})
     return HTML.div('''
 <h4>{}</h4>
 {} <b class="mg_lr">{}</b>

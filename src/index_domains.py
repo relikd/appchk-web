@@ -15,10 +15,8 @@ def fname_tracker():
 
 
 def load_json_from_disk(index_file):
-    if mylib.file_exists(index_file):
-        return mylib.json_read(index_file)
-    else:
-        return {'bundle': [], 'pardom': {}, 'subdom': {}}
+    return mylib.json_safe_read(
+        index_file, fallback={'bundle': [], 'pardom': {}, 'subdom': {}})
 
 
 def delete_from_index(index, bundle_ids, deleteOnly=False):

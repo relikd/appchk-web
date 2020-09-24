@@ -21,7 +21,7 @@ def process(affected=None, per_page=60):
         print('  {} ({})'.format(cat, a))
 
     print('  .. {} categories'.format(len(arr)))
-    src = ''.join([HTML.a(n, '{}/'.format(cid)) for cid, n in arr])
+    src = ''.join([HTML.a_category(cid, n) for cid, n in arr])
     HTML.write(base, '''
 <h2>{}</h2>
 <div class="tags large center">

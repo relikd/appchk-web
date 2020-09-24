@@ -33,6 +33,16 @@ def enum_genres(bundle_id):
             yield lang, gid, name
 
 
+def choose_lang(obj):
+    ''' expects dict with {'us': ..., 'de': ...} '''
+    for lang in AVAILABLE_LANGS:
+        try:
+            return obj[lang]
+        except KeyError:
+            pass
+    return None
+
+
 def download_info(bundle_id, lang, force=False):
     fname = fname_for(bundle_id, lang)
     if force or not mylib.file_exists(fname):
