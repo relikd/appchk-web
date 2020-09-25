@@ -4,6 +4,24 @@ import lib_common as mylib
 import lib_html as HTML
 
 
+def write_overview_page(base_dir, category_tuples, title):
+    cluster = {}
+    for x in category_tuples:
+        i = int(int(x[0]) / 1000)
+        try:
+            cluster[i].append(x)
+        except KeyError:
+            cluster[i] = [x]
+    src = '<h2>{}</h2>'.format(title)
+    for i, arr in sorted(cluster.items()):
+        mylib.sort_by_name(arr, 1)
+        kind = 'Apps' if i == 6 else 'Games' if i == 7 else 'Other'
+        src += '<h3 class="center">{}</h3>'.format(kind)
+        src += '<div class="tags large center">'
+        src += ''.join([HTML.a_category(*x) for x in arr]) + '</div>'
+    HTML.write(base_dir, src, title)
+
+
 def process(affected=None, per_page=60):
     print('generating html: category-index ...')
     base = mylib.path_out('category')
@@ -27,13 +45,7 @@ def process(affected=None, per_page=60):
         mylib.symlink(fname, mylib.path_add(out_dir, 'data.json'))
 
     print('  .. {} categories'.format(len(arr)))
-    mylib.sort_by_name(arr, 1)
-    src = ''.join([HTML.a_category(*x) for x in arr])
-    HTML.write(base, '''
-<h2>{}</h2>
-<div class="tags large center">
-  {}
-</div>'''.format(parent, src), parent)
+    write_overview_page(base, arr, parent)
     print('')
 
 
