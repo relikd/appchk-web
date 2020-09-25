@@ -61,7 +61,7 @@ def gen_html_top_10(path, subset, total, title):
     <a class="snd" href="by_name.html">Alphabetical order</a>.
   </p>
 </div>
-<p class="right snd">Download: <a href="data.json" download="domains.json">json</a></p>
+{ HTML.p_download_json('data.json', 'domains.json') }
 ''', title=title)
 
 

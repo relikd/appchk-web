@@ -24,6 +24,11 @@ def a_subdomain(x, inner=None, attr_str=''):
     return '<a{} href="/subdomain/#{}">{}</a>'.format(attr_str, x, inner or x)
 
 
+def p_download_json(href, download_name):
+    return '<p class="right snd">Download: <a href="{}" download="{}">json</a></p>'.format(
+        href, download_name)
+
+
 # Data object preparation
 
 def apps_sorted_batch(bundle_ids, batch_size=60):
@@ -168,7 +173,7 @@ def write(path, content, title=None, fname='index.html'):
         fp.write(base_template(content, title=title))
 
 
-def write_app_pages(base, bundle_ids, title, per_page=60, pre=''):
+def write_app_pages(base, bundle_ids, title, per_page=60, pre='', post=''):
     pages = 0
     entries = 0
     mylib.rm_dir(base)
@@ -177,5 +182,5 @@ def write_app_pages(base, bundle_ids, title, per_page=60, pre=''):
         entries += count
         pth = base if i == 1 else mylib.path_add(base, str(i))
         mylib.mkdir(pth)
-        write(pth, pre + '\n' + src, title=title)
+        write(pth, pre + '\n' + src + '\n' + post, title=title)
     return pages, entries

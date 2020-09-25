@@ -102,7 +102,7 @@ def gen_page(bundle_id, obj):
   { gen_dotgraph(obj['subdom']) }
   { gen_dom_tags(obj['subdom'], HTML.a_subdomain) }
 </div>
-<p class="right snd">Download: <a href="data.json" download="{bundle_id}.json">json</a></p>
+{ HTML.p_download_json('data.json', bundle_id + '.json') }
 <script type="text/javascript" src="/static/lookup-rank.js"></script>
 <script type="text/javascript">
   lookup_rank_js('{bundle_id}');
