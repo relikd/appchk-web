@@ -32,10 +32,10 @@ def path_data_app(bundle_id, filename=None):
     return path_add(pth, filename) if filename else pth
 
 
-def path_data_index(filename):
+def path_data_index(*filename):
     pth = path_root('data', '_eval')
     mkdir(pth)
-    return path_add(pth, filename)
+    return path_add(pth, *filename)
 
 
 def path_out(*path_components):
@@ -90,6 +90,10 @@ def err(scope, msg, logOnly=False):
 
 def printf(msg):
     print(msg, end='', flush=True)
+
+
+def sort_by_name(obj, col):
+    obj.sort(key=lambda x: x[col].lower())
 
 
 # Binary Tree Search
@@ -247,6 +251,12 @@ def enum_jsons(bundle_id):
     for fname in glob.glob(path_data_app(bundle_id, 'id_*.json')):
         with open(fname, 'r') as fp:
             yield fname, json.load(fp)
+
+
+def enum_categories():
+    for fname in glob.glob(path_data_index('category', 'id_*.json')):
+        with open(fname, 'r') as fp:
+            yield json.load(fp)
 
 
 def appids_in_out(selection=None):

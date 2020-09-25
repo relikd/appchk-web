@@ -2,6 +2,7 @@
 
 import lib_common as mylib
 import lib_html as HTML
+import index_app_names  # get_sorted_app_names
 
 
 def process(per_page=60):
@@ -9,8 +10,8 @@ def process(per_page=60):
     title = 'Apps (A–Z)'
     header = HTML.h2(HTML.a_path([('Results', '/results/')], title))
     p, a = HTML.write_app_pages(mylib.path_out('index', 'apps'),
-                                mylib.appids_in_out(), title,
-                                per_page=per_page, pre=header)
+                                index_app_names.get_sorted_app_names(),
+                                title, per_page=per_page, pre=header)
     print('  {} apps'.format(a))
     print('  {} pages'.format(p))
     print('')

@@ -64,7 +64,7 @@ def write_ranking_list(index):
     # TODO: doesnt scale well, 100'000 apps ~> 12mb
     if len(ret) > 500:  # limit to most recent X entries
         ret = ret[:500]
-    # ret.sort(key=lambda x: x[1].lower())  # sort by name
+    # mylib.sort_by_name(ret, 1)
     mylib.json_write(fname_ranking_list(), ret, pretty=False)
 
 

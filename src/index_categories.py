@@ -3,6 +3,7 @@
 import sys
 import lib_common as mylib
 import download_itunes  # get_genres
+import index_app_names  # get_name
 
 _dict_apps = None
 _dict_names = None
@@ -61,6 +62,37 @@ def reset_index():
     _dict_names = None
 
 
+def persist_name_index(index):
+    global _dict_names
+    mylib.json_write(fname_cat_name_all(), index, pretty=False)
+    _dict_names = {cid: download_itunes.choose_lang(names)
+                   for cid, names in index.items()}
+    mylib.json_write(fname_cat_name_compact(), _dict_names, pretty=False)
+
+
+def persist_individual_files():
+    def sorted_reverse_index():
+        ret = {}
+        for bid, category_ids in _dict_apps.items():
+            itm = [bid, index_app_names.get_name(bid)]
+            for cid in category_ids:
+                try:
+                    ret[cid].append(itm)
+                except KeyError:
+                    ret[cid] = [itm]
+        for cid in ret.keys():
+            mylib.sort_by_name(ret[cid], 1)
+        return ret
+
+    index = sorted_reverse_index()
+    pth = mylib.path_data_index('category')
+    mylib.rm_dir(pth)
+    mylib.mkdir(pth)
+    for cid, cname in _dict_names.items():
+        mylib.json_write(mylib.path_add(pth, 'id_{}.json'.format(cid)),
+                         {'cat': [cid, cname], 'apps': index[cid]})
+
+
 def get_categories(bundle_id):
     load_json_if_not_already()
     try:
@@ -73,21 +105,8 @@ def get_categories(bundle_id):
     return res
 
 
-def enum_all_categories():
-    load_json_if_not_already()
-    reverse_index = {}
-    for bid, genre_ids in _dict_apps.items():
-        for gid in genre_ids:
-            try:
-                reverse_index[gid].append(bid)
-            except KeyError:
-                reverse_index[gid] = [bid]
-    for gid, name in _dict_names.items():
-        yield gid, name, reverse_index[gid]
-
-
 def process(bundle_ids, force=False):
-    global _dict_apps, _dict_names
+    global _dict_apps
     print('writing index: categories ...')
     if force and bundle_ids == ['*']:
         print('  full reset')
@@ -107,15 +126,14 @@ def process(bundle_ids, force=False):
         if try_update_app(_dict_apps, bid, cateogory_ids):
             write_app_index = True
 
+    if write_name_index:
+        print('  write name-index')
+        persist_name_index(name_index)  # names first, they are used below
     if write_app_index:
         print('  write app-index')
         mylib.json_write(fname_app_categories(), _dict_apps, pretty=False)
-    if write_name_index:
-        print('  write name-index')
-        mylib.json_write(fname_cat_name_all(), name_index, pretty=False)
-        _dict_names = {cid: download_itunes.choose_lang(names)
-                       for cid, names in name_index.items()}
-        mylib.json_write(fname_cat_name_compact(), _dict_names, pretty=False)
+    if write_name_index or write_app_index:
+        persist_individual_files()
     print('')
 
 

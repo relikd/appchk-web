@@ -3,7 +3,6 @@
 import math  # ceil
 import time  # strftime, gmtime
 import lib_common as mylib
-import index_app_names  # get_name
 
 
 # REFS
@@ -30,12 +29,6 @@ def p_download_json(href, download_name):
 
 
 # Data object preparation
-
-def apps_sorted_batch(bundle_ids, batch_size=60):
-    apps = [(x, index_app_names.get_name(x)) for x in bundle_ids]
-    apps.sort(key=lambda x: (x[1].lower(), x[0]))
-    for i in range(0, len(apps), batch_size):
-        yield int(i / batch_size), apps[i:i + batch_size]
 
 
 def attr_and(a, b):
@@ -140,16 +133,17 @@ def app_tile_template():
 </div></a>'''
 
 
-def app_tiles_all(bundle_ids, per_page=60):
+def app_tiles_all(apps, per_page=60):
     attr = {'id': 'app-toc', 'class': 'no-ul-all'}
-    c_apps = len(bundle_ids)
+    c_apps = len(apps)
     c_pages = int(math.ceil(c_apps / per_page))
-    for i, apps in apps_sorted_batch(bundle_ids, batch_size=per_page):
-        i += 1
+    for offset in range(0, len(apps), per_page):
+        idx = int(offset / per_page) + 1
+        batch = apps[offset:offset + per_page]
         src = ''
-        for x in apps:
+        for x in batch:
             src += app_tile(x[0], x[1])
-        yield i, len(apps), div(src, attr) + pagination(i, c_pages)
+        yield idx, len(batch), div(src, attr) + pagination(idx, c_pages)
 
 
 # Write html to disk
@@ -173,11 +167,11 @@ def write(path, content, title=None, fname='index.html'):
         fp.write(base_template(content, title=title))
 
 
-def write_app_pages(base, bundle_ids, title, per_page=60, pre='', post=''):
+def write_app_pages(base, apps, title, per_page=60, pre='', post=''):
     pages = 0
     entries = 0
     mylib.rm_dir(base)
-    for i, count, src in app_tiles_all(bundle_ids, per_page):
+    for i, count, src in app_tiles_all(apps, per_page):
         pages += 1
         entries += count
         pth = base if i == 1 else mylib.path_add(base, str(i))

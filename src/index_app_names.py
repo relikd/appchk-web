@@ -15,14 +15,23 @@ def fname_apps_compact():
     return mylib.path_data_index('app_names_compact.json')
 
 
-def get_name(bundle_id, fallback='&lt; App-Name &gt;'):
+def load_json_if_not_already():
     global _app_names_dict
     if not _app_names_dict:
         _app_names_dict = mylib.json_safe_read(fname_apps_compact(), {})
+
+
+def get_name(bundle_id, fallback='&lt; App-Name &gt;'):
+    load_json_if_not_already()
     try:
         return _app_names_dict[bundle_id]
     except KeyError:
         return fallback
+
+
+def get_sorted_app_names():
+    load_json_if_not_already()
+    return sorted(_app_names_dict.items(), key=lambda x: x[1].lower())
 
 
 def process(bundle_ids, deleteOnly=False):
