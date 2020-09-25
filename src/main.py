@@ -10,6 +10,7 @@ import html_bundle
 import html_categories
 import html_index_apps
 import html_index_domains
+import html_ranking
 import html_root
 import index_app_names
 import index_categories
@@ -35,9 +36,10 @@ def rebuild_html(bundle_ids=None, cat_ids=None, inclIApp=True, inclRoot=False):
     if bundle_ids:
         html_bundle.process(bundle_ids)  # after index_rank
     html_categories.process(affected=cat_ids)  # after index_categories
-    html_index_domains.process()  # after index_domains
+    html_ranking.process()  # after html_categories
+    html_index_domains.process()  # after index_domains & index_rank
     if inclIApp:
-        html_index_apps.process()
+        html_index_apps.process()  # after index_categories
     else:
         print('no new bundle, not rebuilding index')
     if inclRoot:  # TODO: remove check if root contains dynamic content
@@ -73,7 +75,7 @@ def combine_and_update(bundle_ids):
     # 3. re-calculate combined.json
     bundle_combine.process(bundle_ids)
     # 4. re-build indices
-    index_rank.process(bundle_ids)  # after bundle_combine
+    index_rank.process(bundle_ids)  # after bundle_combine & index_app_names
     index_domains.process(bundle_ids)  # after bundle_combine
     # 5. make all html files
     rebuild_html(bundle_ids, inclIApp=len(new_ids) > 0)

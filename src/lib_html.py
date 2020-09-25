@@ -57,10 +57,6 @@ def div(inner, attr=None):
     return xml('div', inner, attr)
 
 
-def h2(inner, attr=None):
-    return xml('h2', inner, attr)
-
-
 def a_path(parts, suffix):
     ''' expects (name, url) tuples '''
     return ' / '.join(['<a href="{}">{}</a>'.format(url, title)

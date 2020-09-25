@@ -21,6 +21,16 @@ def fname_cat_name_compact():
     return mylib.path_data_index('category_names_compact.json')
 
 
+def fname_cat_individual(cid):
+    return mylib.path_data_index('category', 'id_{}.json'.format(cid))
+
+
+def make_dir_individuals():
+    pth = mylib.path_data_index('category')
+    mylib.rm_dir(pth)
+    mylib.mkdir(pth)
+
+
 def load_json_if_not_already(noNames=False):
     global _dict_apps, _dict_names
     if not _dict_apps:
@@ -85,11 +95,9 @@ def persist_individual_files():
         return ret
 
     index = sorted_reverse_index()
-    pth = mylib.path_data_index('category')
-    mylib.rm_dir(pth)
-    mylib.mkdir(pth)
+    make_dir_individuals()
     for cid, cname in _dict_names.items():
-        mylib.json_write(mylib.path_add(pth, 'id_{}.json'.format(cid)),
+        mylib.json_write(fname_cat_individual(cid),
                          {'meta': [cid, cname], 'apps': index[cid]})
 
 

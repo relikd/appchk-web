@@ -41,7 +41,6 @@ Given A → B, B depends on A
 ```
 digraph Dependency {
   "." -> html_root
-  "." -> html_ranking
   "." -> download_itunes
   "." -> bundle_combine
   download_itunes -> index_app_names
@@ -51,6 +50,7 @@ digraph Dependency {
   index_app_names -> index_rank
   index_app_names -> index_categories
   index_categories -> html_categories
+  html_categories -> html_ranking
   index_rank -> html_bundle
   index_rank -> html_index_domains
   index_domains -> html_index_domains

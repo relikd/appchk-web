@@ -15,8 +15,11 @@ def process(affected=None, per_page=60):
         if affected and cid not in affected:
             continue
         out_dir = mylib.path_add(base, cid)
-        A = HTML.h2(HTML.a_path([(parent, '../')], cname))
-        Z = HTML.p_download_json('data.json', 'category_{}.json'.format(cid))
+        # full url since categories can have page 2, 3, etc.
+        A = '<h2>' + HTML.a_path([(parent, '/category/')], cname) + \
+            '<a class="snd floatr" href="ranking/">Ranking</a></h2>'
+        Z = HTML.p_download_json('data.json', 'category-{}.json'.format(cid))
+        # does BREAK html_ranking!! call html_categories before html_ranking
         _, a = HTML.write_app_pages(out_dir, json['apps'],
                                     cname, per_page, pre=A, post=Z)
         print('  {} ({})'.format(cname, a))

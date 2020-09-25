@@ -16,8 +16,19 @@ def fname_app_rank():
     return mylib.path_data_index('app_rank.json')
 
 
-def fname_ranking_list():
-    return mylib.path_data_index('ranking_list.json')
+def fname_ranking_all():
+    return mylib.path_data_index('ranking_all.json')
+
+
+def fname_ranking_category(cid):
+    return mylib.path_data_index('rank', 'id_{}.json'.format(cid))
+
+
+def make_dir_individuals(reset=False):
+    pth = mylib.path_data_index('rank')
+    if reset:
+        mylib.rm_dir(pth)
+    mylib.mkdir(pth)
 
 
 def json_to_list(json):
@@ -75,10 +86,7 @@ def write_ranking_category_list(index, affected_ids):
                 return True
         return False
 
-    pth = mylib.path_data_index('rank')
-    if reset:
-        mylib.rm_dir(pth)
-    mylib.mkdir(pth)
+    make_dir_individuals(reset)
     for _, json in mylib.enum_categories():
         cid, cname = json['meta']
         ids = [bid for bid, _ in json['apps']]
@@ -90,8 +98,7 @@ def write_ranking_category_list(index, affected_ids):
                 ret.append(x)
                 if len(ids) == 0 or len(ret) >= MAX_RANKING_LIMIT:
                     break
-        mylib.json_write(mylib.path_add(pth, 'id_{}.json'.format(cid)),
-                         ret, pretty=False)
+        mylib.json_write(fname_ranking_category(cid), ret, pretty=False)
 
 
 def write_ranking_list(index, affected_ids):
@@ -105,7 +112,7 @@ def write_ranking_list(index, affected_ids):
     if len(ret) > MAX_RANKING_LIMIT:  # limit to most recent X entries
         ret = ret[:MAX_RANKING_LIMIT]
     # mylib.sort_by_name(ret, 1)
-    mylib.json_write(fname_ranking_list(), ret, pretty=False)
+    mylib.json_write(fname_ranking_all(), ret, pretty=False)
 
 
 def write_rank_index(index):

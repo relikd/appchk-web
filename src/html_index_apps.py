@@ -8,7 +8,7 @@ import index_app_names  # get_sorted_app_names
 def process(per_page=60):
     print('generating html: app-index ...')
     title = 'Apps (A–Z)'
-    header = HTML.h2(HTML.a_path([('Results', '/results/')], title))
+    header = '<h2>' + HTML.a_path([('Results', '/results/')], title) + '</h2>'
     p, a = HTML.write_app_pages(mylib.path_out('index', 'apps'),
                                 index_app_names.get_sorted_app_names(),
                                 title, per_page=per_page, pre=header)
