@@ -71,7 +71,8 @@ def gen_html_trinity(idx_dir, app_count, json, title, symlink):
 
     def write_index(fname, title, button):
         HTML.write(idx_dir, '<h2>{}</h2>{}{}'.format(
-            title, dropdown_choose(button), duo_list(list1, list2)
+            HTML.a_path([('Results', '/results/')], title),
+            dropdown_choose(button), duo_list(list1, list2)
         ), title=title, fname=fname)
 
     # Full list (A–Z)
@@ -90,8 +91,10 @@ def gen_html_trinity(idx_dir, app_count, json, title, symlink):
 
 
 def gen_lookup(html_dir, doms_dict, names_dict, title):
+    header = HTML.a_path([('All Domains', '/index/domains/all/')],
+                         '<span id="name"></span>')
     HTML.write(html_dir, '''
-<h2 id="name"></h2>
+<h2>{}</h2>
 <p>Present in: <b id="num-apps">… applications</b></p>
 <h3>Apps containing this domain:</h3>
 <div id="app-toc" class="no-ul-all">
@@ -102,7 +105,7 @@ def gen_lookup(html_dir, doms_dict, names_dict, title):
 <script type="text/javascript">
   lookup_domain_js('doms.json', 'apps.json', 'name', 'num-apps', 'app-toc');
 </script>
-'''.format(HTML.app_tile_template()), title=title)
+'''.format(header, HTML.app_tile_template()), title=title)
     # after html write which will create the dir
     mylib.json_write(mylib.path_add(html_dir, 'apps.json'), names_dict)
     mylib.json_write(mylib.path_add(html_dir, 'doms.json'), doms_dict)
