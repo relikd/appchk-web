@@ -36,12 +36,12 @@ def rebuild_html(bundle_ids=None, cat_ids=None, inclIApp=True, inclRoot=False):
     if bundle_ids:
         html_bundle.process(bundle_ids)  # after index_rank
     html_categories.process(affected=cat_ids)  # after index_categories
-    html_ranking.process()  # after html_categories
     html_index_domains.process()  # after index_domains & index_rank
     if inclIApp:
         html_index_apps.process()  # after index_categories
     else:
         print('no new bundle, not rebuilding index')
+    html_ranking.process()  # after html_categories & html_index_apps
     if inclRoot:  # TODO: remove check if root contains dynamic content
         html_root.process()
 

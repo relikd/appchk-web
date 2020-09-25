@@ -23,6 +23,11 @@ def a_subdomain(x, inner=None, attr_str=''):
     return '<a{} href="/subdomain/#{}">{}</a>'.format(attr_str, x, inner or x)
 
 
+def h2_path_n_rank(title, path_parts, rank_href):
+    return '<h2>{} <a class="snd floatr" href="{}">Ranking</a></h2>'.format(
+        a_path(path_parts, title), rank_href)
+
+
 def p_download_json(href, download_name):
     return '<p class="right snd">Download: <a href="{}" download="{}">json</a></p>'.format(
         href, download_name)

@@ -33,7 +33,7 @@ def write_ranking_category(cid, category_name):
     src = html_base(('All Categories', '/category/'),
                     (category_name, '/category/{}/'.format(cid)))
     src += HTML.p_download_json('data.json',
-                                'results-category-{}.json'.format(cid))
+                                'raw-category-{}.json'.format(cid))
     src += html_script_chunk('data.json')
     HTML.write(base, src, title='Category Ranking: ' + category_name)
     mylib.symlink(index_rank.fname_ranking_category(cid),
@@ -41,8 +41,10 @@ def write_ranking_category(cid, category_name):
 
 
 def write_ranking_all(title, base_dir):
-    src = html_base(('Results', '/results/'))
-    src += HTML.p_download_json('data.json', 'results-all.json')
+    # full urls since app index can have page 2, 3, etc.
+    src = html_base(('Results', '/results/'),
+                    ('Apps (A–Z)', '/index/apps/'))
+    src += HTML.p_download_json('data.json', 'raw-apps.json')
     src += html_script_chunk('data.json')
     HTML.write(base_dir, src, title=title)
     mylib.symlink(index_rank.fname_ranking_all(),
@@ -51,7 +53,7 @@ def write_ranking_all(title, base_dir):
 
 def process():
     print('generating html: ranking ...')
-    write_ranking_all('Ranking', mylib.path_out('ranking'))
+    write_ranking_all('Ranking', mylib.path_out('index', 'apps', 'ranking'))
     for _, json in mylib.enum_categories():
         cid, name = json['meta']
         write_ranking_category(cid, name)

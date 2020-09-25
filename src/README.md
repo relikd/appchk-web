@@ -51,6 +51,7 @@ digraph Dependency {
   index_app_names -> index_categories
   index_categories -> html_categories
   html_categories -> html_ranking
+  html_index_apps -> html_ranking
   index_rank -> html_bundle
   index_rank -> html_index_domains
   index_domains -> html_index_domains
