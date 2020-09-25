@@ -31,11 +31,14 @@ function lookup_domain_js(fname_a, fname_b, id1, id2, id3) {
         let bid = apps[i][0];
         let item = template.cloneNode(true);
         item.href = '/app/'+bid+'/';
-        item.querySelector('img').src = '/app/'+bid+'/icon.png';
+        let img = item.querySelector('img');
+        img.classList = 'lozad';
+        img.setAttribute('data-src', '/app/'+bid+'/icon.png');
         item.querySelector('.name').innerHTML = apps[i][1];
         item.querySelector('.detail').innerHTML = bid;
         dom_app_list.appendChild(item);
       }
+      const observer = lozad(); observer.observe();
     });
   });
 }

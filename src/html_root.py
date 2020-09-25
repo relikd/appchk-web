@@ -67,7 +67,7 @@ def gen_help():
 
     obj = mylib.json_read(mylib.path_root('src', 'help.json'))
     for land in sorted(obj.keys()):
-        txt += '\n<h3>{}:</h3>\n<table>'.format(land)
+        txt += '\n<h3>{}:</h3>\n<table class="alternate">'.format(land)
         txt += HTML.tr(['', 'App Name', 'pre iOS 14', 'post iOS 14'], 'th')
         for i, x in enumerate(obj[land]):
             bid = x[2]

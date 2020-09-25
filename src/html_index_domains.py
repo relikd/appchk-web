@@ -98,6 +98,7 @@ def gen_lookup(html_dir, doms_dict, names_dict, title):
   {}
 </div>
 <script type="text/javascript" src="/static/lookup-domain.js"></script>
+<script type="text/javascript" src="/static/lozad.js"></script>
 <script type="text/javascript">
   lookup_domain_js('doms.json', 'apps.json', 'name', 'num-apps', 'app-toc');
 </script>
@@ -122,7 +123,9 @@ def gen_results(c_apps, c_domains, title):
   <li>List of <a href="/category/">Categories</a></li>
   <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
   <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
-</ul>'''.format(title, c_apps, c_domains, c_recordings, c_logs), title=title)
+</ul>
+<p>Or go ahead to the <b><a href="/ranking/">Ranking</a></b> directly.</p>
+'''.format(title, c_apps, c_domains, c_recordings, c_logs), title=title)
     mylib.symlink(index_rank.fname_app_rank(),
                   mylib.path_out('results', 'rank.json'))  # after HTML.write
 

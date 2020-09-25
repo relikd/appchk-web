@@ -3,6 +3,7 @@
 import sys
 import lib_common as mylib
 import bundle_combine  # get_evaluated
+import index_app_names
 
 
 def fname_app_summary():
@@ -13,38 +14,25 @@ def fname_app_rank():
     return mylib.path_data_index('app_rank.json')
 
 
+def fname_ranking_list():
+    return mylib.path_data_index('ranking_list.json')
+
+
 def json_to_list(json):
     return [
-        json['sum_rec'],
-        json['avg_time'],
-        json['sum_time'],
-        json['avg_logs_pm'],
-        json['sum_logs_pm'],
-        len(json['pardom']),
-        len(json['subdom']),
-        json['tracker_percent'],
+        json['sum_rec'],  # 0
+        json['avg_time'],  # 1
+        json['sum_time'],  # 2
+        json['avg_logs_pm'],  # 3
+        json['sum_logs_pm'],  # 4
+        len(json['pardom']),  # 5
+        len(json['subdom']),  # 6
+        json['tracker_percent'],  # 7
         # v- not part of rank -v
-        json['sum_logs'],
-        json['avg_logs'],
-        json['last_date'],
+        json['sum_logs'],  # 8
+        json['avg_logs'],  # 9
+        json['last_date'],  # 10
     ]
-
-
-def list_to_json(list):
-    return {
-        'sum_rec': list[0],
-        'avg_time': list[1],
-        'sum_time': list[2],
-        'avg_logs_pm': list[3],
-        'sum_logs_pm': list[4],
-        'pardom': list[5],
-        'subdom': list[6],
-        'tracker_percent': list[7],
-        # v- not part of rank -v
-        'sum_logs': list[8],
-        'avg_logs': list[9],
-        'last_date': list[10],
-    }
 
 
 def write_summary_index(index, bundle_ids, deleteOnly=False):
@@ -64,10 +52,24 @@ def write_summary_index(index, bundle_ids, deleteOnly=False):
         total[1] += val[8]
     index['_sum'] = total
     mylib.json_write(fname_app_summary(), index, pretty=False)
+    mylib.try_del(index, ['_sum'])
+
+
+def write_ranking_list(index):
+    ret = []
+    for bid, values in index.items():
+        ret.append([bid, index_app_names.get_name(bid)] + values)
+        del(values[8:])
+    ret.sort(key=lambda x: -x[2 + 10])  # sort by last update
+    # TODO: doesnt scale well, 100'000 apps ~> 12mb
+    if len(ret) > 500:  # limit to most recent X entries
+        ret = ret[:500]
+    # ret.sort(key=lambda x: x[1].lower())  # sort by name
+    mylib.json_write(fname_ranking_list(), ret, pretty=False)
 
 
 def write_rank_index(index):
-    mylib.try_del(index, ['_sum', '_ranks', '_min', '_max'])
+    mylib.try_del(index, ['_ranks', '_min', '_max'])
     mins = []
     maxs = []
     if len(index) > 0:
@@ -111,6 +113,7 @@ def process(bundle_ids, deleteOnly=False):
     index = mylib.json_safe_read(fname, {})
     ids = mylib.appids_in_data(bundle_ids)
     write_summary_index(index, ids, deleteOnly=deleteOnly)
+    write_ranking_list(index)
     write_rank_index(index)
     print('')
 

@@ -20,16 +20,6 @@ function lookup_rank_js(bundle_id) {
       meta[1].innerHTML = fmt(best[i]);
       meta[2].innerHTML = fmt(worst[i]);
     }
-    // formatting
-    function dot1(x) { return Math.round(x * 10) / 10; }
-    function as_percent(x) { return dot1(x * 100) + '%'; }
-    function as_pm(x) { return dot1(x) + '/min'; }
-    function HHmmss(seconds) {
-      const h = Math.floor(seconds / 3600);
-      const m = Math.floor((seconds % 3600) / 60);
-      const s = Math.round(seconds % 60);
-      return (h<10?'0'+h:h)+':'+(m<10?'0'+m:m)+':'+(s<10?'0'+s:s);
-    }
     // order is important!
     update(0, 'sum_rec');
     update(1, 'avg_time', HHmmss);

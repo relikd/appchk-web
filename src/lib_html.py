@@ -65,7 +65,7 @@ def h2(inner, attr=None):
 
 def a_path(parts, suffix):
     ''' expects (name, url) tuples '''
-    return ' / '.join(['<a href="{}/">{}</a>'.format(url, title)
+    return ' / '.join(['<a href="{}">{}</a>'.format(url, title)
                        for title, url in parts] + [suffix])
 
 

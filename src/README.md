@@ -40,22 +40,23 @@ Given A → B, B depends on A
 
 ```
 digraph Dependency {
-  "." -> html_root
+  "." -> download_tracker
   "." -> download_itunes
+  "." -> bundle_combine
   download_itunes -> index_app_names
   download_itunes -> index_categories
-  index_categories -> html_categories
-  index_app_names -> html_bundle
-  index_app_names -> html_index_apps
-  index_app_names -> html_index_domains
-  index_app_names -> html_categories
-  index_rank -> html_index_domains
-  "." -> bundle_combine
   bundle_combine -> index_rank
-  index_rank -> html_bundle
   bundle_combine -> index_domains
+  index_categories -> html_categories
+  index_app_names -> html_index_apps
+  index_app_names -> html_categories
+  index_app_names -> index_rank
+  index_rank -> html_bundle
+  index_rank -> html_rank
+  index_rank -> html_index_domains
   index_domains -> html_index_domains
-  "." -> download_tracker
+  "." -> html_ranking
+  "." -> html_root
 }
 ```
 [graphviz](http://www.webgraphviz.com/)
