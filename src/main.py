@@ -132,6 +132,7 @@ try:
             if bundle_ids:
                 rebuild_html(bundle_ids)
         elif cmd == 'index':
+            index_categories.process(['*'], force=True)
             index_rank.process(['*'])
             index_domains.process(['*'])
             rebuild_html(inclRoot=True)
