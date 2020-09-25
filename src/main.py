@@ -69,7 +69,7 @@ def combine_and_update(bundle_ids):
         new_ids = ['*']  # special case needed to force rebuilt index
     if len(new_ids) > 0:
         index_app_names.process(new_ids)  # after download_itunes
-        index_categories.process(new_ids)  # after download_itunes
+        index_categories.process(new_ids)  # after index_app_names
     # 3. re-calculate combined.json
     bundle_combine.process(bundle_ids)
     # 4. re-build indices

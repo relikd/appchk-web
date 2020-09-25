@@ -90,7 +90,7 @@ def persist_individual_files():
     mylib.mkdir(pth)
     for cid, cname in _dict_names.items():
         mylib.json_write(mylib.path_add(pth, 'id_{}.json'.format(cid)),
-                         {'cat': [cid, cname], 'apps': index[cid]})
+                         {'meta': [cid, cname], 'apps': index[cid]})
 
 
 def get_categories(bundle_id):

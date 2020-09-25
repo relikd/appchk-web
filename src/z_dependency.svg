@@ -1,161 +1,151 @@
-<svg width="667pt" height="332pt" viewBox="0.00 0.00 667.00 332.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="666pt" height="332pt" viewBox="0.00 0.00 666.00 332.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph1" class="graph" transform="scale(1 1) rotate(0) translate(4 328)">
 <title>Dependency</title>
-<polygon fill="white" stroke="white" points="-4,5 -4,-328 664,-328 664,5 -4,5"></polygon>
+<polygon fill="white" stroke="white" points="-4,5 -4,-328 663,-328 663,5 -4,5"></polygon>
 <!-- . -->
 <g id="node1" class="node"><title>.</title>
-<ellipse fill="none" stroke="black" cx="389" cy="-306" rx="27" ry="18"></ellipse>
-<text text-anchor="middle" x="389" y="-301.8" font-family="Times,serif" font-size="14.00">.</text>
-</g>
-<!-- download_tracker -->
-<g id="node3" class="node"><title>download_tracker</title>
-<ellipse fill="none" stroke="black" cx="108" cy="-234" rx="80.1284" ry="18"></ellipse>
-<text text-anchor="middle" x="108" y="-229.8" font-family="Times,serif" font-size="14.00">download_tracker</text>
-</g>
-<!-- .&#45;&gt;download_tracker -->
-<g id="edge2" class="edge"><title>.-&gt;download_tracker</title>
-<path fill="none" stroke="black" d="M364.063,-298.788C320.739,-287.996 230.38,-265.486 169.44,-250.305"></path>
-<polygon fill="black" stroke="black" points="170.098,-246.862 159.549,-247.841 168.406,-253.655 170.098,-246.862"></polygon>
-</g>
-<!-- download_itunes -->
-<g id="node5" class="node"><title>download_itunes</title>
-<ellipse fill="none" stroke="black" cx="284" cy="-234" rx="77.0235" ry="18"></ellipse>
-<text text-anchor="middle" x="284" y="-229.8" font-family="Times,serif" font-size="14.00">download_itunes</text>
-</g>
-<!-- .&#45;&gt;download_itunes -->
-<g id="edge4" class="edge"><title>.-&gt;download_itunes</title>
-<path fill="none" stroke="black" d="M370.228,-292.485C355.324,-282.55 334.132,-268.422 316.487,-256.658"></path>
-<polygon fill="black" stroke="black" points="318.415,-253.737 308.153,-251.102 314.532,-259.561 318.415,-253.737"></polygon>
-</g>
-<!-- bundle_combine -->
-<g id="node7" class="node"><title>bundle_combine</title>
-<ellipse fill="none" stroke="black" cx="423" cy="-162" rx="75.1062" ry="18"></ellipse>
-<text text-anchor="middle" x="423" y="-157.8" font-family="Times,serif" font-size="14.00">bundle_combine</text>
-</g>
-<!-- .&#45;&gt;bundle_combine -->
-<g id="edge6" class="edge"><title>.-&gt;bundle_combine</title>
-<path fill="none" stroke="black" d="M392.312,-287.862C395.867,-269.884 401.84,-240.843 408,-216 410.127,-207.422 412.673,-198.129 415.059,-189.757"></path>
-<polygon fill="black" stroke="black" points="418.433,-190.689 417.85,-180.11 411.709,-188.743 418.433,-190.689"></polygon>
-</g>
-<!-- html_ranking -->
-<g id="node29" class="node"><title>html_ranking</title>
-<ellipse fill="none" stroke="black" cx="480" cy="-234" rx="63.108" ry="18"></ellipse>
-<text text-anchor="middle" x="480" y="-229.8" font-family="Times,serif" font-size="14.00">html_ranking</text>
-</g>
-<!-- .&#45;&gt;html_ranking -->
-<g id="edge30" class="edge"><title>.-&gt;html_ranking</title>
-<path fill="none" stroke="black" d="M406.116,-291.834C418.684,-282.166 436.061,-268.799 450.805,-257.457"></path>
-<polygon fill="black" stroke="black" points="453.334,-259.928 459.126,-251.057 449.066,-254.38 453.334,-259.928"></polygon>
+<ellipse fill="none" stroke="black" cx="350" cy="-306" rx="27" ry="18"></ellipse>
+<text text-anchor="middle" x="350" y="-301.8" font-family="Times,serif" font-size="14.00">.</text>
 </g>
 <!-- html_root -->
-<g id="node31" class="node"><title>html_root</title>
-<ellipse fill="none" stroke="black" cx="610" cy="-234" rx="49.1927" ry="18"></ellipse>
-<text text-anchor="middle" x="610" y="-229.8" font-family="Times,serif" font-size="14.00">html_root</text>
+<g id="node3" class="node"><title>html_root</title>
+<ellipse fill="none" stroke="black" cx="62" cy="-234" rx="49.1927" ry="18"></ellipse>
+<text text-anchor="middle" x="62" y="-229.8" font-family="Times,serif" font-size="14.00">html_root</text>
 </g>
 <!-- .&#45;&gt;html_root -->
-<g id="edge32" class="edge"><title>.-&gt;html_root</title>
-<path fill="none" stroke="black" d="M413.072,-297.376C449.237,-285.92 518.243,-264.063 564.199,-249.507"></path>
-<polygon fill="black" stroke="black" points="565.444,-252.784 573.921,-246.428 563.331,-246.111 565.444,-252.784"></polygon>
+<g id="edge2" class="edge"><title>.-&gt;html_root</title>
+<path fill="none" stroke="black" d="M324.697,-299.678C282.214,-290.628 193.935,-271.336 120,-252 116.225,-251.013 112.323,-249.953 108.41,-248.864"></path>
+<polygon fill="black" stroke="black" points="109.304,-245.48 98.7285,-246.118 107.394,-252.214 109.304,-245.48"></polygon>
+</g>
+<!-- html_ranking -->
+<g id="node5" class="node"><title>html_ranking</title>
+<ellipse fill="none" stroke="black" cx="192" cy="-234" rx="63.108" ry="18"></ellipse>
+<text text-anchor="middle" x="192" y="-229.8" font-family="Times,serif" font-size="14.00">html_ranking</text>
+</g>
+<!-- .&#45;&gt;html_ranking -->
+<g id="edge4" class="edge"><title>.-&gt;html_ranking</title>
+<path fill="none" stroke="black" d="M328.031,-295.267C303.853,-284.555 264.414,-267.082 234.212,-253.702"></path>
+<polygon fill="black" stroke="black" points="235.322,-250.365 224.762,-249.515 232.487,-256.765 235.322,-250.365"></polygon>
+</g>
+<!-- download_itunes -->
+<g id="node7" class="node"><title>download_itunes</title>
+<ellipse fill="none" stroke="black" cx="350" cy="-234" rx="77.0235" ry="18"></ellipse>
+<text text-anchor="middle" x="350" y="-229.8" font-family="Times,serif" font-size="14.00">download_itunes</text>
+</g>
+<!-- .&#45;&gt;download_itunes -->
+<g id="edge6" class="edge"><title>.-&gt;download_itunes</title>
+<path fill="none" stroke="black" d="M350,-287.697C350,-279.983 350,-270.712 350,-262.112"></path>
+<polygon fill="black" stroke="black" points="353.5,-262.104 350,-252.104 346.5,-262.104 353.5,-262.104"></polygon>
+</g>
+<!-- bundle_combine -->
+<g id="node9" class="node"><title>bundle_combine</title>
+<ellipse fill="none" stroke="black" cx="489" cy="-162" rx="75.1062" ry="18"></ellipse>
+<text text-anchor="middle" x="489" y="-157.8" font-family="Times,serif" font-size="14.00">bundle_combine</text>
+</g>
+<!-- .&#45;&gt;bundle_combine -->
+<g id="edge8" class="edge"><title>.-&gt;bundle_combine</title>
+<path fill="none" stroke="black" d="M371.786,-295.269C390.483,-286.116 417.294,-270.993 436,-252 453.946,-233.779 468.309,-208.337 477.532,-189.32"></path>
+<polygon fill="black" stroke="black" points="480.809,-190.574 481.878,-180.033 474.469,-187.607 480.809,-190.574"></polygon>
+</g>
+<!-- download_tracker -->
+<g id="node29" class="node"><title>download_tracker</title>
+<ellipse fill="none" stroke="black" cx="564" cy="-234" rx="80.1284" ry="18"></ellipse>
+<text text-anchor="middle" x="564" y="-229.8" font-family="Times,serif" font-size="14.00">download_tracker</text>
+</g>
+<!-- .&#45;&gt;download_tracker -->
+<g id="edge30" class="edge"><title>.-&gt;download_tracker</title>
+<path fill="none" stroke="black" d="M373.719,-297.241C406.6,-286.486 466.94,-266.749 510.878,-252.376"></path>
+<polygon fill="black" stroke="black" points="512.131,-255.649 520.547,-249.214 509.954,-248.996 512.131,-255.649"></polygon>
 </g>
 <!-- index_app_names -->
-<g id="node9" class="node"><title>index_app_names</title>
-<ellipse fill="none" stroke="black" cx="249" cy="-162" rx="80.1456" ry="18"></ellipse>
-<text text-anchor="middle" x="249" y="-157.8" font-family="Times,serif" font-size="14.00">index_app_names</text>
+<g id="node11" class="node"><title>index_app_names</title>
+<ellipse fill="none" stroke="black" cx="315" cy="-162" rx="80.1456" ry="18"></ellipse>
+<text text-anchor="middle" x="315" y="-157.8" font-family="Times,serif" font-size="14.00">index_app_names</text>
 </g>
 <!-- download_itunes&#45;&gt;index_app_names -->
-<g id="edge8" class="edge"><title>download_itunes-&gt;index_app_names</title>
-<path fill="none" stroke="black" d="M275.527,-216.055C271.503,-208.007 266.602,-198.205 262.113,-189.226"></path>
-<polygon fill="black" stroke="black" points="265.24,-187.654 257.638,-180.275 258.979,-190.785 265.24,-187.654"></polygon>
+<g id="edge10" class="edge"><title>download_itunes-&gt;index_app_names</title>
+<path fill="none" stroke="black" d="M341.527,-216.055C337.503,-208.007 332.602,-198.205 328.113,-189.226"></path>
+<polygon fill="black" stroke="black" points="331.24,-187.654 323.638,-180.275 324.979,-190.785 331.24,-187.654"></polygon>
 </g>
 <!-- index_rank -->
-<g id="node11" class="node"><title>index_rank</title>
-<ellipse fill="none" stroke="black" cx="399" cy="-90" rx="54.219" ry="18"></ellipse>
-<text text-anchor="middle" x="399" y="-85.8" font-family="Times,serif" font-size="14.00">index_rank</text>
+<g id="node13" class="node"><title>index_rank</title>
+<ellipse fill="none" stroke="black" cx="403" cy="-90" rx="54.219" ry="18"></ellipse>
+<text text-anchor="middle" x="403" y="-85.8" font-family="Times,serif" font-size="14.00">index_rank</text>
 </g>
 <!-- bundle_combine&#45;&gt;index_rank -->
-<g id="edge10" class="edge"><title>bundle_combine-&gt;index_rank</title>
-<path fill="none" stroke="black" d="M417.067,-143.697C414.394,-135.898 411.174,-126.509 408.199,-117.829"></path>
-<polygon fill="black" stroke="black" points="411.418,-116.429 404.864,-108.104 404.797,-118.699 411.418,-116.429"></polygon>
+<g id="edge12" class="edge"><title>bundle_combine-&gt;index_rank</title>
+<path fill="none" stroke="black" d="M468.619,-144.411C457.21,-135.125 442.832,-123.421 430.444,-113.338"></path>
+<polygon fill="black" stroke="black" points="432.608,-110.586 422.643,-106.988 428.189,-116.015 432.608,-110.586"></polygon>
 </g>
 <!-- index_domains -->
-<g id="node13" class="node"><title>index_domains</title>
-<ellipse fill="none" stroke="black" cx="551" cy="-90" rx="70.0665" ry="18"></ellipse>
-<text text-anchor="middle" x="551" y="-85.8" font-family="Times,serif" font-size="14.00">index_domains</text>
+<g id="node15" class="node"><title>index_domains</title>
+<ellipse fill="none" stroke="black" cx="559" cy="-90" rx="70.0665" ry="18"></ellipse>
+<text text-anchor="middle" x="559" y="-85.8" font-family="Times,serif" font-size="14.00">index_domains</text>
 </g>
 <!-- bundle_combine&#45;&gt;index_domains -->
-<g id="edge12" class="edge"><title>bundle_combine-&gt;index_domains</title>
-<path fill="none" stroke="black" d="M451.726,-145.291C469.924,-135.338 493.656,-122.36 513.353,-111.588"></path>
-<polygon fill="black" stroke="black" points="515.276,-114.526 522.37,-106.657 511.917,-108.384 515.276,-114.526"></polygon>
+<g id="edge14" class="edge"><title>bundle_combine-&gt;index_domains</title>
+<path fill="none" stroke="black" d="M505.589,-144.411C514.352,-135.648 525.268,-124.732 534.943,-115.057"></path>
+<polygon fill="black" stroke="black" points="537.448,-117.502 542.044,-107.956 532.498,-112.552 537.448,-117.502"></polygon>
 </g>
 <!-- index_app_names&#45;&gt;index_rank -->
-<g id="edge16" class="edge"><title>index_app_names-&gt;index_rank</title>
-<path fill="none" stroke="black" d="M282.29,-145.465C305.149,-134.797 335.587,-120.593 359.648,-109.364"></path>
-<polygon fill="black" stroke="black" points="361.278,-112.466 368.859,-105.066 358.318,-106.123 361.278,-112.466"></polygon>
-</g>
-<!-- html_index_apps -->
-<g id="node15" class="node"><title>html_index_apps</title>
-<ellipse fill="none" stroke="black" cx="249" cy="-90" rx="77.3345" ry="18"></ellipse>
-<text text-anchor="middle" x="249" y="-85.8" font-family="Times,serif" font-size="14.00">html_index_apps</text>
-</g>
-<!-- index_app_names&#45;&gt;html_index_apps -->
-<g id="edge14" class="edge"><title>index_app_names-&gt;html_index_apps</title>
-<path fill="none" stroke="black" d="M249,-143.697C249,-135.983 249,-126.712 249,-118.112"></path>
-<polygon fill="black" stroke="black" points="252.5,-118.104 249,-108.104 245.5,-118.104 252.5,-118.104"></polygon>
+<g id="edge18" class="edge"><title>index_app_names-&gt;index_rank</title>
+<path fill="none" stroke="black" d="M335.855,-144.411C347.529,-135.125 362.242,-123.421 374.917,-113.338"></path>
+<polygon fill="black" stroke="black" points="377.253,-115.952 382.901,-106.988 372.896,-110.474 377.253,-115.952"></polygon>
 </g>
 <!-- index_categories -->
-<g id="node18" class="node"><title>index_categories</title>
-<ellipse fill="none" stroke="black" cx="77" cy="-90" rx="76.1936" ry="18"></ellipse>
-<text text-anchor="middle" x="77" y="-85.8" font-family="Times,serif" font-size="14.00">index_categories</text>
+<g id="node16" class="node"><title>index_categories</title>
+<ellipse fill="none" stroke="black" cx="245" cy="-90" rx="76.1936" ry="18"></ellipse>
+<text text-anchor="middle" x="245" y="-85.8" font-family="Times,serif" font-size="14.00">index_categories</text>
 </g>
 <!-- index_app_names&#45;&gt;index_categories -->
-<g id="edge18" class="edge"><title>index_app_names-&gt;index_categories</title>
-<path fill="none" stroke="black" d="M212.102,-145.983C186.054,-135.382 150.967,-121.103 123.079,-109.753"></path>
-<polygon fill="black" stroke="black" points="124.123,-106.399 113.542,-105.872 121.485,-112.883 124.123,-106.399"></polygon>
+<g id="edge20" class="edge"><title>index_app_names-&gt;index_categories</title>
+<path fill="none" stroke="black" d="M298.055,-144.055C289.371,-135.371 278.644,-124.644 269.114,-115.114"></path>
+<polygon fill="black" stroke="black" points="271.335,-112.385 261.789,-107.789 266.385,-117.335 271.335,-112.385"></polygon>
 </g>
 <!-- html_bundle -->
-<g id="node22" class="node"><title>html_bundle</title>
-<ellipse fill="none" stroke="black" cx="265" cy="-18" rx="59.2871" ry="18"></ellipse>
-<text text-anchor="middle" x="265" y="-13.8" font-family="Times,serif" font-size="14.00">html_bundle</text>
+<g id="node24" class="node"><title>html_bundle</title>
+<ellipse fill="none" stroke="black" cx="396" cy="-18" rx="59.2871" ry="18"></ellipse>
+<text text-anchor="middle" x="396" y="-13.8" font-family="Times,serif" font-size="14.00">html_bundle</text>
 </g>
 <!-- index_rank&#45;&gt;html_bundle -->
-<g id="edge22" class="edge"><title>index_rank-&gt;html_bundle</title>
-<path fill="none" stroke="black" d="M371.235,-74.496C351.38,-64.1241 324.428,-50.0446 302.64,-38.6626"></path>
-<polygon fill="black" stroke="black" points="304.138,-35.4964 293.654,-33.9684 300.897,-41.7009 304.138,-35.4964"></polygon>
-</g>
-<!-- html_rank -->
-<g id="node24" class="node"><title>html_rank</title>
-<ellipse fill="none" stroke="black" cx="394" cy="-18" rx="50.5965" ry="18"></ellipse>
-<text text-anchor="middle" x="394" y="-13.8" font-family="Times,serif" font-size="14.00">html_rank</text>
-</g>
-<!-- index_rank&#45;&gt;html_rank -->
-<g id="edge24" class="edge"><title>index_rank-&gt;html_rank</title>
-<path fill="none" stroke="black" d="M397.764,-71.6966C397.213,-63.9827 396.551,-54.7125 395.937,-46.1124"></path>
-<polygon fill="black" stroke="black" points="399.425,-45.8295 395.222,-36.1043 392.443,-46.3283 399.425,-45.8295"></polygon>
+<g id="edge24" class="edge"><title>index_rank-&gt;html_bundle</title>
+<path fill="none" stroke="black" d="M401.27,-71.6966C400.498,-63.9827 399.571,-54.7125 398.711,-46.1124"></path>
+<polygon fill="black" stroke="black" points="402.188,-45.7064 397.71,-36.1043 395.223,-46.403 402.188,-45.7064"></polygon>
 </g>
 <!-- html_index_domains -->
 <g id="node26" class="node"><title>html_index_domains</title>
-<ellipse fill="none" stroke="black" cx="555" cy="-18" rx="92.3709" ry="18"></ellipse>
-<text text-anchor="middle" x="555" y="-13.8" font-family="Times,serif" font-size="14.00">html_index_domains</text>
+<ellipse fill="none" stroke="black" cx="566" cy="-18" rx="92.3709" ry="18"></ellipse>
+<text text-anchor="middle" x="566" y="-13.8" font-family="Times,serif" font-size="14.00">html_index_domains</text>
 </g>
 <!-- index_rank&#45;&gt;html_index_domains -->
 <g id="edge26" class="edge"><title>index_rank-&gt;html_index_domains</title>
-<path fill="none" stroke="black" d="M429.821,-75.1703C452.913,-64.8083 484.842,-50.481 510.674,-38.8899"></path>
-<polygon fill="black" stroke="black" points="512.197,-42.0429 519.887,-34.7557 509.331,-35.6564 512.197,-42.0429"></polygon>
+<path fill="none" stroke="black" d="M434.815,-75.3371C459.181,-64.8733 493.128,-50.2949 520.384,-38.5898"></path>
+<polygon fill="black" stroke="black" points="521.912,-41.7428 529.719,-34.5808 519.149,-35.3108 521.912,-41.7428"></polygon>
 </g>
 <!-- index_domains&#45;&gt;html_index_domains -->
 <g id="edge28" class="edge"><title>index_domains-&gt;html_index_domains</title>
-<path fill="none" stroke="black" d="M551.989,-71.6966C552.43,-63.9827 552.959,-54.7125 553.451,-46.1124"></path>
-<polygon fill="black" stroke="black" points="556.946,-46.2878 554.023,-36.1043 549.958,-45.8883 556.946,-46.2878"></polygon>
+<path fill="none" stroke="black" d="M560.73,-71.6966C561.502,-63.9827 562.429,-54.7125 563.289,-46.1124"></path>
+<polygon fill="black" stroke="black" points="566.777,-46.403 564.29,-36.1043 559.812,-45.7064 566.777,-46.403"></polygon>
+</g>
+<!-- html_index_apps -->
+<g id="node18" class="node"><title>html_index_apps</title>
+<ellipse fill="none" stroke="black" cx="77" cy="-18" rx="77.3345" ry="18"></ellipse>
+<text text-anchor="middle" x="77" y="-13.8" font-family="Times,serif" font-size="14.00">html_index_apps</text>
+</g>
+<!-- index_categories&#45;&gt;html_index_apps -->
+<g id="edge16" class="edge"><title>index_categories-&gt;html_index_apps</title>
+<path fill="none" stroke="black" d="M208.96,-73.9832C183.604,-63.4182 149.48,-49.1998 122.285,-37.8687"></path>
+<polygon fill="black" stroke="black" points="123.558,-34.6074 112.981,-33.9919 120.865,-41.0689 123.558,-34.6074"></polygon>
 </g>
 <!-- html_categories -->
-<g id="node20" class="node"><title>html_categories</title>
-<ellipse fill="none" stroke="black" cx="77" cy="-18" rx="72.5712" ry="18"></ellipse>
-<text text-anchor="middle" x="77" y="-13.8" font-family="Times,serif" font-size="14.00">html_categories</text>
+<g id="node22" class="node"><title>html_categories</title>
+<ellipse fill="none" stroke="black" cx="245" cy="-18" rx="72.5712" ry="18"></ellipse>
+<text text-anchor="middle" x="245" y="-13.8" font-family="Times,serif" font-size="14.00">html_categories</text>
 </g>
 <!-- index_categories&#45;&gt;html_categories -->
-<g id="edge20" class="edge"><title>index_categories-&gt;html_categories</title>
-<path fill="none" stroke="black" d="M77,-71.6966C77,-63.9827 77,-54.7125 77,-46.1124"></path>
-<polygon fill="black" stroke="black" points="80.5001,-46.1043 77,-36.1043 73.5001,-46.1044 80.5001,-46.1043"></polygon>
+<g id="edge22" class="edge"><title>index_categories-&gt;html_categories</title>
+<path fill="none" stroke="black" d="M245,-71.6966C245,-63.9827 245,-54.7125 245,-46.1124"></path>
+<polygon fill="black" stroke="black" points="248.5,-46.1043 245,-36.1043 241.5,-46.1044 248.5,-46.1043"></polygon>
 </g>
 </g>
 </svg>

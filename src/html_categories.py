@@ -9,15 +9,18 @@ def process(affected=None, per_page=60):
     base = mylib.path_out('category')
     parent = 'All Categories'
     arr = []
-    for json in mylib.enum_categories():
-        cid, cname = json['cat']
+    for fname, json in mylib.enum_categories():
+        cid, cname = json['meta']
         arr.append((cid, cname))
         if affected and cid not in affected:
             continue
-        pre = HTML.h2(HTML.a_path([(parent, '../')], cname))
-        _, a = HTML.write_app_pages(mylib.path_add(base, cid), json['apps'],
-                                    cname, per_page, pre=pre)
+        out_dir = mylib.path_add(base, cid)
+        A = HTML.h2(HTML.a_path([(parent, '../')], cname))
+        Z = HTML.p_download_json('data.json', 'category_{}.json'.format(cid))
+        _, a = HTML.write_app_pages(out_dir, json['apps'],
+                                    cname, per_page, pre=A, post=Z)
         print('  {} ({})'.format(cname, a))
+        mylib.symlink(fname, mylib.path_add(out_dir, 'data.json'))
 
     print('  .. {} categories'.format(len(arr)))
     mylib.sort_by_name(arr, 1)

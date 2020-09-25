@@ -256,7 +256,7 @@ def enum_jsons(bundle_id):
 def enum_categories():
     for fname in glob.glob(path_data_index('category', 'id_*.json')):
         with open(fname, 'r') as fp:
-            yield json.load(fp)
+            yield fname, json.load(fp)
 
 
 def appids_in_out(selection=None):
