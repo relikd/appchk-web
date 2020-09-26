@@ -5,7 +5,6 @@ import lib_graphs as Graph
 import lib_html as HTML
 import index_app_names  # get_name
 import index_domains
-import index_rank  # get_total_counts, fname_app_rank
 
 
 def dropdown_choose(button):
@@ -111,27 +110,6 @@ def gen_lookup(html_dir, doms_dict, names_dict, title):
     mylib.json_write(mylib.path_add(html_dir, 'doms.json'), doms_dict)
 
 
-def gen_results(c_apps, c_domains, title):
-    [c_recordings, c_logs] = index_rank.get_total_counts()
-    print('    {} apps'.format(c_apps))
-    print('    {} domains'.format(c_domains))
-    print('    {} recordings'.format(c_recordings))
-    print('    {} logs'.format(c_logs))
-    HTML.write(mylib.path_out('results'), '''
-<h2>{}</h2>
-<p>The AppCheck database currently contains <b>{:,}&nbsp;apps</b> with a total of <b>{:,} unique domains</b>.</p>
-<p>Collected through <b>{:,}&nbsp;recordings</b> with <b>{:,} individual requests</b>.</p>
-<ul>
-  <li>List of <a href="/index/apps/">Apps</a></li>
-  <li>List of <a href="/category/">Categories</a></li>
-  <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
-  <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
-</ul>
-'''.format(title, c_apps, c_domains, c_recordings, c_logs), title=title)
-    mylib.symlink(index_rank.fname_app_rank(),
-                  mylib.path_out('results', 'rank.json'))  # after HTML.write
-
-
 def process():
     # bundle_combine assures domain name is [a-zA-Z0-9.-]
     print('generating html: domain-index ...')
@@ -157,10 +135,8 @@ def process():
     gen_html_trinity(mylib.path_out('index', 'domains', 'tracker'), app_count,
                      json=index_domains.load(tracker=True), title='Tracker',
                      symlink=index_domains.fname_tracker())
-    # Stats
-    print('  Results')
-    gen_results(app_count, dom_count, title='Results')
     print('')
+    return app_count, dom_count
 
 
 if __name__ == '__main__':

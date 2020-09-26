@@ -36,14 +36,13 @@ def rebuild_html(bundle_ids=None, cat_ids=None, inclIApp=True, inclRoot=False):
     if bundle_ids:
         html_bundle.process(bundle_ids)  # after index_rank
     html_categories.process(affected=cat_ids)  # after index_categories
-    html_index_domains.process()  # after index_domains & index_rank
     if inclIApp:
         html_index_apps.process()  # after index_categories
     else:
         print('no new bundle, not rebuilding index')
     html_ranking.process()  # after html_categories & html_index_apps
-    if inclRoot:  # TODO: remove check if root contains dynamic content
-        html_root.process()
+    app_count, dom_count = html_index_domains.process()  # after index_domains
+    html_root.process(app_count, dom_count, inclStatic=inclRoot)
 
 
 def del_id(bundle_ids):
@@ -98,7 +97,6 @@ def import_update():
     print('')
     if len(needs_update) > 0:
         combine_and_update(needs_update)
-        html_root.gen_help()
     if len(then_delete) > 0:
         print('cleanup _in folder ...')
         for x in then_delete:

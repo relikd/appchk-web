@@ -3,11 +3,28 @@
 import os
 import lib_common as mylib
 import lib_html as HTML
+import index_rank  # get_total_counts
 
 
 def gen_root():
     with open(mylib.path_root('templates', 'root.html'), 'r') as fp:
         HTML.write(mylib.path_out(), fp.read())
+
+
+def gen_redirect():
+    HTML.write(mylib.path_out(), '''
+<h2>Redirecting …</h2>
+<script type="text/javascript">
+  var GET={};
+  window.location.search.substr(1).split("&").forEach(function(x){GET[x.split("=")[0]]=x.split("=")[1]});
+  if (GET["id"]) { window.location = "/app/" + GET["id"] + "/"; }
+</script>''', fname='redirect.html')
+
+
+def gen_404():
+    HTML.write(mylib.path_out(), '''
+<h2>404 – Not Found</h2>
+<p>Go back to <a href="/">start page</a></p>''', fname='404.html')
 
 
 def gen_help():
@@ -60,32 +77,41 @@ def gen_help():
     HTML.write(mylib.path_out('help'), txt)
 
 
-def gen_search():
-    HTML.write(mylib.path_out(), '''
-<h2>Redirecting …</h2>
-<script type="text/javascript">
-  var GET={};
-  window.location.search.substr(1).split("&").forEach(function(x){GET[x.split("=")[0]]=x.split("=")[1]});
-  if (GET["id"]) { window.location = "/app/" + GET["id"] + "/"; }
-</script>''', fname='redirect.html')
+def gen_results(base_dir, c_apps, c_domains, title):
+    [c_recs, c_logs] = index_rank.get_total_counts()
+    print('    {} apps'.format(c_apps))
+    print('    {} domains'.format(c_domains))
+    print('    {} recordings'.format(c_recs))
+    print('    {} logs'.format(c_logs))
+    HTML.write(base_dir, '''
+<h2>{}</h2>
+<p>The AppCheck database currently contains <b>{:,}&nbsp;apps</b> with a total of <b>{:,} unique domains</b>.</p>
+<p>Collected through <b>{:,}&nbsp;recordings</b> with <b>{:,} individual requests</b>.</p>
+<ul>
+  <li>List of <a href="/index/apps/">Apps</a></li>
+  <li>List of <a href="/category/">Categories</a></li>
+  <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
+  <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
+</ul>
+'''.format(title, c_apps, c_domains, c_recs, c_logs), title=title)
+    mylib.symlink(index_rank.fname_app_rank(),
+                  mylib.path_add(base_dir, 'rank.json'))  # after HTML.write
 
 
-def gen_404():
-    HTML.write(mylib.path_out(), '''
-<h2>404 – Not Found</h2>
-<p>Go back to <a href="/">start page</a></p>''', fname='404.html')
-
-
-def process():
+def process(app_count, dom_count, inclStatic=False):
     print('generating root html ...')
-    print('  index.html')
-    gen_root()  # root index.thml
-    print('  redirect.html')
-    gen_search()  # root redirect.html?id=my.bundle.id
-    print('  404.html')
-    gen_404()
-    print('  /help/')
+    if inclStatic:
+        print('  index.html')
+        gen_root()  # root index.thml
+        print('  redirect.html')
+        gen_redirect()  # root redirect.html?id=my.bundle.id
+        print('  404.html')
+        gen_404()
+    print('  /help/')  # dynamic content
     gen_help()
+    print('  /results/')  # dynamic content
+    gen_results(mylib.path_out('results'), app_count, dom_count,
+                title='Results')
     print('')
 
 
