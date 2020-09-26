@@ -17,15 +17,15 @@ def fname_app_rank():
 
 
 def fname_ranking_all():
-    return mylib.path_data_index('ranking_all.json')
+    return mylib.path_data_index('rank', 'all.json')
 
 
-def fname_ranking_category(cid):
-    return mylib.path_data_index('rank', 'id_{}.json'.format(cid))
+def fname_rank_list(sublist, cid):
+    return mylib.path_data_index('rank', sublist, 'id_{}.json'.format(cid))
 
 
-def make_dir_individuals(reset=False):
-    pth = mylib.path_data_index('rank')
+def make_rank_list_dir(sublist, reset=False):
+    pth = mylib.path_data_index('rank', sublist)
     if reset:
         mylib.rm_dir(pth)
     mylib.mkdir(pth)
@@ -75,47 +75,58 @@ def update_summary_index(index, bundle_ids, deleteOnly=False):
     return did_change
 
 
+def filter_by_list(index, list_ids, updated_ids):
+    if len(list_ids) == 0 or len(updated_ids) == 0:
+        return
+    if updated_ids != ['*'] and not any(x in list_ids for x in updated_ids):
+        return
+    c = 0
+    for x in index:
+        if x[0] in list_ids:
+            yield x
+            c += 1
+            if c >= MAX_RANKING_LIMIT:
+                break
+
+
 def write_ranking_category_list(index, affected_ids):
-    reset = affected_ids == ['*']
-
-    def category_affected(category_bundle_ids):
-        if reset or len(affected_ids) > 10:
-            return True
-        for x in affected_ids:
-            if x in category_bundle_ids:
-                return True
-        return False
-
-    make_dir_individuals(reset)
+    make_rank_list_dir('category', reset=affected_ids == ['*'])
     for _, json in mylib.enum_categories():
-        cid, cname = json['meta']
         ids = [bid for bid, _ in json['apps']]
-        ret = []
-        if len(ids) > 0 and category_affected(ids):
-            for x in index:
-                if x[0] not in ids:
-                    continue
-                ret.append(x)
-                if len(ids) == 0 or len(ret) >= MAX_RANKING_LIMIT:
-                    break
-        mylib.json_write(fname_ranking_category(cid), ret, pretty=False)
+        ret = list(filter_by_list(index, ids, affected_ids))
+        cid = json['meta'][0]
+        mylib.json_write(fname_rank_list('category', cid), ret, pretty=False)
+
+
+def write_ranking_custom_lists(index, affected_ids):
+    make_rank_list_dir('custom', reset=affected_ids == ['*'])
+    for list_id, json in mylib.enum_custom_lists():
+        ret = list(filter_by_list(index, json['apps'], affected_ids))
+        mylib.json_write(fname_rank_list('custom', list_id), ret, pretty=False)
 
 
 def write_ranking_list(index, affected_ids):
     ret = []
     for bid, values in index.items():
         ret.append([bid, index_app_names.get_name(bid)] + values)
-        del(values[8:])
+        del(values[8:])  # prepare for write_rank_index
+
+    print('  write custom lists')
+    write_ranking_custom_lists(ret, affected_ids)
+
     ret.sort(key=lambda x: -x[2 + 10])  # sort by last update
+
+    print('  write category lists')
     write_ranking_category_list(ret, affected_ids)
-    # TODO: doesnt scale well, 100'000 apps ~> 12mb
     if len(ret) > MAX_RANKING_LIMIT:  # limit to most recent X entries
         ret = ret[:MAX_RANKING_LIMIT]
     # mylib.sort_by_name(ret, 1)
+    print('  write overall list')
     mylib.json_write(fname_ranking_all(), ret, pretty=False)
 
 
 def write_rank_index(index):
+    print('  generate bundle ranks')
     mylib.try_del(index, ['_ranks', '_min', '_max'])
     mins = []
     maxs = []
@@ -151,7 +162,7 @@ def get_total_counts():
 
 
 def process(bundle_ids, deleteOnly=False):
-    print('writing index: meta ...')
+    print('writing index: ranking ...')
     fname = fname_app_summary()
     if bundle_ids == ['*']:
         print('  full reset')

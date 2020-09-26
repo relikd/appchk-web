@@ -23,7 +23,7 @@ def html_script_chunk(fname):
 <script type="text/javascript" src="/static/ranking.js"></script>
 <script type="text/javascript" src="/static/lozad.js"></script>
 <script type="text/javascript">
-  rank_js('{}');
+  rank_js('{}', 12, -1);
 </script>'''.format(fname)
 
 
@@ -36,7 +36,7 @@ def write_ranking_category(cid, category_name):
                                 'raw-category-{}.json'.format(cid))
     src += html_script_chunk('data.json')
     HTML.write(base, src, title='Category Ranking: ' + category_name)
-    mylib.symlink(index_rank.fname_ranking_category(cid),
+    mylib.symlink(index_rank.fname_rank_list('category', cid),
                   mylib.path_add(base, 'data.json'))
 
 

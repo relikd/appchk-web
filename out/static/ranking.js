@@ -51,9 +51,9 @@ function sort_by(col, asc) {
   _data.sort(function(a, b){ return a[i] < b[i] ? -o : a[i] > b[i] ? o : 0; });
   update(col, asc);
 }
-function rank_js(fname) {
+function rank_js(fname, column, order) {
   loadJSON(fname, function(response) {
     _data = JSON.parse(response);
-    update(12,-1);
+    update(column, order);
   });
 }

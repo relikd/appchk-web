@@ -247,6 +247,12 @@ def enum_newly_added():
         yield fname, os.path.basename(fname)[3:]  # del prefix 'in_'
 
 
+def enum_custom_lists():
+    for fname in glob.glob(path_data('_lists', 'id_*.json')):
+        with open(fname, 'r') as fp:
+            yield os.path.basename(fname)[3:-5], json.load(fp)
+
+
 def enum_jsons(bundle_id):
     for fname in glob.glob(path_data_app(bundle_id, 'id_*.json')):
         with open(fname, 'r') as fp:
@@ -262,7 +268,8 @@ def enum_categories():
 def appids_in_out(selection=None):
     if selection and selection != ['*']:
         return selection
-    return [os.path.basename(x) for x in glob.glob(path_out_app('*'))]
+    return [os.path.basename(os.path.dirname(x))
+            for x in glob.glob(path_out_app('*/'))]
 
 
 def appids_in_data(selection=None):
