@@ -105,7 +105,7 @@ def gen_page(bundle_id, obj):
 { HTML.p_download_json('data.json', bundle_id + '.json') }
 <script type="text/javascript" src="/static/lookup-rank.js"></script>
 <script type="text/javascript">
-  lookup_rank_js('{bundle_id}');
+  lookup_rank_js('/results/rank.json', '{bundle_id}');
 </script>''', title=name)
 
 
