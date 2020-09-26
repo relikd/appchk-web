@@ -248,9 +248,9 @@ def enum_newly_added():
 
 
 def enum_custom_lists():
-    for fname in glob.glob(path_data('_lists', 'id_*.json')):
+    for fname in glob.glob(path_data('_lists', 'list_*.json')):
         with open(fname, 'r') as fp:
-            yield os.path.basename(fname)[3:-5], json.load(fp)
+            yield os.path.basename(fname)[5:-5], json.load(fp)
 
 
 def enum_jsons(bundle_id):

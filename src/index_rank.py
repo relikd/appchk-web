@@ -112,11 +112,12 @@ def write_ranking_list(index, affected_ids):
         del(values[8:])  # prepare for write_rank_index
 
     print('  write custom lists')
+    # sort by  %-tracker asc,  #-pardom asc,  avg-req-per-min asc
+    ret.sort(key=lambda x: (x[2 + 7], x[2 + 5], x[2 + 3]))
     write_ranking_custom_lists(ret, affected_ids)
 
-    ret.sort(key=lambda x: -x[2 + 10])  # sort by last update
-
     print('  write category lists')
+    ret.sort(key=lambda x: -x[2 + 10])  # sort by last update desc
     write_ranking_category_list(ret, affected_ids)
     if len(ret) > MAX_RANKING_LIMIT:  # limit to most recent X entries
         ret = ret[:MAX_RANKING_LIMIT]

@@ -30,6 +30,7 @@ header h1 {
 	margin-top: 0;
 }
 header h1 span { font-size: .7em; color: silver; }
+header ul { padding: 0; }
 main {
 	padding: .1em 2em 1.5em;
 	background: #fff;

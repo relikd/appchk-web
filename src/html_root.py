@@ -93,6 +93,7 @@ def gen_results(base_dir, c_apps, c_domains, title):
   <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
   <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
 </ul>
+<p>Or compare similar application via custom comparison <a href="/lists/">Lists</a>.</p>
 '''.format(title, c_apps, c_domains, c_recs, c_logs), title=title)
     mylib.symlink(index_rank.fname_app_rank(),
                   mylib.path_add(base_dir, 'rank.json'))  # after HTML.write
@@ -116,4 +117,4 @@ def process(app_count, dom_count, inclStatic=False):
 
 
 if __name__ == '__main__':
-    process()
+    process(-1, -1)
