@@ -1,0 +1,115 @@
+<h2>Research Project</h2>
+<div class="squeeze">
+  <p>
+    The AppCheck research project is an effort to shine light on the background activity of iOS apps.
+    Making the otherwise hidden network connections visible to everyone.
+    The goal is to make privacy more accessible to the general public.
+    And thus make incentives for app developers to respect the users privacy.
+  </p>
+  <p>
+    We want to offer users, activists, data protection authorities, and data protection officers an easily accessible and flexible tool to assess the privacy measures of iOS applications. 
+  </p>
+  <span>AppCheck allows users to:</span>
+  <ul>
+    <li>get a visiual overview over an apps communication signature</li>
+    <li>assess how an app ranks within its peer group or category</li>
+    <li>influence the ranking according to their own preferences</li>
+  </ul>
+</div>
+<div class="note">
+  <h4>Current Notice:</h4>
+  <p>
+    We have an ongoing <b>research project</b>. Your help is highly appreciated.
+    <br>
+    For more infos follow <a href="/help/">this link</a>.
+  </p>
+</div>
+
+<h2>Results</h2>
+<div class="squeeze">
+  <p>
+    This website is the front-end for the evaluated data.
+    All app recordings are collected and displayed here.
+    In a visual way it shows you how many known trackers an app uses.
+    How apps compare to each other, and if there are privacy friendly alternatives.
+  </p>
+  <p>
+    You can go to <a href="/index/apps/">all apps</a> directly.
+    Or, if you're interested in details, check the <a href="/results/">results section</a>.
+  </p>
+</div>
+
+<h2>AppCheck – The App</h2>
+<p class="squeeze">
+  AppCheck is a pocket DNS monitor and network filter.<br>
+  It helps you identify applications that communicate with other parties.
+</p>
+<div class="xscroll">
+  <div class="carousel">
+    <img src="static/screenshot1.png" height="400">
+    <img src="static/screenshot2.png" height="400">
+    <img src="static/screenshot3.png" height="400">
+  </div>
+</div>
+
+<h3>How does it work?</h3>
+<p class="squeeze">
+  AppCheck creates a local VPN proxy to intercept all network connections.
+  For each connection AppCheck looks into the DNS headers only, namely the domain names.
+  These domain names are logged in the background while the VPN is running.
+  AppCheck does not need to be active all the time.
+</p>
+
+<h3>What about privacy?</h3>
+<p class="squeeze">
+  Your data belongs to you.
+  Therefore, monitoring and analysis takes place on your device only.
+  AppCheck learns only the destination addresses, not the actual data that is exchanged.
+  The app does not share any data with us or any other third-party – unless you choose to.
+</p>
+
+<h3>How can I contribute?</h3>
+<p class="squeeze">
+  AppCheck allows you to record app specific activity.
+  You can share these recordings with us and the community.
+  This can help you and others avoid phony applications; even before you install an app.
+</p>
+<a id="get-appcheck" class="no-ul" href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">
+  <img class="app-icon" src="/static/appcheck.svg" alt="app-icon" width="30" height="30">
+  <p>
+    Get the iOS App and contribute.<br />
+    Join the TestFlight Beta.
+  </p>
+</a>
+<p class="snd mg_lr">
+  Source code is available <a href="https://github.com/relikd/appcheck/" target="_blank">on GitHub</a>.
+</p>
+
+<h2>Limitations</h2>
+<div class="squeeze">
+  <p>
+    AppCheck can not detect if a network activity belongs to one app or another.
+    This is due to technical limitations of the VPN network extension.
+    Therefore these results can't be taken 100&thinsp;% certain.
+    These <b>wrong attributions</b> can be minimized by running only a single application at a time (during recording).
+    Further, results are filtered prior to publication.
+    Requests that are contained only in a small subset of recordings are ignored.
+  </p>
+  <p>
+    This project is limited to <b>iOS applications</b>.
+    But there are similar projects for Android apps and websites.
+    Check these out:
+  </p>
+  <p>
+    &gt; <i><a href="https://github.com/OxfordHCC/tracker-control-android" target="_blank">TrackerControl</a></i> is an Android application that detects and prevents in-app tracking.
+    It uses the same approach as AppCheck does.
+    Analyzing DNS traffic on device with a local VPN extension.
+  </p>
+  <p>
+    &gt; <i><a href="https://privacyscore.org/" target="_blank">PrivacyScore.org</a></i> is a tool to analyze websites.
+    It allows you to create lists for comparison and ranking.
+    Not only does it show you how much tracking is present in a given website.
+    It also gives you a report on technical security and privacy measures.
+    This way you can evaluate related websites and choose the one with greater privacy benefits.
+  </p>
+</div>

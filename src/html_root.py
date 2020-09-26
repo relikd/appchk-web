@@ -6,33 +6,8 @@ import lib_html as HTML
 
 
 def gen_root():
-    HTML.write(mylib.path_out(), '''
-<h2>About</h2>
-<div class="squeeze">
-  <p>
-    Information about the research project will be added soon. Stay tuned.
-  </p>
-  <a id="get-appcheck" class="no-ul" href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">
-    <img class="app-icon" src="/static/appcheck.svg" alt="app-icon" width="30" height="30">
-    <p>
-      Get the iOS App and contribute.<br />
-      Join the TestFlight Beta.
-    </p>
-  </a>
-  <p>
-    The source code of the app is available <a href="https://github.com/relikd/appcheck/" target="_blank">on GitHub</a>.
-  </p>
-  <h2>Results</h2>
-  <p>
-    If you're just interested in the results, go ahead to see <a href="/index/apps/">all apps</a>.
-  </p>
-  <h2>Current research</h2>
-  <p>
-    We have an ongoing research project open. Your help is highly appreciated. <br>
-    For mor infos follow <a href="/help/">this link</a>.
-  </p>
-</div>
-''')
+    with open(mylib.path_root('templates', 'root.html'), 'r') as fp:
+        HTML.write(mylib.path_out(), fp.read())
 
 
 def gen_help():

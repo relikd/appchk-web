@@ -57,6 +57,23 @@ footer .links {
 #get-appcheck:hover { color: #586472; }
 #get-appcheck img { width: 3em; height: 3em; margin: .3em; }
 #get-appcheck * { display: inline-block; vertical-align: middle; }
+.carousel { width: max-content; }
+.carousel img { margin: 20px; }
+.note {
+	color: #550;
+	background: #F5F570;
+	border: 3px solid #DD0;
+	border-radius: 7px;
+	padding: 16px 2%;
+	width: max-content;
+	max-width: 96%;
+}
+.note h4, .note p { margin: 0 0 5px 0; }
+.squeeze ul {
+  list-style-type: '○ ';
+  padding: 0;
+  margin: .5em 0 1em 1em;
+}
 
 /* dropdown */
 .dropdown button {
