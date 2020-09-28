@@ -14,9 +14,25 @@ def fname_tracker():
     return mylib.path_data_index('domains_tracker.json')
 
 
+def fname_no_tracker():
+    return mylib.path_data_index('domains_no_tracker.json')
+
+
 def load_json_from_disk(index_file):
     return mylib.json_safe_read(
         index_file, fallback={'bundle': [], 'pardom': {}, 'subdom': {}})
+
+
+def loadAll():
+    return load_json_from_disk(fname_all())
+
+
+def loadTracker():
+    return load_json_from_disk(fname_tracker())
+
+
+def loadNonTracker():
+    return load_json_from_disk(fname_no_tracker())
 
 
 def delete_from_index(index, bundle_ids, deleteOnly=False):
@@ -55,34 +71,43 @@ def insert_in_index(index, bundle_ids):
             index['bundle'].append(bid)
         json = bundle_combine.get_evaluated(bid)
         for key in ['pardom', 'subdom']:  # assuming keys are identical
-            for domain, _, _ in json[key]:
+            for domain, _, is_trkr in json[key]:
                 try:
                     index[key][domain].append(i)
                 except KeyError:
-                    index[key][domain] = [i]
+                    index[key][domain] = [is_trkr, i]
                 has_changes = True
     return has_changes
 
 
-def filter_tracker_only(index):
-    sub_trkr = {}
-    par_trkr = {}
-    for domain, ids in filter(lambda x: download_tracker.is_tracker(x[0]),
-                              index['subdom'].items()):
-        sub_trkr[domain] = ids
+def split_trackers(index):
+    ret = {'trkr': {'bundle': index['bundle'], 'subdom': {}, 'pardom': {}},
+           'no-trkr': {'bundle': index['bundle'], 'subdom': {}, 'pardom': {}}}
+    for domain, [is_trkr, *ids] in index['subdom'].items():
+        key = 'trkr' if is_trkr else 'no-trkr'
+        ret[key]['subdom'][domain] = ids
         pardom = mylib.parent_domain(domain)
         try:
-            par_trkr[pardom].update(ids)
+            ret[key]['pardom'][pardom].update(ids)
         except KeyError:
-            par_trkr[pardom] = set(ids)
-    for dom, ids in par_trkr.items():
-        par_trkr[dom] = list(ids)
-    index['subdom'] = sub_trkr
-    index['pardom'] = par_trkr
+            ret[key]['pardom'][pardom] = set(ids)
+    for dic in ret.values():
+        for dom, ids in dic['pardom'].items():
+            dic['pardom'][dom] = list(ids)
+    return ret['trkr'], ret['no-trkr']
 
 
-def load(tracker=False):
-    return load_json_from_disk(fname_tracker() if tracker else fname_all())
+def filter_list_at_least(index, min_count):
+    sub = {}
+    par = {}
+    for domain, ids in index['subdom'].items():
+        if len(ids) >= min_count:
+            sub[domain] = ids
+    for domain, ids in index['pardom'].items():
+        if len(ids) >= min_count:
+            par[domain] = ids
+    index['subdom'] = sub
+    index['pardom'] = par
 
 
 def number_of_apps(index):
@@ -120,8 +145,10 @@ def process(bundle_ids, deleteOnly=False):
         did_change |= insert_in_index(index, ids)
     if did_change:
         mylib.json_write(fname, index, pretty=False)
-        filter_tracker_only(index)
-        mylib.json_write(fname_tracker(), index, pretty=False)
+        dict_trkr, dict_no_trkr = split_trackers(index)
+        mylib.json_write(fname_tracker(), dict_trkr, pretty=False)
+        filter_list_at_least(dict_no_trkr, 5)  # or 0.1 * len(ids)
+        mylib.json_write(fname_no_tracker(), dict_no_trkr, pretty=False)
     else:
         print('  no change')
     print('')

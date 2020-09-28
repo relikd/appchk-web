@@ -82,7 +82,7 @@ def gen_html_trinity(idx_dir, app_count, json, title, symlink):
     # Full list (by count)
     list1.sort(key=lambda x: -x[1])
     list2.sort(key=lambda x: -x[1])
-    write_index('by_count.html', title='{} (most apps)'.format(title),
+    write_index('by_count.html', title='{} (by count)'.format(title),
                 button='Full list (by count)')
     # Top 10
     gen_html_top_10(idx_dir, list2[:25], app_count, 'Top 25 {}'.format(title))
@@ -113,7 +113,7 @@ def gen_lookup(html_dir, doms_dict, names_dict, title):
 def process():
     # bundle_combine assures domain name is [a-zA-Z0-9.-]
     print('generating html: domain-index ...')
-    json = index_domains.load()
+    json = index_domains.loadAll()
     app_count = index_domains.number_of_apps(json)
     dom_count = len(json['subdom'])
 
@@ -133,8 +133,14 @@ def process():
 
     print('  Trackers Only')
     gen_html_trinity(mylib.path_out('index', 'domains', 'tracker'), app_count,
-                     json=index_domains.load(tracker=True), title='Tracker',
+                     json=index_domains.loadTracker(), title='Tracker',
                      symlink=index_domains.fname_tracker())
+
+    print('  Highly Used')
+    gen_html_trinity(mylib.path_out('index', 'domains', 'highly-used'),
+                     app_count, json=index_domains.loadNonTracker(),
+                     title='Highly Used Domains',
+                     symlink=index_domains.fname_no_tracker())
     print('')
     return app_count, dom_count
 

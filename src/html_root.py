@@ -90,8 +90,9 @@ def gen_results(base_dir, c_apps, c_domains, title):
 <ul>
   <li>List of <a href="/index/apps/">Apps</a></li>
   <li>List of <a href="/category/">Categories</a></li>
-  <li>List of <a href="/index/domains/all/">Requested Domains</a></li>
-  <li>List of <a href="/index/domains/tracker/">Trackers</a></li>
+  <li>List of <a href="/index/domains/all/">All Domains</a>, 
+  only <a href="/index/domains/tracker/">Trackers</a>,
+  or <a href="/index/domains/highly-used/">Highly-used Domains</a> which appear in at least 5 apps but are not considered tracker <i>yet</i>.</li>
 </ul>
 <p>Or compare similar application via custom comparison <a href="/lists/">Lists</a>.</p>
 '''.format(title, c_apps, c_domains, c_recs, c_logs), title=title)
