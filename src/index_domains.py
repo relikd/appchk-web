@@ -18,6 +18,10 @@ def fname_no_tracker():
     return mylib.path_data_index('domains_no_tracker.json')
 
 
+def fname_dom_subdoms():
+    return mylib.path_data_index('domains_subdomains.json')
+
+
 def load_json_from_disk(index_file):
     return mylib.json_safe_read(
         index_file, fallback={'bundle': [], 'pardom': {}, 'subdom': {}})
@@ -110,6 +114,18 @@ def filter_list_at_least(index, min_count):
     index['pardom'] = par
 
 
+def dict_dom_subdomains(index):
+    ret = {}
+    for subdomain in index['subdom'].keys():
+        pardom = mylib.parent_domain(subdomain)
+        host = subdomain[:-len(pardom) - 1]  # - '.'
+        try:
+            ret[pardom].append(host)
+        except KeyError:
+            ret[pardom] = [host]
+    return ret
+
+
 def number_of_apps(index):
     return sum(1 for x in index['bundle'] if x != '_')
 
@@ -149,6 +165,9 @@ def process(bundle_ids, deleteOnly=False):
         mylib.json_write(fname_tracker(), dict_trkr, pretty=False)
         filter_list_at_least(dict_no_trkr, 5)  # or 0.1 * len(ids)
         mylib.json_write(fname_no_tracker(), dict_no_trkr, pretty=False)
+        mylib.json_write(fname_dom_subdoms(), dict_dom_subdomains(index),
+                         pretty=False)
+
     else:
         print('  no change')
     print('')

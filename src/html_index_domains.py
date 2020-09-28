@@ -89,24 +89,23 @@ def gen_html_trinity(idx_dir, app_count, json, title, symlink):
     mylib.symlink(symlink, mylib.path_out(idx_dir, 'data.json'))
 
 
-def gen_lookup(html_dir, doms_dict, names_dict, title):
-    header = HTML.a_path([('All Domains', '/index/domains/all/')],
-                         '<span id="name"></span>')
-    HTML.write(html_dir, '''
-<h2>{}</h2>
+def gen_lookup(html_dir, doms_dict, flag, title):
+    HTML.write(html_dir, f'''
+<h2>{ HTML.a_path([('All Domains', '/index/domains/all/')],
+                  '<span id="name"></span>') }</h2>
+<p>Known Tracker: <b id="known">?</b></p>
 <p>Present in: <b id="num-apps">… applications</b></p>
+{ '<h3>Subdomains:</h3><div id="subdoms" class="tags"></div>' if flag else '' }
 <h3>Apps containing this domain:</h3>
 <div id="app-toc" class="no-ul-all">
-  {}
+  { HTML.app_tile_template() }
 </div>
-<script type="text/javascript" src="/static/lookup-domain.js"></script>
+<script type="text/javascript" src="/static/lookup-domain.js?2"></script>
 <script type="text/javascript" src="/static/lozad.js"></script>
 <script type="text/javascript">
-  lookup_domain_js('doms.json', 'apps.json', 'name', 'num-apps', 'app-toc');
+  lookup_domain_js('doms.json', '/results/lookup-apps.json', '/results/subdoms.json');
 </script>
-'''.format(header, HTML.app_tile_template()), title=title)
-    # after html write which will create the dir
-    mylib.json_write(mylib.path_add(html_dir, 'apps.json'), names_dict)
+''', title=title)
     mylib.json_write(mylib.path_add(html_dir, 'doms.json'), doms_dict)
 
 
@@ -117,13 +116,20 @@ def process():
     app_count = index_domains.number_of_apps(json)
     dom_count = len(json['subdom'])
 
-    print('  Lookup')
+    # Prepare for lookup
     names = [[x, index_app_names.get_name(x)] for x in json['bundle']]
-    gen_lookup(mylib.path_out('domain'), json['pardom'], names,
-               title='Domain Lookup')
-    gen_lookup(mylib.path_out('subdomain'), json['subdom'], names,
-               title='Subdomain Lookup')
+    dest_dir = mylib.path_out('results')
+    mylib.mkdir(dest_dir)
+    mylib.json_write(mylib.path_add(dest_dir, 'lookup-apps.json'), names)
+    mylib.symlink(index_domains.fname_dom_subdoms(),
+                  mylib.path_add(dest_dir, 'subdoms.json'))
     names = None
+
+    print('  Lookup')
+    gen_lookup(mylib.path_out('domain'), json['pardom'], True,
+               title='Domain Lookup')
+    gen_lookup(mylib.path_out('subdomain'), json['subdom'], False,
+               title='Subdomain Lookup')
 
     print('  All Domains')
     gen_html_trinity(mylib.path_out('index', 'domains', 'all'), app_count,
