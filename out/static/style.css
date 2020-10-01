@@ -271,6 +271,7 @@ p.trckr { font-size: .9em; margin-left: .5em; }
 #help-links .done { color: #52C840; }
 
 /* rank-list */
+#rank-list tr { font-size: 0.75em; }
 #rank-list th span { display: block; margin-top: 4px; }
 #rank-list th { vertical-align: bottom; }
 #rank-list th a { cursor:pointer; border: unset; padding: 0 5px; margin: 0 2px; }
