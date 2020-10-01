@@ -6,6 +6,7 @@ help:
 	@echo '  push-list:     replace custom lists like "Messengers", etc.'
 	@echo '  remote-build:  force-rebuild all remote files (index & html)'
 	@echo '  local:         force-rebuild all local files (index & html)'
+	@echo '  server:        start local HTTP server'
 	@echo ''
 	@echo 'Usage:'
 	@echo '  make push remote-build SSH=your_ssh_key'
@@ -28,3 +29,7 @@ remote-build:
 	ssh $(SSH) /var/www/de-appchk/src/main.py run '*'
 local:
 	src/main.py run '*'
+server:
+	@cd out
+	@open http://127.0.0.1
+	python3 -m http.server 80
