@@ -31,7 +31,7 @@ def print_usage_and_exit():
     exit(0)
 
 
-def rebuild_html(bundle_ids=None, cat_ids=None, inclIApp=True, inclRoot=False):
+def rebuild_html(bundle_ids=None, cat_ids=None, inclIApp=True):
     # all of these must happen after index_app_names
     if bundle_ids:
         html_bundle.process(bundle_ids)  # after index_rank
@@ -42,7 +42,7 @@ def rebuild_html(bundle_ids=None, cat_ids=None, inclIApp=True, inclRoot=False):
         print('no new bundle, not rebuilding index')
     html_ranking.process()  # after html_categories & html_index_apps
     app_count, dom_count = html_index_domains.process()  # after index_domains
-    html_root.process(app_count, dom_count, inclStatic=inclRoot)
+    html_root.process(app_count, dom_count, inclStatic=True)
 
 
 def del_id(bundle_ids):
@@ -133,7 +133,7 @@ try:
             index_categories.process(['*'], force=True)
             index_rank.process(['*'])
             index_domains.process(['*'])
-            rebuild_html(inclRoot=True)
+            rebuild_html()
         elif cmd == 'run':
             if len(params) == 0:
                 print_usage_and_exit()
