@@ -12,14 +12,14 @@ def write_overview_page(base_dir, category_tuples, title):
             cluster[i].append(x)
         except KeyError:
             cluster[i] = [x]
-    src = '<h2>{}</h2>'.format(title)
+    src = '<h2>{}</h2><div id="categories">'.format(title)
     for i, arr in sorted(cluster.items()):
         mylib.sort_by_name(arr, 1)
         kind = 'Apps' if i == 6 else 'Games' if i == 7 else 'Other'
         src += '<h3 class="center">{}</h3>'.format(kind)
         src += '<div class="tags large center">'
         src += ''.join([HTML.a_category(*x) for x in arr]) + '</div>'
-    HTML.write(base_dir, src, title)
+    HTML.write(base_dir, src + '</div>', title)
 
 
 def process(affected=None, per_page=60):

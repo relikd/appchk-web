@@ -129,6 +129,8 @@ footer .links {
 .pagination a.active { border: 1pt solid black; border-radius: .2em; }
 
 
+#categories h3 { margin-top: 2em; }
+
 /* domain index */
 #dom-top10 { text-align: right; }
 #dom-top10>div { margin: .4em; }
