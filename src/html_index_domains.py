@@ -65,8 +65,8 @@ def gen_html_top_10(path, subset, total, title):
 
 
 def gen_html_trinity(idx_dir, app_count, json, title, symlink):
-    list1 = [(dom, len(ids)) for dom, ids in json['subdom'].items()]
-    list2 = [(dom, len(ids)) for dom, ids in json['pardom'].items()]
+    list1 = [(dom, len(ids) - 1) for dom, ids in json['subdom'].items()]
+    list2 = [(dom, len(ids) - 1) for dom, ids in json['pardom'].items()]
 
     def write_index(fname, title, button):
         HTML.write(idx_dir, '<h2>{}</h2>{}{}'.format(

@@ -30,6 +30,5 @@ remote-build:
 local:
 	src/main.py run '*'
 server:
-	@cd out
 	@open http://127.0.0.1
-	python3 -m http.server 80
+	@cd out && python3 -m http.server 80
