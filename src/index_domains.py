@@ -87,10 +87,19 @@ def insert_in_index(index, bundle_ids):
 def split_trackers(index):
     ret = {'trkr': {'bundle': index['bundle'], 'subdom': {}, 'pardom': {}},
            'no-trkr': {'bundle': index['bundle'], 'subdom': {}, 'pardom': {}}}
+
+    is_par_trkr = {}
+    for domain, [is_trkr, *ids] in index['pardom'].items():
+        is_par_trkr[domain] = is_trkr
+        if is_trkr:
+            ret['trkr']['pardom'][domain] = ids
+
     for domain, [is_trkr, *ids] in index['subdom'].items():
         key = 'trkr' if is_trkr else 'no-trkr'
         ret[key]['subdom'][domain] = ids
         pardom = mylib.parent_domain(domain)
+        if is_par_trkr[pardom]:
+            continue
         try:
             ret[key]['pardom'][pardom].update(ids)
         except KeyError:
