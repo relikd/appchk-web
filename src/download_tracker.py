@@ -135,7 +135,11 @@ def combine_all(changes=['_']):
                 continue  # added by exodus, not a tracker per se
             res.add(dom[::-1])  # reverse for bintree lookup
     with open(final, 'w') as fp:
+        prev_dom = ''
         for domain in sorted(res):
+            if domain.startswith(prev_dom + '.'):
+                continue  # parent is tracker already
+            prev_dom = domain
             fp.write(domain + '\n')
 
 
