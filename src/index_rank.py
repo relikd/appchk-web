@@ -94,6 +94,8 @@ def write_ranking_category_list(index, affected_ids):
     for _, json in mylib.enum_categories():
         ids = [bid for bid, _ in json['apps']]
         ret = list(filter_by_list(index, ids, affected_ids))
+        if len(ret) == 0:
+            continue
         cid = json['meta'][0]
         mylib.json_write(fname_rank_list('category', cid), ret, pretty=False)
 
@@ -102,6 +104,8 @@ def write_ranking_custom_lists(index, affected_ids):
     make_rank_list_dir('custom', reset=affected_ids == ['*'])
     for list_id, json in mylib.enum_custom_lists():
         ret = list(filter_by_list(index, json['apps'], affected_ids))
+        if len(ret) == 0:
+            continue
         mylib.json_write(fname_rank_list('custom', list_id), ret, pretty=False)
 
 
