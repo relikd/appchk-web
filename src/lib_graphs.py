@@ -29,7 +29,7 @@ def dotgraph(arr):
     ''' Needs list of (title, count, attr_str) tuples '''
     def D(title, count, attr_str=''):
         return '<span{0} title="{1}"><p>{1}</p>{2}</span>'.format(
-            attr_str, title, '<i></i>' * count)
+            attr_str, title, '<i></i>' * max(1, count))
     return '<div class="dot-graph">' + ''.join([D(*x) for x in arr]) + '</div>'
 
 
