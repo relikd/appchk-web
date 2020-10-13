@@ -48,6 +48,39 @@ def json_to_list(json):
     ]
 
 
+def group_multiple_apps(values_array):
+    c = len(values_array)
+    asum = [0] * 10
+    amin = [float('inf')] * 10
+    amax = [0] * 10
+    for values in values_array:
+        for i in range(10):
+            asum[i] += values[i]
+            amin[i] = min(amin[i], values[i])
+            amax[i] = max(amax[i], values[i])
+
+    def flt(val):
+        return int(val * 1000) / 1000
+    return [
+        # app-count
+        c,
+        # rec-count (avg, sum)
+        flt(asum[0] / c), asum[0],
+        # req-count (avg, sum)
+        flt(asum[9] / c), asum[8],
+        # rec-time (avg, sum)
+        int(asum[1] / c), asum[2],
+        # req-pm (avg, min, max)
+        flt(asum[3] / c), flt(amin[3]), flt(amax[3]),
+        # pardom-count (avg, min, max)
+        flt(asum[5] / c), amin[5], amax[5],
+        # subdom-count (avg, min, max)
+        flt(asum[6] / c), amin[6], amax[6],
+        # tracker-percent (avg, min, max)
+        flt(asum[7] / c), flt(amin[7]), flt(amax[7]),
+    ]
+
+
 def update_summary_index(index, bundle_ids, deleteOnly=False):
     did_change = False
     if deleteOnly:
@@ -102,18 +135,45 @@ def write_ranking_category_list(index, affected_ids):
 
 def write_ranking_custom_lists(index, affected_ids):
     make_rank_list_dir('custom', reset=affected_ids == ['*'])
-    for list_id, json in mylib.enum_custom_lists():
+    for list_id, json in mylib.enum_custom_lists('list_'):
         ret = list(filter_by_list(index, json['apps'], affected_ids))
         if len(ret) == 0:
             continue
         mylib.json_write(fname_rank_list('custom', list_id), ret, pretty=False)
 
 
+def write_ranking_groupby_lists(index, affected_ids):
+    make_rank_list_dir('groupby', reset=affected_ids == ['*'])
+    for listid, json in mylib.enum_custom_lists('groupby_'):
+        ret = []
+        anyone = affected_ids == ['*']
+        for group in json['groups']:
+            arr = []
+            for x in index:
+                if not anyone and x[0] in affected_ids:
+                    anyone = True
+                if x[0] in group['apps']:
+                    arr.append(x[2:])
+            if len(arr) > 0:
+                ident = group['name']
+                try:
+                    url = group['url']
+                    ident = [ident, url]
+                except KeyError:
+                    pass
+                ret.append([ident] + group_multiple_apps(arr))
+        if len(ret) == 0 or not anyone:
+            continue
+        mylib.json_write(fname_rank_list('groupby', listid), ret, pretty=False)
+
+
 def write_ranking_list(index, affected_ids):
-    ret = []
-    for bid, values in index.items():
-        ret.append([bid, index_app_names.get_name(bid)] + values)
-        del(values[8:])  # prepare for write_rank_index
+    # prepend bundle-id and app name
+    ret = [[b, index_app_names.get_name(b)] + v for b, v in index.items()]
+
+    # TODO: return list of updated files
+    print('  write group-by lists')
+    write_ranking_groupby_lists(ret, affected_ids)
 
     print('  write custom lists')
     # sort by  %-tracker asc,  #-pardom asc,  avg-req-per-min asc
@@ -166,6 +226,14 @@ def get_total_counts():
         return [0, 0]
 
 
+def save_groupby_list(gid, title, groups, hidden=False):
+    base = mylib.path_data('_lists')
+    mylib.mkdir(base)
+    fname = mylib.path_add(base, f'groupby_{gid}.json')
+    json = {'name': title, 'hidden': hidden, 'groups': groups}
+    mylib.json_write(fname, json, pretty=False)
+
+
 def process(bundle_ids, deleteOnly=False):
     print('writing index: ranking ...')
     fname = fname_app_summary()
@@ -177,6 +245,8 @@ def process(bundle_ids, deleteOnly=False):
     ids = mylib.appids_in_data(bundle_ids)
     if update_summary_index(index, ids, deleteOnly=deleteOnly):
         write_ranking_list(index, bundle_ids)
+        for values in index.values():
+            del(values[8:])
         write_rank_index(index)
     print('')
 

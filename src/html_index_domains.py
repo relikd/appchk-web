@@ -70,7 +70,7 @@ def gen_html_trinity(idx_dir, app_count, json, title, symlink):
 
     def write_index(fname, title, button):
         HTML.write(idx_dir, '<h2>{}</h2>{}{}'.format(
-            HTML.a_path([('Results', '/results/')], title),
+            HTML.a_path([('/results/', 'Results')], title),
             dropdown_choose(button), duo_list(list1, list2)
         ), title=title, fname=fname)
 
@@ -91,7 +91,7 @@ def gen_html_trinity(idx_dir, app_count, json, title, symlink):
 
 def gen_lookup(html_dir, doms_dict, flag, title):
     HTML.write(html_dir, f'''
-<h2>{ HTML.a_path([('All Domains', '/index/domains/all/')],
+<h2>{ HTML.a_path([('/index/domains/all/', 'All Domains')],
                   '<span id="name"></span>') }</h2>
 <p>Known Tracker: <b id="known">?</b></p>
 <p>Present in: <b id="num-apps">… applications</b></p>

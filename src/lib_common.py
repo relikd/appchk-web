@@ -247,10 +247,10 @@ def enum_newly_added():
         yield fname, os.path.basename(fname)[3:]  # del prefix 'in_'
 
 
-def enum_custom_lists():
-    for fname in glob.glob(path_data('_lists', 'list_*.json')):
+def enum_custom_lists(prefix):
+    for fname in glob.glob(path_data('_lists', prefix + '*.json')):
         with open(fname, 'r') as fp:
-            yield os.path.basename(fname)[5:-5], json.load(fp)
+            yield os.path.basename(fname)[len(prefix):-5], json.load(fp)
 
 
 def enum_jsons(bundle_id):

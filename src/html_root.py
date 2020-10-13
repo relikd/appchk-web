@@ -92,9 +92,12 @@ def gen_results(base_dir, c_apps, c_domains, title):
   <li>List of <a href="/category/">Categories</a></li>
   <li>List of <a href="/index/domains/all/">All Domains</a>, 
   only <a href="/index/domains/tracker/">Trackers</a>,
-  or <a href="/index/domains/highly-used/">Highly-used Domains</a> which appear in at least 5 apps but are not considered tracker <i>yet</i>.</li>
+  or <a href="/index/domains/highly-used/">Highly-used Domains</a> <br>which appear in at least 5 apps but are not considered tracker <i>yet</i>.</li>
 </ul>
-<p>Or compare similar application via custom comparison <a href="/lists/">Lists</a>.</p>
+<ul>
+  <li>Compare <a href="/lists/">App Lists</a></li>
+  <li>Compare <a href="/compare/">Group Lists</a></li>
+</ul>
 '''.format(title, c_apps, c_domains, c_recs, c_logs), title=title)
     mylib.symlink(index_rank.fname_app_rank(),
                   mylib.path_add(base_dir, 'rank.json'))  # after HTML.write

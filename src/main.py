@@ -8,6 +8,7 @@ import download_itunes
 import download_tracker
 import html_bundle
 import html_categories
+import html_group_compare
 import html_index_apps
 import html_index_domains
 import html_ranking
@@ -41,6 +42,7 @@ def rebuild_html(bundle_ids=None, cat_ids=None, inclIApp=True):
     else:
         print('no new bundle, not rebuilding index')
     html_ranking.process()  # after html_categories & html_index_apps
+    html_group_compare.process()  # after index_rank
     app_count, dom_count = html_index_domains.process()  # after index_domains
     html_root.process(app_count, dom_count, inclStatic=True)
 

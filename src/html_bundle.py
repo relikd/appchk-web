@@ -47,21 +47,6 @@ def stat(col, title, ident, value, optional=None):
 
 def gen_page(bundle_id, obj):
 
-    def round_num(num):
-        return format(num, '.1f')  # .rstrip('0').rstrip('.')
-
-    def as_pm(value):
-        return round_num(value) + '/min'
-
-    def as_percent(value):
-        return round_num(value * 100) + '%'
-
-    def seconds_to_time(seconds):
-        seconds = int(seconds)
-        minutes, seconds = divmod(seconds, 60)
-        hours, minutes = divmod(minutes, 60)
-        return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
-
     name = index_app_names.get_name(bundle_id)
     gernes = index_categories.get_categories(bundle_id)
     obj['tracker'] = list(filter(lambda x: x[2], obj['subdom']))
@@ -83,13 +68,13 @@ def gen_page(bundle_id, obj):
 </div>
 <div id="stats">
   { stat(1, 'Number of recordings:', 'sum_rec', obj['sum_rec']) }
-  { stat(1, 'Average recording time:', 'avg_time', seconds_to_time(obj['avg_time'])) }
-  { stat(2, 'Cumulative recording time:', 'sum_time', seconds_to_time(obj['sum_time'])) }
-  { stat(1, 'Average number of requests:', 'avg_logs_pm', round_num(obj['avg_logs']), as_pm(obj['avg_logs_pm'])) }
-  { stat(2, 'Total number of requests:', 'sum_logs_pm', str(obj['sum_logs']), as_pm(obj['sum_logs_pm'])) }
+  { stat(1, 'Average recording time:', 'avg_time', HTML.seconds_to_time(obj['avg_time'])) }
+  { stat(2, 'Cumulative recording time:', 'sum_time', HTML.seconds_to_time(obj['sum_time'])) }
+  { stat(1, 'Average number of requests:', 'avg_logs_pm', HTML.fmt_round_num(obj['avg_logs']), HTML.fmt_as_pm(obj['avg_logs_pm'])) }
+  { stat(2, 'Total number of requests:', 'sum_logs_pm', str(obj['sum_logs']), HTML.fmt_as_pm(obj['sum_logs_pm'])) }
   { stat(1, 'Number of domains:', 'pardom', len(obj['pardom'])) }
   { stat(2, 'Number of subdomains:', 'subdom', len(obj['subdom'])) }
-  { stat(3, 'Tracker percentage:', 'tracker_percent', as_percent(obj['tracker_percent'])) }
+  { stat(3, 'Tracker percentage:', 'tracker_percent', HTML.fmt_as_percent(obj['tracker_percent'])) }
 </div>
 <h3>Connections</h3>
 <div>

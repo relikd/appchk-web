@@ -4,6 +4,7 @@ import sys
 import lib_common as mylib
 import download_itunes  # get_genres
 import index_app_names  # get_name
+import index_rank  # save_groupby_list
 
 _dict_apps = None
 _dict_names = None
@@ -96,9 +97,23 @@ def persist_individual_files():
 
     index = sorted_reverse_index()
     make_dir_individuals()
+    cat_groups = {}
     for cid, cname in _dict_names.items():
+        # write individual
         mylib.json_write(fname_cat_individual(cid),
                          {'meta': [cid, cname], 'apps': index[cid]})
+        # prep groupby compare
+        obj = {'name': cname, 'apps': [x for x, _ in index[cid]]}
+        cat_g_id = int(int(cid) / 1000)
+        try:
+            cat_groups[cat_g_id].append(obj)
+        except KeyError:
+            cat_groups[cat_g_id] = [obj]
+
+    for key, vals in cat_groups.items():
+        mylib.sort_by_name(vals, 'name')
+        index_rank.save_groupby_list(
+            f'category-{key}', f'Category {key}xxx', vals, hidden=True)
 
 
 def get_categories(bundle_id):

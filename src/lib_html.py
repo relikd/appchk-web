@@ -23,9 +23,9 @@ def a_subdomain(x, inner=None, attr_str=''):
     return '<a{} href="/subdomain/#{}">{}</a>'.format(attr_str, x, inner or x)
 
 
-def h2_path_n_rank(title, path_parts, rank_href):
-    return '<h2>{} <a class="snd floatr" href="{}">Ranking</a></h2>'.format(
-        a_path(path_parts, title), rank_href)
+def h2_path_n_rank(title, path_parts, rank_href, rank_title='Ranking'):
+    return '<h2>{} <a class="snd floatr" href="{}">{}</a></h2>'.format(
+        a_path(path_parts, title), rank_href, rank_title)
 
 
 def p_download_json(href, download_name):
@@ -65,7 +65,7 @@ def div(inner, attr=None):
 def a_path(parts, suffix):
     ''' expects (name, url) tuples '''
     return ' / '.join(['<a href="{}">{}</a>'.format(url, title)
-                       for title, url in parts] + [suffix])
+                       for url, title in parts] + [suffix])
 
 
 # Simple constructs
@@ -79,6 +79,36 @@ def date_utc(ctime):
     return '<time datetime="{}">{} UTC</time>'.format(
         time.strftime('%Y-%m-%d %H:%M', time.gmtime(ctime)),
         time.strftime('%Y-%m-%d, %H:%M', time.gmtime(ctime)))
+
+
+def seconds_to_time(seconds):
+    seconds = int(seconds)
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    return '{:02d}:{:02d}:{:02d}'.format(hours, minutes, seconds)
+
+
+def fmt_round_num(num):
+    return format(num, '.1f')  # .rstrip('0').rstrip('.')
+
+
+def fmt_as_pm(value):
+    return fmt_round_num(value) + '/min'
+
+
+def fmt_as_percent(value):
+    return fmt_round_num(value * 100) + '%'
+
+
+def h4_a_title_sub_desc(href, title, subtitle, desc):
+    if desc:
+        desc = f'<p class="squeeze">{desc}</p>'
+    return f'''
+<div class="title-sub">
+  <h4><a href="{href}/">{title}</a></h4>
+  <span>{subtitle}</span>
+  {desc or ''}
+</div>'''
 
 
 # Higher level constructs
