@@ -3,6 +3,7 @@
 import os
 import shutil
 import lib_common as mylib
+import download_tracker
 
 pp = ['flurry.com', 'facebook.com', 'admob.com', 'apple.com', 'tapjoyads.com',
       'crashlytics.com', 'ioam.de', 'amazonaws.com', 'chartboost.com',
@@ -20,6 +21,7 @@ def eval_analyze():
     log_count = 0
     rec_count = [0, 0]
     rec_total = [0, 0]
+    trkr_total = 0
 
     for bid in mylib.appids_in_out(['*']):
         app_count += 1
@@ -33,6 +35,8 @@ def eval_analyze():
                 l = len(logs)
                 if par in pp:
                     ret[par] += l
+                if download_tracker.is_tracker(dom):
+                    trkr_total += l
                 log_count += l
 
     print('Domain: Percent of requests')
@@ -47,7 +51,8 @@ def eval_analyze():
     print(f'  not study {rec_total[1] / rec_count[1]} sec')
     print('')
 
-    print(f'Apps: {app_count}, Recordings: {sum(rec_count)}, Logs: {log_count}')
+    trkr_prct = in_pct(trkr_total / log_count)
+    print(f'Apps: {app_count}, Recordings: {sum(rec_count)}, Logs: {log_count}, Tracker: {trkr_prct}')
     print('')
 
 
@@ -97,4 +102,5 @@ def move_ios14():
                 pass
 
 
-move_ios14()
+# move_ios14()
+eval_analyze()
