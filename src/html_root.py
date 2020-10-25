@@ -85,7 +85,7 @@ def gen_results(base_dir, c_apps, c_domains, title):
     print('    {} logs'.format(c_logs))
     HTML.write(base_dir, '''
 <h2>{}</h2>
-<p>The AppCheck database currently contains <b>{:,}&nbsp;apps</b> with a total of <b>{:,} unique domains</b>.</p>
+<p>The appchk database currently contains <b>{:,}&nbsp;apps</b> with a total of <b>{:,} unique domains</b>.</p>
 <p>Collected through <b>{:,}&nbsp;recordings</b> with <b>{:,} individual requests</b>.</p>
 <ul>
   <li>List of <a href="/index/apps/">Apps</a></li>
@@ -112,8 +112,8 @@ def process(app_count, dom_count, inclStatic=False):
         gen_redirect()  # root redirect.html?id=my.bundle.id
         print('  404.html')
         gen_404()
-    print('  /help/')  # dynamic content
-    gen_help()
+    # print('  /help/')  # dynamic content
+    # gen_help()
     print('  /results/')  # dynamic content
     gen_results(mylib.path_out('results'), app_count, dom_count,
                 title='Results')
@@ -121,4 +121,4 @@ def process(app_count, dom_count, inclStatic=False):
 
 
 if __name__ == '__main__':
-    process(-1, -1)
+    process(-1, -1, inclStatic=True)

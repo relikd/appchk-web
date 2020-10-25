@@ -72,7 +72,7 @@ def write_temporary_lists():
         }]}, pretty=True)
     mylib.json_write(two, {
         "name": "iOS 14 Study: Selected Apps",
-        "apps": ["com.google.chrome.ios", "com.google.chrome.ios.2", "com.ingka.ikea.app", "com.ingka.ikea.app.2", "com.microsoft.skype.teams", "com.microsoft.skype.teams.2", "com.Atinon.PassOver", "com.Atinon.PassOver.2", "com.Celltop.SpiralRoll", "com.Celltop.SpiralRoll.2", "com.redforcegames.stack.colors", "com.redforcegames.stack.colors.2"]
+        "apps": ["com.google.chrome.ios", "com.google.chrome.ios.2", "com.ingka.ikea.app", "com.ingka.ikea.app.2", "com.mcdonalds.mobileapp", "com.mcdonalds.mobileapp.2", "com.microsoft.skype.teams", "com.microsoft.skype.teams.2", "com.Atinon.PassOver", "com.Atinon.PassOver.2", "com.Celltop.SpiralRoll", "com.Celltop.SpiralRoll.2", "com.redforcegames.stack.colors", "com.redforcegames.stack.colors.2"]
         }, pretty=True)
 
 
@@ -116,10 +116,11 @@ def move_ios14():
         for fname, json in mylib.enum_jsons(bid):
             fiil = os.path.basename(fname)
             try:
-                if json['ios'].split('.')[0] == '14':
-                    mylib.mv(fname, mylib.path_add(diir, '2', fiil))
+                ios = json['ios'].split('.')[0]
             except KeyError:
-                pass
+                ios = '14'
+            if ios == '14' and os.path.getmtime(fname) > 1600258000:
+                mylib.mv(fname, mylib.path_add(diir, '2', fiil))
     write_temporary_lists()
 
 # move_ios14()

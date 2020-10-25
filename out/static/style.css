@@ -24,12 +24,11 @@ header h1 {
 	font-family: "Raleway", sans-serif;
 	font-size: 1.4em;
 	font-weight: 900;
-	text-transform: uppercase;
 	letter-spacing: .9px;
 	color: #fff;
 	margin-top: 0;
 }
-header h1 span { font-size: .7em; color: silver; }
+header h1 span { font-size: .7em; color: silver; text-transform: uppercase; }
 header ul { padding: 0; }
 main {
 	padding: .1em 2em 1.5em;
