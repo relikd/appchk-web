@@ -27,6 +27,112 @@ def gen_404():
 <p>Go back to <a href="/">start page</a></p>''', fname='404.html')
 
 
+def gen_privacy():
+    HTML.write(mylib.path_out(), '''
+<h2>Datenschutzerklärung (Webseite)</h2>
+<p>Auf dieser Webseite werden keine personenbezogenen Daten erhoben.</p>
+<p class="squeeze">
+  Einige Daten werden jedoch technisch bedingt automatisch erfasst.
+  Diese Daten werden von Ihrem Browser automatisch gesendet und beinhalten Browsertyp und -version, die Referrer-URL, Ihre IP-Adresse sowie Datum und Uhrzeit der Anfrage.
+  Diese Daten werden explizit weder ausgewertet noch gespeichert.
+</p>
+<p>Bei offenen Fragen wenden Sie sich bitte an <a href="mailto:dominik.herrmann@uni-bamberg.de">dominik.herrmann@uni-bamberg.de</a>.</p>
+
+<h2>Privacy Policy (Website)</h2>
+<p>This website does not collect any personally identifiable information.</p>
+<p class="squeeze">
+  Some data is collected automatically by our IT systems when you visit the website.
+  This technical data is sent automatically by your browser and includes the browser type and version, a referrer URL, your IP address, and date and time when you accessed the page.
+  This data is explicitly neither evaluated nor stored.
+</p>
+<p>If you have further questions write an email to <a href="mailto:dominik.herrmann@uni-bamberg.de">dominik.herrmann@uni-bamberg.de</a>.</p>
+''', fname='privacy.html')
+
+
+def gen_appprivacy():
+    HTML.write(mylib.path_out(), '''
+<h2>Datenschutzerklärung (App)</h2>
+<p>Die appchk app verarbeitet potentiell personenbeziehbare Daten.</p>
+<p class="squeeze">
+  Im Nachfolgenden werden diese Daten gelistet, die von der App erhoben und verarbeitet werden.
+  Dies beinhaltet die Domainnamen der angesurften Webseiten bzw. von anderen Apps kontaktierte Domains, sowie das Datum und die Uhrzeit der Anfrage.
+  Sofern ein App-Recording gestartet wird, wird außerdem die aktuelle Version des iOS Betriebssystems gespeichert.
+  Andere als die genannten Daten werden nicht erhoben.
+  Weiterhin werden diese Daten nur erhoben, solange der (lokale) VPN-Service aktiv ist.
+  Wenn dieser Service inaktiv ist, werden keine Daten erhoben.
+</p>
+<p class="squeeze">
+  Im Gegensatz zu einem konventionellen VPN Provider, verbindet sich dieser VPN-Service <strong>nicht</strong> zu einem anderen Server.
+  Alle Daten werden ausschließlich auf dem eigenen Endgerät erfassten und gespeichert.
+  Das heißt, diese Daten verlassen das eigene Gerät nicht und können demnach auch nicht von uns ausgewertet werden.
+</p>
+<p class="squeeze">
+  Diese Daten werden nur an unsere Server (appchk.de) übermittelt, sofern der Nutzer / die Nutzerin der Übermittlung explizit zustimmt.
+  Nutzer:innen haben weiterhin die Möglichkeit die erfassten Daten vor dem Upload zu filtern.
+  Beim Übermitteln der Daten erhält der Server einen Zeitstempel der Anfrage.
+  Andere Attribute wie Browsertyp, IP-Adresse, etc. werden, wie bei der Webseite, nicht ausgewertet oder gespeichert.
+</p>
+<p>Bei offenen Fragen wenden Sie sich bitte an <a href="mailto:dominik.herrmann@uni-bamberg.de">dominik.herrmann@uni-bamberg.de</a>.</p>
+
+<h2>Privacy Policy (App)</h2>
+<p>The appchk app collects potentially personally identifiable information.</p>
+<p class="squeeze">
+  The following section contains a list of the collected and processed data.
+  This data includes the domain names of websites the user or another app contacted, as well as the date and time of the query.
+  If the user starts an app-recording, the app will also store the current iOS version.
+  Other than the listed data is not collected.
+  Further, this data is only collected as long as the (local) VPN-service is active.
+  As soon as this service is deactivated, no more data is collected.
+</p>
+<p class="squeeze">
+  Contrary to conventional VPN providers, this VPN-service does <strong>not</strong> connect to another server.
+  All collected data is processed and stored solely on the users end-device.
+  This means that this data never leaves a user’s device and can therefore not be evaluated by us.
+</p>
+<p class="squeeze">
+  This data is transmitted to our servers (appchk.de) only in the case if the user explicitly chooses to submit the data.
+  Furthermore, users have the option to filter the data prior to upload.
+  If the data is submitted, the server will also receive a timestamp of the upload.
+  Other attributes like browser type, IP-address, etc. are, similarly to the website, not evaluated nor stored, similar.
+</p>
+<p>If you have further questions write an email to <a href="mailto:dominik.herrmann@uni-bamberg.de">dominik.herrmann@uni-bamberg.de</a>.</p>
+''', fname='app-privacy.html')
+
+
+def gen_imprint():
+    HTML.write(mylib.path_out(), '''
+<h2>Imprint / Impressum</h2>
+<p>
+  <strong>Lehrstuhl für Privatsphäre und Sicherheit in Informationssystemen (PSI)</strong><br>
+  Otto-Friedrich Universität Bamberg<br>
+  Kapuzinerstr. 16<br>
+  96047 Bamberg<br>
+  Germany
+</p>
+<p>Tel.: +49 951 863-2661</p>
+
+<h3>Inhaltliche Verantwortlichkeit i.S.v. § 5 TMG und § 55 Abs. 2 RStV</h3>
+<p>Für die Richtigkeit und Aktualität der Inhalte sind die jeweiligen Erstellerinnen und Ersteller der einzelnen Seiten verantwortlich.</p>
+<p>
+  Otto-Friedrich Universität Bamberg<br>
+  Lehrstuhl für Privatsphäre und Sicherheit in Informationssystemen (PSI)<br>
+  Prof. Dr. Dominik Herrmann<br>
+  An der Weberei 5<br>
+  96047 Bamberg<br>
+  Deutschland<br>
+  Tel.: +49 951 863-2661<br>
+  E-Mail: <a href="mailto:dominik.herrmann@uni-bamberg.de">dominik.herrmann@uni-bamberg.de</a>
+</p>
+
+<h3>Technische Verantwortlichkeit</h3>
+<p>
+  <strong>Webmaster/in:</strong><br>
+  Prof. Dr. Dominik Herrmann<br>
+  Tel.: +49 951 863-2661<br>
+  E-Mail: <a href="mailto:dominik.herrmann@uni-bamberg.de">dominik.herrmann@uni-bamberg.de</a>
+</p>''', fname='imprint.html')
+
+
 def gen_help():
     many = 7
     txt = '''<h2>Help needed!</h2>
@@ -41,7 +147,7 @@ def gen_help():
     In the second stage we repeat the process after the launch of iOS 14.
   </p><p>
     You can help us by providing app recordings of the following applications.
-    Make sure to update to the lastest AppCheck version (v.34) which includes a check for the iOS version.
+    Make sure to update to the lastest appchk version (v.34) which includes a check for the iOS version.
     Get the <a href="https://testflight.apple.com/join/9jjaFeHO" target="_blank">Testflight beta</a>.
   </p>
 </div>
@@ -112,6 +218,12 @@ def process(app_count, dom_count, inclStatic=False):
         gen_redirect()  # root redirect.html?id=my.bundle.id
         print('  404.html')
         gen_404()
+        print('  imprint.html')
+        gen_imprint()
+        print('  privacy.html')
+        gen_privacy()
+        print('  app-privacy.html')
+        gen_appprivacy()
     # print('  /help/')  # dynamic content
     # gen_help()
     print('  /results/')  # dynamic content
